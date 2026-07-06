@@ -4,7 +4,7 @@ Tags: s3, amazon-s3, cloud-storage, media, offload, cdn, digitalocean, aws
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -89,6 +89,10 @@ Yes! All credentials can be stored in wp-config.php (outside the web root), and 
 4. Setup wizard
 
 == Changelog ==
+
+= 1.0.1 =
+* Bug-fix release following an adversarial audit — see CHANGELOG.md for full details
+* Fixed two fatal-error paths, a DigitalOcean thumbnail URL bug, a duplicate-database-row race, and several smaller issues
 
 = 1.0.0 =
 * Initial release

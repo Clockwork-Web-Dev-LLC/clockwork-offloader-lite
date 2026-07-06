@@ -3,7 +3,7 @@
  * Plugin Name: Clockwork Offloader Lite
  * Plugin URI: https://aaronreimann.com/clockwork-offloader
  * Description: Offload media files to Amazon S3 with optional URL rewriting and delete-after-upload. Upgrade to Pro for bulk tools, migration, and more.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Aaron Reimann
  * Author URI: https://aaronreimann.com
  * License: GPL v2 or later
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'CLOCKWORK_OFFLOADER_VERSION', '1.0.0' );
+define( 'CLOCKWORK_OFFLOADER_VERSION', '1.0.1' );
 define( 'CLOCKWORK_OFFLOADER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CLOCKWORK_OFFLOADER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CLOCKWORK_OFFLOADER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
