@@ -74,7 +74,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</label>
 						
 						<label class="clockwork-connection-option<?php echo ( isset( $setup_data['provider'] ) && $setup_data['provider'] === 'digitalocean' ) ? ' selected' : ''; ?>">
-							<input type="radio" name="provider" value="digitalocean" <?php checked( isset( $setup_data['provider'] ), 'digitalocean' ); ?> />
+							<input type="radio" name="provider" value="digitalocean" <?php checked( isset( $setup_data['provider'] ) ? $setup_data['provider'] : 'aws', 'digitalocean' ); ?> />
 							<div class="clockwork-connection-option-content">
 								<strong><?php esc_html_e( 'Digital Ocean Spaces', 'clockwork-offloader' ); ?></strong>
 								<p class="description"><?php esc_html_e( 'Use Digital Ocean Spaces for storage (S3-compatible).', 'clockwork-offloader' ); ?></p>

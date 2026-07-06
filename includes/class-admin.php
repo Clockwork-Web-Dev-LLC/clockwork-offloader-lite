@@ -1167,8 +1167,9 @@ class Clockwork_Offloader_Admin {
 		$base_path = ! empty( $settings['s3_base_path'] ) ? trim( $settings['s3_base_path'], '/' ) : '';
 		$cdn_domain = ! empty( $settings['cdn_domain'] ) ? rtrim( $settings['cdn_domain'], '/' ) : '';
 		
-		// Example file path (typical WordPress upload structure)
-		$example_path = 'wp-content/uploads/2025/12/example.jpg';
+		// Example file path — matches what generate_s3_key() actually produces:
+		// the uploads basedir is stripped entirely, leaving just the year/month/file structure.
+		$example_path = '2025/12/example.jpg';
 		
 		// Build S3 key
 		$s3_key = $example_path;
@@ -2039,6 +2040,10 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_error( array( 'message' => __( 'Invalid attachment ID.', 'clockwork-offloader' ) ) );
 		}
 		
+		if ( ! class_exists( 'Clockwork_Offloader_Bulk_Offloader' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Restore requires Clockwork Offloader Pro.', 'clockwork-offloader' ) ) );
+		}
+
 		$bulk_offloader = new Clockwork_Offloader_Bulk_Offloader();
 		$result = $bulk_offloader->restore_attachment( $attachment_id );
 		

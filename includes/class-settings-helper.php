@@ -61,9 +61,12 @@ class Clockwork_Offloader_Settings_Helper {
 		// Merge database settings with defaults
 		$settings = wp_parse_args( $db_settings, $defaults );
 		
-		// Get provider from wp-config if available (but allow database override)
+		// Get provider from wp-config if available (but allow database override).
+		// Check emptiness against the raw database settings, not the post-wp_parse_args()
+		// merged $settings array — wp_parse_args() always backfills a non-empty 'aws'
+		// default, which would make this override unreachable if checked against $settings.
 		$wp_config_creds = self::get_wp_config_credentials();
-		if ( $wp_config_creds && isset( $wp_config_creds['provider'] ) && empty( $settings['provider'] ) ) {
+		if ( $wp_config_creds && isset( $wp_config_creds['provider'] ) && empty( $db_settings['provider'] ) ) {
 			$settings['provider'] = $wp_config_creds['provider'];
 		}
 		
@@ -278,33 +281,34 @@ class Clockwork_Offloader_Settings_Helper {
 				
 				if ( $wp_config_content ) {
 					// Check for CLOCKWORK_OFFLOADER_SETTINGS first, then CLOUDBOUND_OFFLOADER_SETTINGS for backward compatibility
+					$array_content = null;
 					if ( preg_match( "/define\s*\(\s*['\"]CLOCKWORK_OFFLOADER_SETTINGS['\"]\s*,\s*serialize\s*\(\s*array\s*\((.*?)\)\s*\)\s*\)/s", $wp_config_content, $matches ) ) {
 						$array_content = $matches[1];
 					} elseif ( preg_match( "/define\s*\(\s*['\"]CLOUDBOUND_OFFLOADER_SETTINGS['\"]\s*,\s*serialize\s*\(\s*array\s*\((.*?)\)\s*\)\s*\)/s", $wp_config_content, $matches ) ) {
 						$array_content = $matches[1];
-						
-						// Extract key-value pairs
-						if ( preg_match_all( "/(?:['\"])([^'\"]+)(?:['\"])\s*=>\s*(?:['\"])([^'\"]*)(?:['\"])/", $array_content, $kv_matches, PREG_SET_ORDER ) ) {
-							$credentials = array();
-							foreach ( $kv_matches as $kv_match ) {
-								$key = $kv_match[1];
-								$value = $kv_match[2];
-								
-								if ( $key === 'provider' ) {
-									$credentials['provider'] = ( $value === 'do' ) ? 'digitalocean' : $value;
-								} elseif ( $key === 'access-key-id' ) {
-									$credentials['access-key-id'] = $value;
-								} elseif ( $key === 'secret-access-key' ) {
-									$credentials['secret-access-key'] = $value;
-								}
+					}
+
+					// Extract key-value pairs — applies to whichever constant name matched above
+					if ( $array_content !== null && preg_match_all( "/(?:['\"])([^'\"]+)(?:['\"])\s*=>\s*(?:['\"])([^'\"]*)(?:['\"])/", $array_content, $kv_matches, PREG_SET_ORDER ) ) {
+						$credentials = array();
+						foreach ( $kv_matches as $kv_match ) {
+							$key = $kv_match[1];
+							$value = $kv_match[2];
+
+							if ( $key === 'provider' ) {
+								$credentials['provider'] = ( $value === 'do' ) ? 'digitalocean' : $value;
+							} elseif ( $key === 'access-key-id' ) {
+								$credentials['access-key-id'] = $value;
+							} elseif ( $key === 'secret-access-key' ) {
+								$credentials['secret-access-key'] = $value;
 							}
-							
-							if ( ! empty( $credentials['access-key-id'] ) && ! empty( $credentials['secret-access-key'] ) ) {
-								if ( ! isset( $credentials['provider'] ) ) {
-									$credentials['provider'] = 'aws';
-								}
-								return $credentials;
+						}
+
+						if ( ! empty( $credentials['access-key-id'] ) && ! empty( $credentials['secret-access-key'] ) ) {
+							if ( ! isset( $credentials['provider'] ) ) {
+								$credentials['provider'] = 'aws';
 							}
+							return $credentials;
 						}
 					}
 				}

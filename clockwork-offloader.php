@@ -189,12 +189,18 @@ class Clockwork_Offloader {
 		
 		// Load required classes
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-offload-tracker.php';
-		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-queue.php';
-		
+
+		// Only create queue table if Pro is active (queue is Pro-only)
+		if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
+			require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-queue.php';
+		}
+
 		// Switch to new site and create tables
 		switch_to_blog( $blog_id );
 		Clockwork_Offloader_Tracker::create_table();
-		Clockwork_Offloader_Queue::create_table();
+		if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
+			Clockwork_Offloader_Queue::create_table();
+		}
 		restore_current_blog();
 	}
 	

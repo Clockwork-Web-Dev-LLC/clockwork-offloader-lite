@@ -47,6 +47,7 @@ class Clockwork_Offloader_Tracker {
 			status ENUM('offloaded', 'restored', 'deleted') DEFAULT 'offloaded',
 			size_name VARCHAR(100) DEFAULT '',
 			PRIMARY KEY (id),
+			UNIQUE KEY attachment_size (attachment_id, size_name),
 			INDEX attachment_id (attachment_id),
 			INDEX status (status),
 			INDEX size_name (size_name),
@@ -91,62 +92,36 @@ class Clockwork_Offloader_Tracker {
 		global $wpdb;
 		
 		$table_name = $this->get_table_name();
-		
-		// Optimize: Use composite index for faster lookup
-		$existing = $wpdb->get_var( $wpdb->prepare(
-			"SELECT id FROM $table_name WHERE attachment_id = %d AND size_name = %s AND status = 'offloaded' LIMIT 1",
+
+		// Atomic upsert keyed on the (attachment_id, size_name) unique constraint.
+		// Avoids the race condition of a separate SELECT-then-INSERT/UPDATE (two concurrent
+		// offload calls for the same attachment+size could previously both pass the "does it
+		// exist" check and insert duplicate rows), and correctly re-activates a row that was
+		// previously 'restored' or 'deleted' instead of inserting a second row for it.
+		$result = $wpdb->query( $wpdb->prepare(
+			"INSERT INTO $table_name (attachment_id, bucket, s3_key, original_path, file_size, offload_date, status, size_name)
+			VALUES (%d, %s, %s, %s, %d, %s, 'offloaded', %s)
+			ON DUPLICATE KEY UPDATE
+				bucket = VALUES(bucket),
+				s3_key = VALUES(s3_key),
+				original_path = VALUES(original_path),
+				file_size = VALUES(file_size),
+				offload_date = VALUES(offload_date),
+				status = 'offloaded'",
 			$attachment_id,
+			$bucket,
+			$s3_key,
+			$original_path,
+			$file_size,
+			current_time( 'mysql' ),
 			$size_name
 		) );
-		
-		if ( $existing ) {
-			// Update existing record
-			$result = $wpdb->update(
-				$table_name,
-				array(
-					'bucket' => $bucket,
-					's3_key' => $s3_key,
-					'original_path' => $original_path,
-					'file_size' => $file_size,
-					'offload_date' => current_time( 'mysql' ),
-					'status' => 'offloaded',
-				),
-				array(
-					'id' => $existing,
-				),
-				array( '%s', '%s', '%s', '%d', '%s', '%s' ),
-				array( '%d' )
-			);
-			
-			// Clear cache on update
-			if ( $result !== false ) {
-				$this->clear_statistics_cache();
-			}
-			
-			return $result;
-		}
-		
-		// Insert new record
-		$result = $wpdb->insert(
-			$table_name,
-			array(
-				'attachment_id' => $attachment_id,
-				'bucket' => $bucket,
-				's3_key' => $s3_key,
-				'original_path' => $original_path,
-				'file_size' => $file_size,
-				'offload_date' => current_time( 'mysql' ),
-				'status' => 'offloaded',
-				'size_name' => $size_name,
-			),
-			array( '%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s' )
-		);
-		
-		// Clear cache on insert
+
+		// Clear cache on successful write
 		if ( $result !== false ) {
 			$this->clear_statistics_cache();
 		}
-		
+
 		return $result;
 	}
 	

@@ -398,13 +398,21 @@ class Clockwork_Offloader_URL_Rewriter {
 			return $cdn_domain . '/' . $s3_key;
 		}
 		
-		// Use same credential logic as S3 service to get correct region
+		// Use same credential logic as S3 service to get correct region and provider
 		// This ensures wp-config.php constants are checked first, then database settings
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-s3-service.php';
 		$s3_service = new Clockwork_Offloader_S3_Service();
 		$credentials = $s3_service->get_credentials();
 		$region = ! empty( $credentials['region'] ) ? $credentials['region'] : 'us-east-1';
-		
+		$provider = ! empty( $credentials['provider'] ) ? $credentials['provider'] : 'aws';
+
+		// Construct URL based on provider
+		if ( $provider === 'digitalocean' ) {
+			// DO Spaces URL format: https://{space-name}.{region}.digitaloceanspaces.com/{key}
+			return 'https://' . $original->bucket . '.' . $region . '.digitaloceanspaces.com/' . $s3_key;
+		}
+
+		// AWS S3 URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
 		return 'https://' . $original->bucket . '.s3.' . $region . '.amazonaws.com/' . $s3_key;
 	}
 }
