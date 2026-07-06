@@ -93,6 +93,11 @@ class Clockwork_Offloader {
 		
 		// Migrate R2/GCS settings to AWS (backward compatibility)
 		add_action( 'admin_init', array( $this, 'migrate_unsupported_providers' ) );
+
+		// Upgrade the offloads table schema for existing installs. Runs here (not just on
+		// register_activation_hook) because WordPress never fires the activation hook when
+		// plugin files are updated in place without an explicit deactivate/reactivate.
+		add_action( 'admin_init', array( 'Clockwork_Offloader_Tracker', 'maybe_upgrade_table' ) );
 		
 		// Initialize admin
 		if ( is_admin() ) {

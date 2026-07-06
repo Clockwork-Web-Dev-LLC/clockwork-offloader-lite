@@ -16,7 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Clockwork_Offloader_Tracker class
  */
 class Clockwork_Offloader_Tracker {
-	
+
+	/**
+	 * Schema version. Bump this and add an upgrade step in maybe_upgrade_table()
+	 * whenever create_table()'s CREATE TABLE SQL changes in a way existing installs
+	 * need migrating for (new column, new constraint, etc.).
+	 */
+	const DB_VERSION = '1.1';
+
 	/**
 	 * Get the table name
 	 *
@@ -59,7 +66,48 @@ class Clockwork_Offloader_Tracker {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 	}
-	
+
+	/**
+	 * Migrate existing installs to the current schema.
+	 *
+	 * Runs on every page load (cheap: one option read) rather than only on plugin
+	 * activation, because WordPress does NOT fire the activation hook when a plugin's
+	 * files are updated in place (git pull, zip overwrite, etc.) without an explicit
+	 * deactivate/reactivate — an existing site would otherwise be silently stuck on the
+	 * old schema, including installs already carrying the duplicate rows this schema
+	 * version's unique key is meant to prevent going forward.
+	 */
+	public static function maybe_upgrade_table() {
+		if ( get_option( 'clockwork_offloader_db_version' ) === self::DB_VERSION ) {
+			return;
+		}
+
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'clockwork_offloads';
+
+		$table_name_escaped = esc_sql( $table_name );
+		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '{$table_name_escaped}'" ) === $table_name;
+
+		if ( $table_exists ) {
+			// dbDelta silently refuses to add a UNIQUE KEY if rows already violate it, so any
+			// duplicate (attachment_id, size_name) rows left over from the pre-1.1 check-then-insert
+			// race must be cleared first. Keep the highest id (most recent write) per pair.
+			$wpdb->query(
+				"DELETE t1 FROM $table_name t1
+				INNER JOIN $table_name t2
+				ON t1.attachment_id = t2.attachment_id
+				AND t1.size_name = t2.size_name
+				AND t1.id < t2.id"
+			);
+		}
+
+		// Re-run dbDelta: creates the table on a fresh install, or adds the missing unique
+		// key (now safe, since duplicates were just cleared) on an existing one.
+		self::create_table();
+
+		update_option( 'clockwork_offloader_db_version', self::DB_VERSION );
+	}
+
 	/**
 	 * Check if table exists, create if it doesn't
 	 */
