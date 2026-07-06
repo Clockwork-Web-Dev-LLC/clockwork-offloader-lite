@@ -182,25 +182,27 @@ class Clockwork_Offloader_S3_Service {
 	 * @param string $size_name Image size name (optional)
 	 * @return array|WP_Error Array with bucket and s3_key, or WP_Error on failure
 	 */
-	public function upload_file( $file_path, $attachment_id, $size_name = '' ) {
+	public function upload_file( $file_path, $attachment_id, $size_name = '', $custom_key = null ) {
 		if ( ! file_exists( $file_path ) ) {
 			return new WP_Error( 'file_not_found', __( 'File does not exist.', 'clockwork-offloader' ) );
 		}
-		
+
 		$client = $this->get_client();
 		if ( is_wp_error( $client ) ) {
 			return $client;
 		}
-		
+
 		$credentials = $this->get_credentials();
 		$bucket = $credentials['bucket'];
-		
+
 		if ( empty( $bucket ) ) {
 			return new WP_Error( 'bucket_not_set', __( 'S3 bucket is not configured.', 'clockwork-offloader' ) );
 		}
-		
-		// Generate S3 key
-		$s3_key = $this->generate_s3_key( $file_path, $attachment_id, $size_name );
+
+		// Generate S3 key — or use the caller-supplied key verbatim (e.g. when uploading a
+		// file that doesn't live under the uploads dir, where generate_s3_key()'s relative-path
+		// logic can't produce a sensible key).
+		$s3_key = $custom_key !== null ? $custom_key : $this->generate_s3_key( $file_path, $attachment_id, $size_name );
 		
 		// Get file info
 		$file_info = wp_check_filetype( $file_path );
@@ -436,6 +438,16 @@ class Clockwork_Offloader_S3_Service {
 		try {
 			return $client->doesObjectExist( $bucket, $s3_key );
 		} catch ( Exception $e ) {
+			// doesObjectExist() already resolves a genuine 404/NoSuchKey to a clean `false`
+			// return internally and only throws for other failures (network timeout, API
+			// throttling, permissions). Catching those here and returning false too — the
+			// existing behavior — means callers (e.g. the migration verifier) can't tell a
+			// real "missing" from a transient error. Keep the boolean contract (callers don't
+			// expect exceptions), but log distinctly so a transient blip isn't silently
+			// indistinguishable from an actually-missing file in diagnostics.
+			if ( function_exists( 'error_log' ) ) {
+				error_log( sprintf( 'Clockwork Offloader: file_exists() check failed for S3 key "%s" due to a non-404 error: %s', $s3_key, $e->getMessage() ) );
+			}
 			return false;
 		}
 	}
