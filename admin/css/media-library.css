@@ -1,0 +1,59 @@
+/**
+ * Media Library Styles
+ *
+ * Styles for offload status indicators in media library
+ */
+
+/* List view column */
+.clockwork-offload-status-indicator {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.clockwork-offload-status-indicator .fa-solid {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Grid view indicator */
+.clockwork-offload-grid-indicator {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: rgba(255, 255, 255, 0.95);
+	border-radius: 3px;
+	padding: 4px 6px;
+	z-index: 10;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+}
+
+.clockwork-offload-grid-indicator .fa-solid {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1;
+}
+
+/* Ensure attachment wrapper has relative positioning */
+.attachment {
+	position: relative;
+}
+
+/* Hover effect */
+.clockwork-offload-grid-indicator:hover {
+	background: rgba(255, 255, 255, 1);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+

@@ -1,0 +1,1170 @@
+/**
+ * Clockwork Offloader Admin Styles
+ *
+ * Uses WordPress native styles and patterns
+ */
+
+.clockwork-offloader-stats .stat-boxes {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 20px;
+	margin: 0;
+}
+
+.clockwork-offloader-stats .stat-box {
+	text-align: center;
+	padding: 15px;
+}
+
+.clockwork-offloader-stats .stat-box h3 {
+	margin: 0 0 10px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #646970;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.clockwork-offloader-stats .stat-box .stat-number {
+	font-size: 32px;
+	font-weight: 600;
+	color: #2271b1;
+	margin: 0;
+	line-height: 1.2;
+}
+
+.clockwork-offloader-status .form-table th {
+	width: 200px;
+}
+
+.status-indicator {
+	margin-right: 10px;
+}
+
+.status-success {
+	color: #00a32a;
+	font-weight: 600;
+}
+
+.status-error {
+	color: #d63638;
+	font-weight: 600;
+}
+
+.status-unknown {
+	color: #646970;
+}
+
+.clockwork-offloader-bulk .subsubsub {
+	margin: 8px 0 0;
+}
+
+.clockwork-offloader-bulk .column-actions {
+	width: 150px;
+}
+
+.clockwork-offloader-bulk .column-actions .spinner {
+	float: none;
+	margin: 0 5px;
+	visibility: hidden;
+}
+
+.clockwork-offloader-bulk .column-actions .spinner.is-active {
+	visibility: visible;
+}
+
+.status-badge {
+	display: inline-block;
+	padding: 4px 8px;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.status-badge.status-offloaded {
+	background: #d1e7dd;
+	color: #0f5132;
+}
+
+.status-badge.status-not-offloaded {
+	background: #fff3cd;
+	color: #856404;
+}
+
+/* WordPress native table styles */
+.clockwork-offloader-bulk .wp-list-table .column-thumbnail {
+	width: 80px;
+}
+
+/* Force consistent thumbnail sizing like Media Library */
+.clockwork-offloader-bulk .wp-list-table .column-thumbnail img,
+.clockwork-offloader-bulk .wp-list-table .column-thumbnail .wp-attachment-icon {
+	width: 60px !important;
+	height: 60px !important;
+	max-width: 60px !important;
+	max-height: 60px !important;
+	object-fit: cover;
+	display: block;
+}
+
+.clockwork-offloader-bulk .wp-list-table .column-title {
+	width: auto;
+}
+
+.clockwork-offloader-bulk .wp-list-table .column-status {
+	width: 120px;
+}
+
+.clockwork-offloader-bulk .wp-list-table .column-actions {
+	width: 150px;
+}
+
+/* Bucket selector styles */
+.clockwork-bucket-selector {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+/* Override for setup wizard - each option on its own row */
+.clockwork-setup-wizard .clockwork-bucket-selector {
+	display: block;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0;
+}
+
+.clockwork-bucket-selector #s3_bucket {
+	min-width: 300px;
+}
+
+.clockwork-bucket-selector #s3_bucket_text {
+	flex: 1;
+}
+
+.clockwork-bucket-selector #bucket-spinner {
+	visibility: hidden;
+}
+
+.clockwork-bucket-selector #bucket-spinner.is-active {
+	visibility: visible;
+}
+
+.clockwork-bucket-selector #load-buckets .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 1;
+	vertical-align: middle;
+	margin-right: 3px;
+}
+
+/* Connection status indicator */
+.connection-status-indicator {
+	display: inline-block;
+	min-width: 200px;
+	font-weight: 600;
+}
+
+.connection-status-indicator .status-success {
+	color: #00a32a;
+}
+
+.connection-status-indicator .status-error {
+	color: #d63638;
+}
+
+.connection-status-indicator .status-unknown {
+	color: #646970;
+}
+
+/* Queue Status Styles */
+.clockwork-queue-status {
+	margin: 20px 0;
+}
+
+.queue-stats {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.queue-stat-item {
+	display: flex;
+	gap: 5px;
+}
+
+.queue-progress .progress-bar {
+	width: 100%;
+	height: 20px;
+	background: #f0f0f1;
+	border-radius: 3px;
+	overflow: hidden;
+	margin-top: 5px;
+}
+
+.queue-progress #queue-progress-bar {
+	height: 100%;
+	background: #2271b1;
+	transition: width 0.3s ease;
+}
+
+.queue-actions {
+	margin-top: 15px;
+}
+
+.queue-actions .spinner {
+	float: none;
+	margin-left: 5px;
+	visibility: hidden;
+}
+
+.queue-actions .spinner.is-active {
+	visibility: visible;
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+/* Throttle rate field */
+.throttle-rate-wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	transition: opacity 0.2s ease;
+}
+
+.throttle-rate-wrapper input:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* Toggle Switch Styles */
+.clockwork-toggle-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.clockwork-toggle-input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.clockwork-toggle-slider {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+	background-color: #c3c4c7;
+	border-radius: 24px;
+	transition: background-color 0.2s ease;
+	flex-shrink: 0;
+}
+
+.clockwork-toggle-slider:before {
+	content: "";
+	position: absolute;
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: #fff;
+	border-radius: 50%;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.clockwork-toggle-input:checked + .clockwork-toggle-slider {
+	background-color: #2271b1;
+}
+
+.clockwork-toggle-input:checked + .clockwork-toggle-slider:before {
+	transform: translateX(20px);
+}
+
+.clockwork-toggle-input:focus + .clockwork-toggle-slider {
+	outline: 2px solid #2271b1;
+	outline-offset: 2px;
+}
+
+.clockwork-toggle-input:hover + .clockwork-toggle-slider {
+	background-color: #a7aaad;
+}
+
+.clockwork-toggle-input:checked:hover + .clockwork-toggle-slider {
+	background-color: #135e96;
+}
+
+.clockwork-toggle-label {
+	font-size: 14px;
+	line-height: 1.5;
+	color: #1d2327;
+	flex: 1;
+}
+
+/* Ensure proper spacing in form table */
+.form-table .clockwork-toggle-wrapper {
+	margin: 0;
+}
+
+.form-table td .clockwork-toggle-wrapper + .description {
+	margin-top: 8px;
+	margin-left: 56px;
+}
+
+/* Postbox header spacing - WordPress standards */
+.postbox-header .hndle {
+	padding: 8px 12px;
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+/* Specific override for bulk upload if needed */
+.clockwork-bulk-upload-content .postbox-header .hndle {
+	padding: 8px 12px;
+	margin: 0;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+/* Details Modal */
+.clockwork-modal {
+	display: none;
+	position: fixed;
+	z-index: 100000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.clockwork-modal-content {
+	background-color: #fff;
+	margin: 5% auto;
+	padding: 0;
+	border: 1px solid #c3c4c7;
+	width: 90%;
+	max-width: 700px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	border-radius: 2px;
+}
+
+.clockwork-modal-header {
+	padding: 15px 20px;
+	border-bottom: 1px solid #c3c4c7;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #f6f7f7;
+}
+
+.clockwork-modal-header h2 {
+	margin: 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.clockwork-modal-close {
+	color: #787c82;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.clockwork-modal-close:hover,
+.clockwork-modal-close:focus {
+	color: #1d2327;
+}
+
+.clockwork-modal-body {
+	padding: 20px;
+	max-height: 70vh;
+	overflow-y: auto;
+}
+
+.clockwork-details-section {
+	margin-bottom: 20px;
+}
+
+.clockwork-details-section:last-child {
+	margin-bottom: 0;
+}
+
+.clockwork-details-section h3 {
+	margin: 0 0 10px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #1d2327;
+	border-bottom: 1px solid #c3c4c7;
+	padding-bottom: 8px;
+}
+
+.clockwork-details-row {
+	display: flex;
+	padding: 8px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.clockwork-details-row:last-child {
+	border-bottom: none;
+}
+
+.clockwork-details-label {
+	font-weight: 600;
+	min-width: 150px;
+	color: #646970;
+	font-size: 13px;
+}
+
+.clockwork-details-value {
+	flex: 1;
+	color: #1d2327;
+	font-size: 13px;
+	word-break: break-all;
+}
+
+.clockwork-details-value a {
+	color: #2271b1;
+	text-decoration: none;
+}
+
+.clockwork-details-value a:hover {
+	text-decoration: underline;
+}
+
+.clockwork-details-copy {
+	margin-left: 8px;
+	cursor: pointer;
+	color: #2271b1;
+	font-size: 12px;
+}
+
+.clockwork-details-copy:hover {
+	color: #135e96;
+}
+
+.clockwork-offload-item {
+	background: #f6f7f7;
+	padding: 12px;
+	margin-bottom: 10px;
+	border-radius: 3px;
+	border-left: 3px solid #2271b1;
+}
+
+.clockwork-offload-item:last-child {
+	margin-bottom: 0;
+}
+
+/* Development Mode Styles */
+.clockwork-development-content .file-type-category {
+	background: #fff;
+}
+
+.clockwork-development-content .file-type-category h3 {
+	border-bottom: 1px solid #c3c4c7;
+	padding-bottom: 8px;
+}
+
+.clockwork-development-content .file-type-checkbox {
+	margin-right: 8px;
+}
+
+.clockwork-development-content .file-type-category label {
+	cursor: pointer;
+}
+
+.clockwork-development-content .file-type-category label:hover {
+	background: #f6f7f7;
+	padding: 2px 4px;
+	border-radius: 2px;
+}
+
+.clockwork-development-content .clockwork-file-types-grid {
+	max-height: 600px;
+	overflow-y: auto;
+	padding: 10px;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+}
+
+.clockwork-development-content table.widefat {
+	margin-top: 12px;
+}
+
+.clockwork-development-content table.widefat th,
+.clockwork-development-content table.widefat td {
+	padding: 10px;
+}
+
+.clockwork-development-content table.widefat img {
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+}
+
+/* Plugin Header Styles */
+.clockwork-offloader-header {
+	background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+	border: 1px solid #90caf9;
+	border-radius: 4px 4px 0 0;
+	padding: 20px 30px;
+	margin: -10px -20px 0 -20px;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Hide default WordPress h1 when using custom header */
+.wrap > h1:first-of-type {
+	display: none;
+}
+
+.clockwork-offloader-header::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 300px;
+	height: 300px;
+	background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.clockwork-offloader-header-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+	z-index: 1;
+}
+
+.clockwork-offloader-header-left {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+}
+
+.clockwork-offloader-header-right {
+	display: flex;
+	align-items: center;
+}
+
+.clockwork-offloader-header-right .clockwork-offloader-status-indicator {
+	background: #fff;
+	padding: 10px 20px;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clockwork-offloader-logo {
+	width: 60px;
+	height: 60px;
+	flex-shrink: 0;
+}
+
+.clockwork-offloader-logo-placeholder {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background: #fff;
+	border: 3px solid #2196f3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+	overflow: hidden;
+}
+
+.clockwork-offloader-logo-placeholder img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	padding: 4px;
+	display: block;
+}
+
+.clockwork-offloader-logo-placeholder .dashicons {
+	font-size: 32px;
+	width: 32px;
+	height: 32px;
+	color: #1976d2;
+}
+
+.clockwork-offloader-title h1 {
+	margin: 0;
+	font-size: 28px;
+	font-weight: 600;
+	color: #1565c0;
+	line-height: 1.2;
+}
+
+.clockwork-offloader-header-right {
+	text-align: right;
+}
+
+.clockwork-offloader-user-info {
+	font-size: 13px;
+	color: #1565c0;
+	line-height: 1.5;
+}
+
+.clockwork-offloader-user-email {
+	color: #42a5f5;
+	font-size: 12px;
+}
+
+/* Status Bar */
+.clockwork-offloader-status-bar {
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	padding: 0;
+	margin: 0 0 20px -20px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.clockwork-offloader-nav-tabs {
+	border-bottom: none;
+	margin: 0;
+	flex: 1;
+}
+
+.clockwork-offloader-nav-tabs .nav-tab {
+	padding: 12px 20px;
+	font-size: 13px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	border-bottom: 3px solid transparent;
+	margin-bottom: 0;
+}
+
+.clockwork-offloader-nav-tabs .nav-tab:hover {
+	background: #fff;
+	border-bottom-color: #c3c4c7;
+}
+
+.clockwork-offloader-nav-tabs .nav-tab-active {
+	background: #fff;
+	border-bottom-color: #2196f3;
+	color: #1d2327;
+}
+
+.clockwork-offloader-nav-tabs .nav-tab-upgrade {
+	color: #2271b1;
+	font-weight: 600;
+}
+
+.clockwork-offloader-status-indicator {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 20px;
+	background: #fff;
+	border-left: 1px solid #c3c4c7;
+	min-width: 200px;
+}
+
+.clockwork-offloader-status-text {
+	font-size: 13px;
+	font-weight: 600;
+	color: #1d2327;
+	white-space: nowrap;
+}
+
+.clockwork-offloader-progress-bar {
+	width: 100px;
+	height: 6px;
+	background: #f0f0f1;
+	border-radius: 3px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.clockwork-offloader-progress-fill {
+	height: 100%;
+	background: #00a32a;
+	border-radius: 3px;
+	transition: width 0.3s ease;
+}
+
+/* Tab Navigation Styles */
+.clockwork-offloader-tab-content {
+	margin-top: 20px;
+}
+
+.clockwork-offloader-tab-content .nav-tab-wrapper {
+	border-bottom: 1px solid #c3c4c7;
+	margin-bottom: 20px;
+}
+
+.clockwork-offloader-tab-content .nav-tab {
+	padding: 8px 12px;
+	font-size: 14px;
+	line-height: 1.71428571;
+}
+
+/* Bulk Tools Card Layout */
+.clockwork-bulk-tools-content {
+	margin-top: 20px;
+}
+
+.clockwork-bulk-tools-title {
+	font-size: 20px;
+	font-weight: 600;
+	margin: 0 0 20px;
+	padding: 0;
+	color: #1d2327;
+}
+
+.clockwork-bulk-tool-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 2px;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.clockwork-bulk-tool-header {
+	display: flex;
+	align-items: center;
+	padding: 20px;
+	border-bottom: 1px solid #f0f0f1;
+	gap: 15px;
+}
+
+.clockwork-bulk-tool-icon {
+	font-size: 24px;
+	color: #2271b1;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f0f6fc;
+	border-radius: 3px;
+	flex-shrink: 0;
+}
+
+.clockwork-bulk-tool-title {
+	flex: 1;
+}
+
+.clockwork-bulk-tool-title h3 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	color: #1d2327;
+	line-height: 1.4;
+}
+
+.clockwork-bulk-tool-action {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.clockwork-bulk-tool-content {
+	padding: 20px;
+}
+
+.clockwork-progress-text {
+	font-size: 14px;
+	color: #1d2327;
+	margin-bottom: 8px;
+	font-weight: 500;
+}
+
+.clockwork-progress-bar-wrapper {
+	width: 100%;
+	height: 8px;
+	background: #f0f0f1;
+	border-radius: 4px;
+	overflow: hidden;
+	margin-bottom: 12px;
+}
+
+.clockwork-progress-bar {
+	height: 100%;
+	background: #2271b1;
+	transition: width 0.3s ease;
+	border-radius: 4px;
+}
+
+.clockwork-success-message {
+	color: #00a32a;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.clockwork-queue-status {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid #f0f0f1;
+}
+
+.clockwork-queue-controls {
+	margin-top: 10px;
+}
+
+.clockwork-queue-controls .button {
+	margin-right: 8px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 782px) {
+	.clockwork-bulk-tool-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	
+	.clockwork-bulk-tool-action {
+		width: 100%;
+		margin-top: 10px;
+	}
+	
+	.clockwork-bulk-tool-action .button {
+		width: 100%;
+	}
+}
+
+/* Setup Wizard Styles */
+.clockwork-setup-wizard {
+	max-width: 900px;
+	margin: 20px auto;
+}
+
+.clockwork-setup-breadcrumbs {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 30px 0;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.clockwork-breadcrumb-link {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: #646970;
+	padding: 8px 16px;
+	border-radius: 4px;
+	transition: all 0.2s;
+}
+
+.clockwork-breadcrumb-link:hover:not(.disabled) {
+	background: #f0f0f1;
+	color: #2271b1;
+}
+
+.clockwork-breadcrumb-link.active {
+	color: #2271b1;
+	font-weight: 600;
+}
+
+.clockwork-breadcrumb-link.disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+.clockwork-breadcrumb-number {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: #f0f0f1;
+	color: #646970;
+	font-weight: 600;
+	margin-right: 8px;
+	font-size: 14px;
+}
+
+.clockwork-breadcrumb-link.active .clockwork-breadcrumb-number {
+	background: #2271b1;
+	color: #fff;
+}
+
+.clockwork-breadcrumb-separator {
+	margin: 0 10px;
+	color: #c3c4c7;
+	font-size: 18px;
+}
+
+.clockwork-setup-content {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 30px;
+	margin-top: 20px;
+}
+
+/* WP-Config Status Section - Match Migrator */
+#clockwork-wp-config-status {
+	margin: 20px 0;
+}
+
+#clockwork-wp-config-status .button .dashicons {
+	vertical-align: middle;
+	margin-right: 5px;
+	line-height: 1;
+}
+
+#clockwork-wp-config-status-message {
+	line-height: 1.8;
+	min-height: 28px;
+	display: flex;
+	align-items: center;
+}
+
+#clockwork-wp-config-status-notice {
+	margin-top: 10px;
+}
+
+#clockwork-wp-config-status-notice .notice {
+	margin: 0;
+	padding: 10px 15px;
+}
+
+#clockwork-wp-config-status-notice .notice p {
+	margin: 0.5em 0;
+}
+
+#clockwork-wp-config-status-notice .notice p:first-child {
+	margin-top: 0;
+}
+
+#clockwork-wp-config-status-notice .notice p:last-child {
+	margin-bottom: 0;
+}
+
+.clockwork-setup-step h2 {
+	margin-top: 0;
+	font-size: 24px;
+	color: #1d2327;
+	border-bottom: 2px solid #2271b1;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+}
+
+.clockwork-setup-connection-method {
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
+	margin: 20px 0;
+	flex-wrap: wrap;
+}
+
+.clockwork-connection-option {
+	display: flex;
+	align-items: flex-start;
+	padding: 12px 15px;
+	border: 2px solid #c3c4c7;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
+	background: #fff;
+	flex: 1;
+	min-width: 200px;
+	max-width: 300px;
+}
+
+.clockwork-connection-option:hover {
+	border-color: #2271b1;
+	background: #f0f6fc;
+}
+
+.clockwork-connection-option.selected {
+	border-color: #2271b1;
+	background: #f0f6fc;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+.clockwork-connection-option.clockwork-already-configured {
+	border-color: #00a32a;
+	background: #f0f6fc;
+}
+
+.clockwork-connection-option.clockwork-already-configured.selected {
+	border-color: #00a32a;
+	box-shadow: 0 0 0 1px #00a32a;
+}
+
+.clockwork-connection-option input[type="radio"] {
+	margin-right: 12px;
+	margin-top: 4px;
+	flex-shrink: 0;
+	align-self: flex-start;
+}
+
+.clockwork-connection-option-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.clockwork-connection-option-content strong {
+	display: block;
+	font-size: 14px;
+	color: #1d2327;
+	margin-bottom: 3px;
+	line-height: 1.4;
+}
+
+.clockwork-connection-option-content .description {
+	font-size: 12px;
+	margin: 0;
+	line-height: 1.4;
+}
+
+.clockwork-wp-config-section,
+.clockwork-database-section {
+	margin-top: 25px;
+	padding: 20px;
+	background: #f9f9f9;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.clockwork-code-block {
+	position: relative;
+	margin: 15px 0;
+}
+
+.clockwork-code-block pre {
+	background: #1e1e1e;
+	color: #d4d4d4;
+	padding: 15px;
+	border-radius: 4px;
+	overflow-x: auto;
+	font-family: 'Courier New', monospace;
+	font-size: 13px;
+	line-height: 1.6;
+	margin: 0;
+}
+
+.clockwork-code-block code {
+	background: transparent;
+	padding: 0;
+	color: inherit;
+}
+
+.clockwork-copy-code {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.clockwork-setup-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 30px;
+	padding-top: 20px;
+	border-top: 1px solid #c3c4c7;
+}
+
+.clockwork-setup-next,
+.clockwork-setup-back {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.clockwork-arrow {
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1;
+	margin-left: 4px;
+}
+
+.clockwork-setup-back .clockwork-arrow {
+	margin-left: 0;
+	margin-right: 4px;
+}
+
+.clockwork-checkmark {
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 1;
+	margin-right: 6px;
+}
+
+.clockwork-setup-summary {
+	margin: 20px 0;
+	padding: 20px;
+	background: #f9f9f9;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+}
+
+.clockwork-setup-summary h3 {
+	margin-top: 0;
+}
+
+.clockwork-setup-test {
+	margin: 30px 0;
+	padding: 20px;
+	background: #f0f6fc;
+	border: 1px solid #2271b1;
+	border-radius: 4px;
+	text-align: center;
+}
+
+#clockwork-setup-test-connection {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+#clockwork-setup-test-connection .dashicons {
+	vertical-align: middle;
+	margin: 0;
+	line-height: 1;
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+}
+
+#clockwork-setup-test-result {
+	min-height: 30px;
+}
+
+#clockwork-setup-test-result .notice {
+	margin: 0;
+}
+
+/* Hide notices from other plugins on setup wizard page */
+.clockwork-setup-wizard .notice:not(.clockwork-notice) {
+	display: none !important;
+}
+
+/* Also hide notices in the main content area that aren't from Clockwork */
+.clockwork-setup-content .notice:not(.clockwork-notice) {
+	display: none !important;
+}

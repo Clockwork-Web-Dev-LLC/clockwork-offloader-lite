@@ -1,0 +1,649 @@
+<?php
+/**
+ * S3 Service
+ *
+ * Handles S3 uploads and downloads using AWS SDK v3
+ *
+ * @package Clockwork_Offloader
+ */
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Clockwork_Offloader_S3_Service class
+ */
+class Clockwork_Offloader_S3_Service {
+	
+	/**
+	 * S3 client instance
+	 *
+	 * @var Aws\S3\S3Client|null
+	 */
+	private $s3_client = null;
+	
+	/**
+	 * Get provider (AWS or Digital Ocean Spaces)
+	 *
+	 * @return string Provider name ('aws' or 'digitalocean')
+	 */
+	public function get_provider() {
+		// Check for constant first (with backward compatibility)
+		if ( defined( 'CLOCKWORK_OFFLOADER_PROVIDER' ) ) {
+			$provider = CLOCKWORK_OFFLOADER_PROVIDER;
+			if ( in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+				return $provider;
+			}
+		} elseif ( defined( 'CLOUDBOUND_OFFLOADER_PROVIDER' ) ) {
+			// Backward compatibility
+			$provider = CLOUDBOUND_OFFLOADER_PROVIDER;
+			if ( in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+				return $provider;
+			}
+		}
+		
+		// Get from database settings (with multisite support)
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+		$provider = isset( $settings['provider'] ) ? $settings['provider'] : 'aws';
+		
+		// Validate and default to 'aws' if invalid
+		if ( ! in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+			return 'aws';
+		}
+		
+		return $provider;
+	}
+	
+	/**
+	 * Get S3 credentials from wp-config.php or database
+	 *
+	 * @return array Array with 'access_key', 'secret_key', 'region', 'bucket', 'account_id', 'source', 'provider'
+	 */
+	public function get_credentials() {
+		// Get provider
+		$provider = $this->get_provider();
+		
+		// Check for new serialized wp-config.php constant first (CLOCKWORK_OFFLOADER_SETTINGS, with backward compatibility)
+		$wp_config_creds = Clockwork_Offloader_Settings_Helper::get_wp_config_credentials();
+		$access_key = null;
+		$secret_key = null;
+		$source = 'database';
+		
+		if ( $wp_config_creds && ! empty( $wp_config_creds['access-key-id'] ) && ! empty( $wp_config_creds['secret-access-key'] ) ) {
+			// New serialized constant format
+			$access_key = $wp_config_creds['access-key-id'];
+			$secret_key = $wp_config_creds['secret-access-key'];
+			$provider = ! empty( $wp_config_creds['provider'] ) ? $wp_config_creds['provider'] : $provider;
+			$source = 'wp-config';
+		} else {
+			// Fallback to old separate constants for backward compatibility
+			if ( defined( 'CLOCKWORK_OFFLOADER_AWS_ACCESS_KEY' ) && defined( 'CLOCKWORK_OFFLOADER_AWS_SECRET_KEY' ) ) {
+				$access_key = CLOCKWORK_OFFLOADER_AWS_ACCESS_KEY;
+				$secret_key = CLOCKWORK_OFFLOADER_AWS_SECRET_KEY;
+			} elseif ( defined( 'CLOUDBOUND_OFFLOADER_AWS_ACCESS_KEY' ) && defined( 'CLOUDBOUND_OFFLOADER_AWS_SECRET_KEY' ) ) {
+				// Backward compatibility
+				$access_key = CLOUDBOUND_OFFLOADER_AWS_ACCESS_KEY;
+				$secret_key = CLOUDBOUND_OFFLOADER_AWS_SECRET_KEY;
+		$source = 'wp-config';
+			}
+		}
+		
+		// Get settings (with multisite support) - always get region and bucket from database
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+		$region = ! empty( $settings['s3_region'] ) ? $settings['s3_region'] : ( $provider === 'digitalocean' ? 'nyc3' : 'us-east-1' );
+		$bucket = ! empty( $settings['s3_bucket'] ) ? $settings['s3_bucket'] : '';
+		
+		// Fall back to database for credentials if wp-config.php constants not defined
+		if ( empty( $access_key ) || empty( $secret_key ) ) {
+			$access_key = ! empty( $settings['s3_access_key'] ) ? $settings['s3_access_key'] : '';
+			$secret_key = ! empty( $settings['s3_secret_key'] ) ? $settings['s3_secret_key'] : '';
+			$source = 'database';
+		}
+		
+		return array(
+			'access_key' => $access_key,
+			'secret_key' => $secret_key,
+			'region' => $region,
+			'bucket' => $bucket,
+			'source' => $source,
+			'provider' => $provider,
+		);
+	}
+	
+	/**
+	 * Check if credentials are defined in wp-config.php
+	 *
+	 * @return bool
+	 */
+	public function is_using_wp_config() {
+		// Check for new serialized constant
+		if ( defined( 'CLOCKWORK_OFFLOADER_SETTINGS' ) || defined( 'CLOUDBOUND_OFFLOADER_SETTINGS' ) ) {
+			$wp_config_creds = Clockwork_Offloader_Settings_Helper::get_wp_config_credentials();
+			return ( $wp_config_creds && ! empty( $wp_config_creds['access-key-id'] ) && ! empty( $wp_config_creds['secret-access-key'] ) );
+		}
+		
+		// Fallback: Check old separate constants
+		return ( ( defined( 'CLOCKWORK_OFFLOADER_AWS_ACCESS_KEY' ) && defined( 'CLOCKWORK_OFFLOADER_AWS_SECRET_KEY' ) ) ||
+		         ( defined( 'CLOUDBOUND_OFFLOADER_AWS_ACCESS_KEY' ) && defined( 'CLOUDBOUND_OFFLOADER_AWS_SECRET_KEY' ) ) );
+	}
+	
+	/**
+	 * Get S3 client instance
+	 *
+	 * @return Aws\S3\S3Client|WP_Error
+	 */
+	private function get_client() {
+		if ( null !== $this->s3_client ) {
+			return $this->s3_client;
+		}
+		
+		// Check if AWS SDK is available
+		if ( ! class_exists( 'Aws\S3\S3Client' ) ) {
+			return new WP_Error( 'aws_sdk_missing', __( 'AWS SDK is not installed. Please run composer install.', 'clockwork-offloader' ) );
+		}
+		
+		$credentials = $this->get_credentials();
+		
+		if ( empty( $credentials['access_key'] ) || empty( $credentials['secret_key'] ) ) {
+			return new WP_Error( 's3_not_configured', __( 'S3 credentials are not configured.', 'clockwork-offloader' ) );
+		}
+		
+		try {
+			$config = array(
+				'version' => 'latest',
+				'region' => $credentials['region'],
+				'credentials' => array(
+					'key' => $credentials['access_key'],
+					'secret' => $credentials['secret_key'],
+				),
+			);
+			
+			// Configure endpoint for Digital Ocean Spaces
+			if ( $credentials['provider'] === 'digitalocean' ) {
+				$config['endpoint'] = 'https://' . $credentials['region'] . '.digitaloceanspaces.com';
+				$config['use_path_style_endpoint'] = true; // Required for DO Spaces
+			}
+			
+			$this->s3_client = new Aws\S3\S3Client( $config );
+			
+			return $this->s3_client;
+		} catch ( Exception $e ) {
+			return new WP_Error( 's3_client_error', $e->getMessage() );
+		}
+	}
+	
+	/**
+	 * Upload a file to S3
+	 *
+	 * @param string $file_path Local file path
+	 * @param int    $attachment_id Attachment ID
+	 * @param string $size_name Image size name (optional)
+	 * @return array|WP_Error Array with bucket and s3_key, or WP_Error on failure
+	 */
+	public function upload_file( $file_path, $attachment_id, $size_name = '' ) {
+		if ( ! file_exists( $file_path ) ) {
+			return new WP_Error( 'file_not_found', __( 'File does not exist.', 'clockwork-offloader' ) );
+		}
+		
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+		
+		$credentials = $this->get_credentials();
+		$bucket = $credentials['bucket'];
+		
+		if ( empty( $bucket ) ) {
+			return new WP_Error( 'bucket_not_set', __( 'S3 bucket is not configured.', 'clockwork-offloader' ) );
+		}
+		
+		// Generate S3 key
+		$s3_key = $this->generate_s3_key( $file_path, $attachment_id, $size_name );
+		
+		// Get file info
+		$file_info = wp_check_filetype( $file_path );
+		$content_type = ! empty( $file_info['type'] ) ? $file_info['type'] : 'application/octet-stream';
+		
+		try {
+			// Upload file
+			// Note: ACL is not included as modern S3 buckets often have Object Ownership
+			// set to "Bucket owner enforced" which disables ACLs. Public access should
+			// be controlled via bucket policies instead.
+			$upload_params = array(
+				'Bucket' => $bucket,
+				'Key' => $s3_key,
+				'SourceFile' => $file_path,
+				'ContentType' => $content_type,
+			);
+			
+			$result = $client->putObject( $upload_params );
+			
+			// Construct URL based on provider
+			$url = $this->construct_file_url( $bucket, $s3_key, $credentials['region'], $credentials['provider'] );
+			
+			return array(
+				'bucket' => $bucket,
+				's3_key' => $s3_key,
+				'url' => $url,
+			);
+		} catch ( Exception $e ) {
+			// If the error is about ACLs, try again without ACL
+			if ( strpos( $e->getMessage(), 'AccessControlListNotSupported' ) !== false || 
+			     strpos( $e->getMessage(), 'does not allow ACLs' ) !== false ) {
+				try {
+					// Retry without ACL
+					$upload_params = array(
+						'Bucket' => $bucket,
+						'Key' => $s3_key,
+						'SourceFile' => $file_path,
+						'ContentType' => $content_type,
+					);
+					
+					$result = $client->putObject( $upload_params );
+					
+					// Construct URL based on provider
+					$url = $this->construct_file_url( $bucket, $s3_key, $credentials['region'], $credentials['provider'] );
+					
+					return array(
+						'bucket' => $bucket,
+						's3_key' => $s3_key,
+						'url' => $url,
+					);
+				} catch ( Exception $retry_e ) {
+					return new WP_Error( 'upload_failed', $retry_e->getMessage() );
+				}
+			}
+			
+			return new WP_Error( 'upload_failed', $e->getMessage() );
+		}
+	}
+	
+	/**
+	 * Download a file from S3
+	 *
+	 * @param string $s3_key S3 key/path
+	 * @param string $local_path Local file path to save to
+	 * @return bool|WP_Error True on success, WP_Error on failure
+	 */
+	public function download_file( $s3_key, $local_path ) {
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+		
+		$credentials = $this->get_credentials();
+		$bucket = $credentials['bucket'];
+		
+		if ( empty( $bucket ) ) {
+			return new WP_Error( 'bucket_not_set', __( 'S3 bucket is not configured.', 'clockwork-offloader' ) );
+		}
+		
+		// Create directory if it doesn't exist
+		$dir = dirname( $local_path );
+		if ( ! file_exists( $dir ) ) {
+			$mkdir_result = wp_mkdir_p( $dir );
+			if ( ! $mkdir_result ) {
+				return new WP_Error( 'directory_creation_failed', sprintf( __( 'Failed to create directory: %s', 'clockwork-offloader' ), $dir ) );
+			}
+		}
+		
+		// Check if directory is writable
+		if ( ! is_writable( $dir ) ) {
+			return new WP_Error( 'directory_not_writable', sprintf( __( 'Directory is not writable: %s', 'clockwork-offloader' ), $dir ) );
+		}
+		
+		try {
+			$result = $client->getObject( array(
+				'Bucket' => $bucket,
+				'Key' => $s3_key,
+				'SaveAs' => $local_path,
+			) );
+			
+			// Verify file was actually downloaded
+			if ( ! file_exists( $local_path ) ) {
+				return new WP_Error( 'download_verification_failed', __( 'File download completed but file does not exist locally.', 'clockwork-offloader' ) );
+			}
+			
+			return true;
+		} catch ( Exception $e ) {
+			return new WP_Error( 'download_failed', sprintf( __( 'S3 download failed: %s', 'clockwork-offloader' ), $e->getMessage() ) );
+		}
+	}
+	
+	/**
+	 * Delete a file from S3
+	 *
+	 * @param string $s3_key S3 key/path
+	 * @return bool|WP_Error True on success, WP_Error on failure
+	 */
+	public function delete_file( $s3_key ) {
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+		
+		$credentials = $this->get_credentials();
+		$bucket = $credentials['bucket'];
+		
+		if ( empty( $bucket ) ) {
+			return new WP_Error( 'bucket_not_set', __( 'S3 bucket is not configured.', 'clockwork-offloader' ) );
+		}
+		
+		try {
+			$result = $client->deleteObject( array(
+				'Bucket' => $bucket,
+				'Key' => $s3_key,
+			) );
+			
+			// Check the result status code
+			$status_code = $result->get( '@metadata' )['statusCode'] ?? null;
+			
+			if ( $status_code === 204 || $status_code === 200 ) {
+				// Fire action for CloudFront invalidation (Pro feature)
+				do_action( 'clockwork_offloader_file_deleted_from_s3', $s3_key, $bucket );
+				return true;
+			} else {
+				return new WP_Error( 'delete_failed', sprintf( __( 'Unexpected response code: %d', 'clockwork-offloader' ), $status_code ) );
+			}
+		} catch ( Exception $e ) {
+			$error_message = $e->getMessage();
+			
+			// Provide more specific error messages
+			if ( strpos( $error_message, '403' ) !== false || strpos( $error_message, 'Forbidden' ) !== false || strpos( $error_message, 'AccessDenied' ) !== false ) {
+				return new WP_Error( 'delete_permission_denied', __( 'Permission denied. Your AWS credentials do not have delete permissions for this bucket.', 'clockwork-offloader' ) );
+			} elseif ( strpos( $error_message, '404' ) !== false || strpos( $error_message, 'NoSuchKey' ) !== false ) {
+				return new WP_Error( 'delete_file_not_found', __( 'File not found in S3. It may have already been deleted.', 'clockwork-offloader' ) );
+			}
+			
+			return new WP_Error( 'delete_failed', sprintf( __( 'S3 delete failed: %s', 'clockwork-offloader' ), $error_message ) );
+		}
+	}
+	
+	/**
+	 * List objects in S3 with a prefix
+	 *
+	 * @param string $prefix Prefix to filter objects
+	 * @return array|WP_Error Array of object keys, or WP_Error on failure
+	 */
+	public function list_objects( $prefix = '' ) {
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+		
+		$credentials = $this->get_credentials();
+		$bucket = $credentials['bucket'];
+		
+		if ( empty( $bucket ) ) {
+			return new WP_Error( 'bucket_not_set', __( 'S3 bucket is not configured.', 'clockwork-offloader' ) );
+		}
+		
+		$objects = array();
+		$continuation_token = null;
+		
+		try {
+			do {
+				$params = array(
+					'Bucket' => $bucket,
+				);
+				
+				if ( ! empty( $prefix ) ) {
+					$params['Prefix'] = $prefix;
+				}
+				
+				if ( $continuation_token ) {
+					$params['ContinuationToken'] = $continuation_token;
+				}
+				
+				$result = $client->listObjectsV2( $params );
+				
+				if ( isset( $result['Contents'] ) ) {
+					foreach ( $result['Contents'] as $object ) {
+						$objects[] = $object['Key'];
+					}
+				}
+				
+				$continuation_token = $result['NextContinuationToken'] ?? null;
+			} while ( $continuation_token );
+			
+			return $objects;
+		} catch ( Exception $e ) {
+			return new WP_Error( 'list_failed', sprintf( __( 'Failed to list S3 objects: %s', 'clockwork-offloader' ), $e->getMessage() ) );
+		}
+	}
+	
+	/**
+	 * Check if file exists in S3
+	 *
+	 * @param string $s3_key S3 key/path
+	 * @return bool
+	 */
+	public function file_exists( $s3_key ) {
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return false;
+		}
+		
+		$credentials = $this->get_credentials();
+		$bucket = $credentials['bucket'];
+		
+		if ( empty( $bucket ) ) {
+			return false;
+		}
+		
+		try {
+			return $client->doesObjectExist( $bucket, $s3_key );
+		} catch ( Exception $e ) {
+			return false;
+		}
+	}
+	
+	/**
+	 * List all S3 buckets
+	 *
+	 * @return array|WP_Error Array of bucket names or WP_Error on failure
+	 */
+	public function list_buckets() {
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+		
+		try {
+			$result = $client->listBuckets();
+			$buckets = array();
+			
+			if ( isset( $result['Buckets'] ) && is_array( $result['Buckets'] ) ) {
+				foreach ( $result['Buckets'] as $bucket ) {
+					if ( isset( $bucket['Name'] ) ) {
+						$buckets[] = $bucket['Name'];
+					}
+				}
+			}
+			
+			return $buckets;
+		} catch ( Exception $e ) {
+			return new WP_Error( 'list_buckets_failed', $e->getMessage() );
+		}
+	}
+	
+	/**
+	 * Construct file URL based on provider
+	 *
+	 * @param string $bucket Bucket/space name
+	 * @param string $s3_key S3 key/path
+	 * @param string $region Region
+	 * @param string $provider Provider ('aws' or 'digitalocean')
+	 * @return string File URL
+	 */
+	private function construct_file_url( $bucket, $s3_key, $region, $provider ) {
+		if ( $provider === 'digitalocean' ) {
+			// DO Spaces URL format: https://{space-name}.{region}.digitaloceanspaces.com/{key}
+			return 'https://' . $bucket . '.' . $region . '.digitaloceanspaces.com/' . $s3_key;
+		} else {
+			// AWS S3 URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
+			return 'https://' . $bucket . '.s3.' . $region . '.amazonaws.com/' . $s3_key;
+		}
+	}
+	
+	/**
+	 * Test S3 connection
+	 *
+	 * @param string $access_key Optional access key for testing (overrides stored credentials)
+	 * @param string $secret_key Optional secret key for testing (overrides stored credentials)
+	 * @param string $bucket Optional bucket name for testing (overrides stored credentials)
+	 * @param string $region Optional region for testing (overrides stored credentials)
+	 * @param string $provider Optional provider for testing (overrides stored provider)
+	 * @return bool|WP_Error True on success, WP_Error on failure
+	 */
+	public function test_connection( $access_key = null, $secret_key = null, $bucket = null, $region = null, $provider = null, $account_id = null ) {
+		// If credentials provided, create temporary client
+		if ( $access_key !== null && $secret_key !== null ) {
+			if ( empty( $access_key ) || empty( $secret_key ) ) {
+				return new WP_Error( 'credentials_required', __( 'Access Key and Secret Key are required.', 'clockwork-offloader' ) );
+			}
+			
+			// Check if AWS SDK is available
+			if ( ! class_exists( 'Aws\S3\S3Client' ) ) {
+				return new WP_Error( 'aws_sdk_missing', __( 'AWS SDK is not installed. Please run composer install.', 'clockwork-offloader' ) );
+			}
+			
+			// Get provider (use provided or default to stored)
+			if ( $provider === null ) {
+				$provider = $this->get_provider();
+			}
+			
+			$test_region = $region ? $region : ( $provider === 'digitalocean' ? 'nyc3' : 'us-east-1' );
+			
+			try {
+				$config = array(
+					'version' => 'latest',
+					'region' => $test_region,
+					'credentials' => array(
+						'key' => $access_key,
+						'secret' => $secret_key,
+					),
+				);
+				
+				// Configure endpoint for Digital Ocean Spaces
+				if ( $provider === 'digitalocean' ) {
+					$config['endpoint'] = 'https://' . $test_region . '.digitaloceanspaces.com';
+					$config['use_path_style_endpoint'] = true;
+				}
+				
+				$test_client = new Aws\S3\S3Client( $config );
+				
+				// Test by listing buckets (doesn't require bucket parameter)
+				$test_client->listBuckets();
+				
+				// If bucket provided, test bucket access
+				if ( $bucket ) {
+					$test_client->listObjects( array(
+						'Bucket' => $bucket,
+						'MaxKeys' => 1,
+					) );
+				}
+				
+				return true;
+			} catch ( Exception $e ) {
+				$error_message = $e->getMessage();
+				
+				// Handle permanent redirect (region mismatch)
+				if ( stripos( $error_message, 'permanent redirect' ) !== false || 
+					 stripos( $error_message, 'PermanentRedirect' ) !== false ) {
+					// Try to extract region from exception if it's a PermanentRedirectException
+					$correct_region = null;
+					if ( class_exists( 'Aws\S3\Exception\PermanentRedirectException' ) && $e instanceof \Aws\S3\Exception\PermanentRedirectException ) {
+						$result = $e->getResult();
+						if ( $result && isset( $result['@metadata']['headers']['x-amz-bucket-region'] ) ) {
+							$correct_region = $result['@metadata']['headers']['x-amz-bucket-region'];
+						}
+					}
+					
+					if ( $correct_region ) {
+						$suggested_message = sprintf( 
+							__( 'The bucket is in region "%s", not "%s". Please select "%s" from the region dropdown.', 'clockwork-offloader' ),
+							$correct_region,
+							$test_region,
+							$correct_region
+						);
+					} else {
+						$suggested_message = __( 'The bucket appears to be in a different region than the one selected. Please try selecting a different region. Common regions to try: us-east-2, us-west-1, us-west-2, eu-west-1, or check your AWS S3 console for the bucket\'s actual region.', 'clockwork-offloader' );
+					}
+					
+					return new WP_Error( 
+						'region_mismatch', 
+						$suggested_message,
+						array( 'correct_region' => $correct_region )
+					);
+				}
+				
+				// Provide more helpful error messages for common SSL/certificate issues
+				if ( stripos( $error_message, 'certificate' ) !== false || 
+					 stripos( $error_message, 'SSL' ) !== false ||
+					 stripos( $error_message, 'TLS' ) !== false ||
+					 stripos( $error_message, 'handshake' ) !== false ) {
+					return new WP_Error( 
+						'connection_failed', 
+						__( 'SSL certificate validation failed. This is usually a server configuration issue. Please check your server\'s SSL certificates and ensure they are valid and trusted.', 'clockwork-offloader' ) . ' ' . $error_message
+					);
+				}
+				
+				return new WP_Error( 'connection_failed', $error_message );
+			}
+		}
+		
+		// Use stored credentials
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+		
+		$credentials = $this->get_credentials();
+		$bucket = $credentials['bucket'];
+		
+		if ( empty( $bucket ) ) {
+			return new WP_Error( 'bucket_not_set', __( 'S3 bucket is not configured.', 'clockwork-offloader' ) );
+		}
+		
+		try {
+			// Try to list objects (limited to 1) to test connection
+			$client->listObjects( array(
+				'Bucket' => $bucket,
+				'MaxKeys' => 1,
+			) );
+			
+			return true;
+		} catch ( Exception $e ) {
+			return new WP_Error( 'connection_failed', $e->getMessage() );
+		}
+	}
+	
+	/**
+	 * Generate S3 key for a file
+	 *
+	 * @param string $file_path Local file path
+	 * @param int    $attachment_id Attachment ID
+	 * @param string $size_name Image size name (optional)
+	 * @return string S3 key
+	 */
+	private function generate_s3_key( $file_path, $attachment_id, $size_name = '' ) {
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+		$base_path = ! empty( $settings['s3_base_path'] ) ? trim( $settings['s3_base_path'], '/' ) : '';
+		
+		// Get upload directory info
+		$upload_dir = wp_upload_dir();
+		$relative_path = str_replace( $upload_dir['basedir'], '', $file_path );
+		$relative_path = ltrim( $relative_path, '/' );
+		
+		// If base path is set, prepend it
+		if ( ! empty( $base_path ) ) {
+			$relative_path = $base_path . '/' . $relative_path;
+		}
+		
+		return $relative_path;
+	}
+}
+

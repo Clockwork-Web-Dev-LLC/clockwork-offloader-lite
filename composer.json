@@ -1,0 +1,18 @@
+{
+    "name": "cloudbound/offloader",
+    "description": "WordPress plugin for offloading media to S3",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.2",
+        "aws/aws-sdk-php": "^3.0",
+        "symfony/filesystem": "^7.4.0"
+    },
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "CloudBoundOffloader\\": "includes/"
+        }
+    }
+}
+
