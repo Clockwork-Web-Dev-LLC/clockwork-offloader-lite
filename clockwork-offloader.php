@@ -3,7 +3,7 @@
  * Plugin Name: Clockwork Offloader Lite
  * Plugin URI: https://aaronreimann.com/clockwork-offloader
  * Description: Offload media files to Amazon S3 with optional URL rewriting and delete-after-upload. Upgrade to Pro for bulk tools, migration, and more.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: Aaron Reimann
  * Author URI: https://aaronreimann.com
  * License: GPL v2 or later
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'CLOCKWORK_OFFLOADER_VERSION', '1.0.1' );
+define( 'CLOCKWORK_OFFLOADER_VERSION', '1.1.0' );
 define( 'CLOCKWORK_OFFLOADER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CLOCKWORK_OFFLOADER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'CLOCKWORK_OFFLOADER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -85,12 +85,14 @@ class Clockwork_Offloader {
 		// Activation and deactivation hooks
 		register_activation_hook( __FILE__, array( 'Clockwork_Offloader', 'activate' ) );
 		register_deactivation_hook( __FILE__, array( 'Clockwork_Offloader', 'deactivate' ) );
-		
-		// Multisite: Create tables when new site is created
+
+		// Multisite: Create tables when new site is created. wp_initialize_site replaced the
+		// deprecated wpmu_new_blog in WP 5.1; priority 200 runs after core has populated the
+		// new site's tables.
 		if ( is_multisite() ) {
-			add_action( 'wpmu_new_blog', array( 'Clockwork_Offloader', 'activate_new_site' ) );
+			add_action( 'wp_initialize_site', array( 'Clockwork_Offloader', 'activate_new_site' ), 200 );
 		}
-		
+
 		// Migrate R2/GCS settings to AWS (backward compatibility)
 		add_action( 'admin_init', array( $this, 'migrate_unsupported_providers' ) );
 
@@ -98,52 +100,90 @@ class Clockwork_Offloader {
 		// register_activation_hook) because WordPress never fires the activation hook when
 		// plugin files are updated in place without an explicit deactivate/reactivate.
 		add_action( 'admin_init', array( 'Clockwork_Offloader_Tracker', 'maybe_upgrade_table' ) );
-		
+
+		// Everything that depends on whether Pro is present is wired on plugins_loaded, after
+		// every plugin file has been included. Doing it at include time made the result depend
+		// on plugin load order (alphabetical by directory), so Pro's AJAX handlers and queue
+		// cron silently never registered when Lite's directory sorted before Pro's.
+		add_action( 'plugins_loaded', array( $this, 'init_runtime' ), 20 );
+
+		// Initialize auto-offload hooks
+		add_action( 'add_attachment', array( $this, 'handle_new_attachment' ), 10, 1 );
+		add_filter( 'wp_generate_attachment_metadata', array( $this, 'handle_attachment_metadata' ), 10, 2 );
+
+		// Clear statistics cache when attachments are deleted
+		add_action( 'delete_attachment', array( $this, 'handle_delete_attachment' ), 10, 1 );
+	}
+
+	/**
+	 * Wire up admin, URL rewriting and (when Pro is active) queue processing.
+	 * Runs on plugins_loaded priority 20 — see init_hooks().
+	 */
+	public function init_runtime() {
 		// Initialize admin
 		if ( is_admin() ) {
 			new Clockwork_Offloader_Admin();
 			// Media Library integration removed for performance
 			// new Clockwork_Offloader_Media_Library();
 		}
-		
+
 		// Initialize URL rewriter
 		Clockwork_Offloader_URL_Rewriter::get_instance();
-		
+
 		// Initialize queue processing (Pro-only)
 		if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
 			$this->init_queue();
 		}
-		
-		// Initialize auto-offload hooks
-		add_action( 'add_attachment', array( $this, 'handle_new_attachment' ), 10, 1 );
-		add_filter( 'wp_generate_attachment_metadata', array( $this, 'handle_attachment_metadata' ), 10, 2 );
-		
-		// Clear statistics cache when attachments are deleted
-		add_action( 'delete_attachment', array( $this, 'handle_delete_attachment' ), 10, 1 );
+
+		/**
+		 * Fires once Lite (and Pro, if present) have finished wiring their hooks.
+		 */
+		do_action( 'clockwork_offloader_loaded', $this );
 	}
-	
+
 	/**
 	 * Plugin activation
+	 *
+	 * @param bool $network_wide True when network-activated on a multisite.
 	 */
-	public static function activate() {
+	public static function activate( $network_wide = false ) {
 		// Run migration from old plugin name if needed
 		self::migrate_from_cloudbound();
-		
+
 		// Load tracker class and settings helper
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-settings-helper.php';
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-offload-tracker.php';
-		
-		// Only create queue table if Pro is active (queue is Pro-only)
-		if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
-			require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-queue.php';
+
+		if ( is_multisite() && $network_wide ) {
+			// Tables are per-site ($wpdb->prefix), so create them on every existing site now
+			// rather than lazily on each site's first admin visit.
+			$site_ids = get_sites( array( 'fields' => 'ids', 'number' => 0 ) );
+			foreach ( $site_ids as $site_id ) {
+				switch_to_blog( $site_id );
+				self::activate_site();
+				restore_current_blog();
+			}
+		} else {
+			self::activate_site();
+		}
+
+		// Flush rewrite rules
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Per-site activation: create tables and default options for the current blog.
+	 */
+	private static function activate_site() {
+		// Create tables for current site
+		Clockwork_Offloader_Tracker::create_table();
+
+		// The queue table belongs to Pro. Only Pro ships class-queue.php, so never require it
+		// from here — just create the table if Pro is already loaded.
+		if ( class_exists( 'Clockwork_Offloader_Queue' ) ) {
 			Clockwork_Offloader_Queue::create_table();
 		}
-		
-		// Create tables for current site
-		// In multisite, tables are per-site via $wpdb->prefix (wp_1_, wp_2_, etc.)
-		// If network-activated, this runs on the main site
-		Clockwork_Offloader_Tracker::create_table();
-		
+
 		// Track installation date for Lite auto-offload restriction
 		if ( ! get_option( 'clockwork_offloader_installed_date' ) ) {
 			add_option( 'clockwork_offloader_installed_date', time() );
@@ -176,36 +216,31 @@ class Clockwork_Offloader {
 				update_option( 'clockwork_offloader_settings', $settings );
 			}
 		}
-		
-		// Flush rewrite rules
-		flush_rewrite_rules();
 	}
-	
+
 	/**
-	 * Create tables for new site in multisite
-	 * Hooked to wpmu_new_blog
+	 * Create tables for a new site in multisite.
+	 * Hooked to wp_initialize_site.
 	 *
-	 * @param int $blog_id New blog ID
+	 * @param WP_Site|int $site New site object (or a blog ID, for callers using the old hook).
 	 */
-	public static function activate_new_site( $blog_id ) {
+	public static function activate_new_site( $site ) {
 		if ( ! is_multisite() ) {
 			return;
 		}
-		
-		// Load required classes
-		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-offload-tracker.php';
 
-		// Only create queue table if Pro is active (queue is Pro-only)
-		if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
-			require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-queue.php';
+		$blog_id = ( $site instanceof WP_Site ) ? (int) $site->blog_id : (int) $site;
+		if ( ! $blog_id ) {
+			return;
 		}
+
+		// Load required classes
+		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-settings-helper.php';
+		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-offload-tracker.php';
 
 		// Switch to new site and create tables
 		switch_to_blog( $blog_id );
-		Clockwork_Offloader_Tracker::create_table();
-		if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
-			Clockwork_Offloader_Queue::create_table();
-		}
+		self::activate_site();
 		restore_current_blog();
 	}
 	
@@ -248,12 +283,18 @@ class Clockwork_Offloader {
 			}
 		}
 		
-		// Offload the original file
+		// Offload the original file. Never delete it here: add_attachment fires inside
+		// wp_insert_attachment(), BEFORE WordPress generates thumbnails / the -scaled copy from
+		// this file. Local deletion (if enabled) happens in handle_attachment_metadata().
 		$this->offload_attachment_file( $attachment_id, get_attached_file( $attachment_id ) );
 	}
-	
+
 	/**
 	 * Handle attachment metadata generation (image sizes)
+	 *
+	 * Runs after WordPress has generated every intermediate size, so this is the one place
+	 * where it is safe to offload the whole set and, if delete-after-upload is on, remove
+	 * the local copies.
 	 *
 	 * @param array $metadata Attachment metadata
 	 * @param int   $attachment_id Attachment ID
@@ -261,32 +302,98 @@ class Clockwork_Offloader {
 	 */
 	public function handle_attachment_metadata( $metadata, $attachment_id ) {
 		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
-		
+
 		// Only auto-offload if enabled
 		if ( empty( $settings['auto_offload'] ) ) {
 			return $metadata;
 		}
-		
+
 		// Check if S3 is configured
 		if ( ! $this->is_s3_configured() ) {
 			return $metadata;
 		}
-		
-		// Offload all image sizes
-		if ( ! empty( $metadata['sizes'] ) ) {
-			$upload_dir = wp_upload_dir();
-			$base_dir = $upload_dir['basedir'];
-			$file_dir = dirname( get_attached_file( $attachment_id ) );
-			
-			foreach ( $metadata['sizes'] as $size => $size_data ) {
-				$file_path = $file_dir . '/' . $size_data['file'];
-				if ( file_exists( $file_path ) ) {
-					$this->offload_attachment_file( $attachment_id, $file_path, $size );
+
+		$tracker = new Clockwork_Offloader_Tracker();
+		$files = self::get_attachment_files( $attachment_id, $metadata );
+
+		// Offload original (if add_attachment didn't already), every size, and the full-res
+		// original behind a -scaled image.
+		foreach ( $files as $size_name => $file_path ) {
+			if ( file_exists( $file_path ) && ! $tracker->is_offloaded( $attachment_id, $size_name ) ) {
+				$this->offload_attachment_file( $attachment_id, $file_path, $size_name );
+			}
+		}
+
+		// Delete local copies only once everything above is confirmed offloaded.
+		if ( ! empty( $settings['delete_after_upload'] ) ) {
+			foreach ( $files as $size_name => $file_path ) {
+				if ( file_exists( $file_path ) && $tracker->is_offloaded( $attachment_id, $size_name ) ) {
+					self::delete_local_file( $file_path );
 				}
 			}
 		}
-		
+
 		return $metadata;
+	}
+
+	/**
+	 * Every local file that belongs to an attachment, keyed by the size_name the tracker
+	 * uses for it: '' for the attached file, each intermediate size by name, and
+	 * 'original_image' for the full-resolution original behind a -scaled image.
+	 *
+	 * @param int        $attachment_id Attachment ID
+	 * @param array|null $metadata      Attachment metadata (fetched if null)
+	 * @return array<string, string> size_name => absolute path
+	 */
+	public static function get_attachment_files( $attachment_id, $metadata = null ) {
+		$files = array();
+
+		$file_path = get_attached_file( $attachment_id );
+		if ( ! $file_path ) {
+			return $files;
+		}
+		$files[''] = $file_path;
+
+		if ( null === $metadata ) {
+			$metadata = wp_get_attachment_metadata( $attachment_id );
+		}
+		if ( ! is_array( $metadata ) ) {
+			return $files;
+		}
+
+		$file_dir = dirname( $file_path );
+
+		if ( ! empty( $metadata['sizes'] ) && is_array( $metadata['sizes'] ) ) {
+			foreach ( $metadata['sizes'] as $size_name => $size_data ) {
+				if ( ! empty( $size_data['file'] ) ) {
+					$files[ $size_name ] = $file_dir . '/' . $size_data['file'];
+				}
+			}
+		}
+
+		if ( ! empty( $metadata['original_image'] ) ) {
+			$files['original_image'] = $file_dir . '/' . $metadata['original_image'];
+		}
+
+		return $files;
+	}
+
+	/**
+	 * Delete a local file, but only if it lives inside this site's uploads directory.
+	 *
+	 * @param string $file_path Absolute path
+	 * @return bool
+	 */
+	public static function delete_local_file( $file_path ) {
+		$upload_dir = wp_upload_dir();
+		$real_upload_dir = realpath( $upload_dir['basedir'] );
+		$real_file_path = realpath( dirname( $file_path ) );
+
+		if ( false === $real_upload_dir || false === $real_file_path || 0 !== strpos( $real_file_path, $real_upload_dir ) ) {
+			return false;
+		}
+
+		return @unlink( $file_path );
 	}
 	
 	/**
@@ -373,7 +480,6 @@ class Clockwork_Offloader {
 			return;
 		}
 		
-		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
 		$s3_service = new Clockwork_Offloader_S3_Service();
 		
 		// Upload to S3
@@ -396,17 +502,8 @@ class Clockwork_Offloader {
 			filesize( $file_path ),
 			$size_name
 		);
-		
-		// Delete from server if enabled - validate path first
-		if ( ! empty( $settings['delete_after_upload'] ) ) {
-			$upload_dir = wp_upload_dir();
-			$real_upload_dir = realpath( $upload_dir['basedir'] );
-			$real_file_path = realpath( dirname( $file_path ) );
-			
-			if ( false !== $real_upload_dir && false !== $real_file_path && 0 === strpos( $real_file_path, $real_upload_dir ) ) {
-				@unlink( $file_path );
-			}
-		}
+
+		// Local deletion is deliberately NOT done here — see handle_attachment_metadata().
 	}
 	
 	/**

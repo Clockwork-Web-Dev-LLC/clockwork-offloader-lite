@@ -54,6 +54,106 @@ class Clockwork_Offloader_URL_Rewriter {
 		add_filter( 'wp_get_attachment_image_src', array( $this, 'rewrite_image_src' ), 10, 4 );
 		add_filter( 'wp_calculate_image_srcset', array( $this, 'rewrite_srcset' ), 10, 5 );
 		add_filter( 'image_downsize', array( $this, 'rewrite_image_downsize' ), 5, 3 );
+		add_filter( 'wp_get_original_image_url', array( $this, 'rewrite_original_image_url' ), 10, 2 );
+
+		// Hard-coded upload URLs saved inside post content (block editor, classic editor,
+		// page builders) never pass through the attachment filters above, so they'd 404 the
+		// moment local files are deleted. Rewrite them at render time.
+		add_filter( 'the_content', array( $this, 'rewrite_content' ), 99 );
+		add_filter( 'the_excerpt', array( $this, 'rewrite_content' ), 99 );
+		add_filter( 'widget_text_content', array( $this, 'rewrite_content' ), 99 );
+		add_filter( 'widget_block_content', array( $this, 'rewrite_content' ), 99 );
+	}
+
+	/**
+	 * Rewrite the full-resolution original behind a -scaled image.
+	 *
+	 * @param string $url           Original image URL
+	 * @param int    $attachment_id Attachment ID
+	 * @return string
+	 */
+	public function rewrite_original_image_url( $url, $attachment_id ) {
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+		if ( empty( $settings['rewrite_urls'] ) ) {
+			return $url;
+		}
+
+		$tracker = new Clockwork_Offloader_Tracker();
+		$record = $tracker->get_offload_record( $attachment_id, 'original_image' );
+
+		return $record ? $tracker->get_record_url( $record ) : $url;
+	}
+
+	/**
+	 * Replace local upload URLs found in a block of HTML with their offloaded equivalents.
+	 *
+	 * Only URLs under this site's uploads base URL are considered, and only ones whose
+	 * local path has an 'offloaded' record are replaced, so nothing changes for files that
+	 * were never offloaded. One tracker query per distinct set of URLs.
+	 *
+	 * @param string $content HTML
+	 * @return string
+	 */
+	public function rewrite_content( $content ) {
+		if ( ! is_string( $content ) || '' === $content ) {
+			return $content;
+		}
+
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+		if ( empty( $settings['rewrite_urls'] ) ) {
+			return $content;
+		}
+
+		$upload_dir = wp_upload_dir( null, false );
+		$base_url = $upload_dir['baseurl'];
+		$base_dir = wp_normalize_path( $upload_dir['basedir'] );
+		if ( empty( $base_url ) || false === stripos( $content, $base_url ) ) {
+			return $content;
+		}
+
+		// Match the base URL (either scheme, or scheme-relative) plus a path up to the
+		// next quote/space/bracket — good enough for src, srcset, href and inline CSS url().
+		$scheme_less = preg_replace( '#^https?:#i', '', $base_url );
+		$pattern = '#(?:https?:)?' . preg_quote( $scheme_less, '#' ) . '/[^\s"\'<>()\\\\,]+#i';
+		if ( ! preg_match_all( $pattern, $content, $matches ) ) {
+			return $content;
+		}
+
+		$urls = array_unique( $matches[0] );
+		$path_for_url = array();
+		foreach ( $urls as $url ) {
+			$clean = preg_replace( '#[?\#].*$#', '', $url );
+			$relative = preg_replace( '#^(?:https?:)?' . preg_quote( $scheme_less, '#' ) . '/#i', '', $clean );
+			$path_for_url[ $url ] = $base_dir . '/' . rawurldecode( $relative );
+		}
+
+		static $cache = array();
+		$tracker = new Clockwork_Offloader_Tracker();
+		$missing = array_diff( array_values( $path_for_url ), array_keys( $cache ) );
+		if ( ! empty( $missing ) ) {
+			$records = $tracker->get_records_by_paths( $missing );
+			foreach ( $missing as $path ) {
+				$cache[ $path ] = isset( $records[ $path ] ) ? $tracker->get_record_url( $records[ $path ] ) : false;
+			}
+		}
+
+		$replacements = array();
+		foreach ( $path_for_url as $url => $path ) {
+			if ( ! empty( $cache[ $path ] ) ) {
+				$replacements[ $url ] = $cache[ $path ];
+			}
+		}
+
+		if ( empty( $replacements ) ) {
+			return $content;
+		}
+
+		// Longest URLs first so a size variant is never clobbered by its original's prefix.
+		uksort( $replacements, function ( $a, $b ) {
+			return strlen( $b ) - strlen( $a );
+		} );
+
+		return strtr( $content, $replacements );
 	}
 	
 	/**

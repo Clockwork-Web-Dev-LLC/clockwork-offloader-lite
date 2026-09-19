@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-09-19
+
+Multisite hardening pass. Reviewed against a production 11-site network with a 28 GB library.
+
+### Fixed
+- Fatal on activation / re-activation when Pro was already active: `activate()` and `activate_new_site()` required `includes/class-queue.php`, which only Pro ships. The same path fired inside `wp_insert_site()`, so creating a new subsite with both plugins active died mid-insert
+- Pro wiring (queue cron interval + callback, every Pro AJAX handler) was decided at file-include time with `class_exists( 'Clockwork_Offloader_Pro' )`, so it silently never registered unless Lite's directory happened to sort after Pro's. Now wired on `plugins_loaded` (priority 20), after every plugin file is loaded
+- `Clockwork_Offloader_Settings_Helper::update_settings()` was called from three places but never existed (fatal on "Force S3 URLs" / "Switch back", and in the provider migration)
+- **Object keys collided across subsites.** Keys were built relative to the current site's uploads dir, which for a subsite already includes `sites/N`, so `www` and `sub` uploading `2024/01/photo.jpg` shared one object (and deleting on one site deleted the other's). Subsite keys are now `sites/{blog_id}/…`, mirroring the uploads directory. Single sites are unaffected
+- Auto-offload with delete-after-upload unlinked the original on `add_attachment` — before WordPress generated thumbnails and the `-scaled` copy. Deletion now happens only in `wp_generate_attachment_metadata`, after every size is confirmed offloaded
+- The full-resolution original behind a `-scaled` image (`metadata['original_image']`) was never offloaded, tracked, restored or deleted. It is now tracked under the size name `original_image`
+- Hard-coded upload URLs inside post content were never rewritten (only attachment-function URLs were), so they 404'd once local files were deleted. `the_content`, `the_excerpt`, widget text and widget blocks are now rewritten at render time, one tracker query per distinct URL set
+- `get_settings()` re-read options and regexed `wp-config.php` from disk on every call — and it is called from every attachment-URL filter. Both are now cached per request (and invalidated on every settings write)
+- Bulk "add all to queue" called `wp_cache_flush()` every 500 items, emptying a shared Redis/Memcached cache for the whole network
+- `wpmu_new_blog` (deprecated since 5.1) replaced with `wp_initialize_site`
+- Network activation now creates tables on every existing site, instead of only the main site
+
+### Added
+- Network settings page now carries the feature toggles (auto-offload, delete-after-upload, rewrite URLs, batch size, throttle) plus base path and CDN domain. Previously network mode could only hold credentials, so every behaviour fell back to defaults with no way to change it
+- `Clockwork_Offloader_Settings_Helper::current_user_can_manage()`: under network mode, destructive and credential-writing operations (delete from server, delete from bucket, remove all from bucket, uninstall data, create table, setup wizard, URL toggles, settings save) require `manage_network_options`. A subsite administrator can no longer wipe shared bucket objects or drop tables
+- `clockwork_offloader_s3_key` filter on generated object keys
+- `clockwork_offloader_settings` filter on the effective settings
+- `clockwork_offloader_loaded` action once Lite/Pro hooks are wired
+- `Clockwork_Offloader::get_attachment_files()` / `delete_local_file()` helpers shared with Pro and WP-CLI
+
 ## [1.0.1] - 2026-07-06
 
 Bug-fix pass following an adversarial audit — no user-facing feature changes.

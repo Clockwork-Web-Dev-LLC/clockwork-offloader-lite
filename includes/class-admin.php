@@ -368,7 +368,7 @@ class Clockwork_Offloader_Admin {
 	 * @return array Sanitized settings
 	 */
 	public function sanitize_settings( $input ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			return Clockwork_Offloader_Settings_Helper::get_settings();
 		}
 		
@@ -1118,7 +1118,25 @@ class Clockwork_Offloader_Admin {
 					if ( isset( $post_settings['s3_region'] ) ) {
 						$new_settings['s3_region'] = sanitize_text_field( $post_settings['s3_region'] );
 					}
-					
+					if ( isset( $post_settings['s3_base_path'] ) ) {
+						$new_settings['s3_base_path'] = trim( sanitize_text_field( $post_settings['s3_base_path'] ), '/' );
+					}
+					if ( isset( $post_settings['cdn_domain'] ) ) {
+						$new_settings['cdn_domain'] = esc_url_raw( trim( $post_settings['cdn_domain'] ) );
+					}
+
+					// Feature toggles. Checkboxes are absent from $_POST when unticked, so these
+					// are always written (true/false) rather than only when present.
+					foreach ( array( 'auto_offload', 'delete_after_upload', 'rewrite_urls', 'enable_throttle' ) as $toggle ) {
+						$new_settings[ $toggle ] = ! empty( $post_settings[ $toggle ] );
+					}
+					if ( isset( $post_settings['queue_batch_size'] ) ) {
+						$new_settings['queue_batch_size'] = max( 1, min( 100, absint( $post_settings['queue_batch_size'] ) ) );
+					}
+					if ( isset( $post_settings['throttle_rate'] ) ) {
+						$new_settings['throttle_rate'] = max( 1, min( 10000, absint( $post_settings['throttle_rate'] ) ) );
+					}
+
 					$network_settings = array_merge( $network_settings, $new_settings );
 					Clockwork_Offloader_Settings_Helper::update_network_settings( $network_settings );
 				}
@@ -2089,7 +2107,7 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'clockwork-offloader' ) ) );
 		}
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -2226,7 +2244,7 @@ class Clockwork_Offloader_Admin {
 	public function ajax_delete_from_server() {
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -2802,10 +2820,6 @@ class Clockwork_Offloader_Admin {
 				$added = $queue->add_to_queue( $batch );
 				$total_added += $added;
 				
-				// Clear cache periodically to free memory
-				if ( $total_added % 500 === 0 ) {
-					wp_cache_flush();
-				}
 			}
 		}
 		
@@ -3025,7 +3039,7 @@ class Clockwork_Offloader_Admin {
 		
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -3112,7 +3126,7 @@ class Clockwork_Offloader_Admin {
 		
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -3692,7 +3706,7 @@ class Clockwork_Offloader_Admin {
 	public function ajax_remove_all_from_bucket() {
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -3821,7 +3835,7 @@ class Clockwork_Offloader_Admin {
 	public function ajax_setup_step1() {
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -3914,7 +3928,7 @@ class Clockwork_Offloader_Admin {
 	public function ajax_setup_step2() {
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -4385,7 +4399,7 @@ class Clockwork_Offloader_Admin {
 	public function ajax_force_s3_urls() {
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		
@@ -4423,7 +4437,7 @@ class Clockwork_Offloader_Admin {
 	public function ajax_switch_back_local() {
 		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
 		
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! Clockwork_Offloader_Settings_Helper::current_user_can_manage() ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );
 		}
 		

@@ -17,20 +17,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Clockwork_Offloader_Settings_Helper class
  */
 class Clockwork_Offloader_Settings_Helper {
-	
+
 	/**
-	 * Get settings with multisite support
-	 * Priority: wp-config constants (for provider only) > network settings > site settings > defaults
-	 * Note: Region, bucket, and base_path are ALWAYS from database, never from wp-config
+	 * Per-request settings cache, keyed by blog ID (settings can differ per site when
+	 * network mode is off). get_settings() is called from every attachment-URL filter, so
+	 * without this each image on a page cost an option read plus the wp-config.php scan.
 	 *
-	 * @return array Settings array
+	 * @var array<int, array>
 	 */
-	public static function get_settings() {
-		// Run migration check on first load
-		self::migrate_old_constants_to_database();
-		
-		// Default settings
-		$defaults = array(
+	private static $settings_cache = array();
+
+	/**
+	 * Per-request cache of get_wp_config_credentials(). null = not yet computed.
+	 *
+	 * @var array|false|null
+	 */
+	private static $wp_config_creds_cache = null;
+
+	/**
+	 * Default settings shared by get_settings() and the network settings form.
+	 *
+	 * @return array
+	 */
+	public static function get_defaults() {
+		return array(
 			'provider' => 'aws',
 			'auto_offload' => false,
 			'delete_after_upload' => false,
@@ -44,7 +54,69 @@ class Clockwork_Offloader_Settings_Helper {
 			'show_media_library_status' => true,
 			'development_mode' => false,
 		);
-		
+	}
+
+	/**
+	 * Drop the per-request caches. Called after any settings write.
+	 */
+	public static function clear_cache() {
+		self::$settings_cache = array();
+		self::$wp_config_creds_cache = null;
+	}
+
+	/**
+	 * Save settings to wherever get_settings() currently reads them from: the network
+	 * option when network mode is on, otherwise the current site's option.
+	 *
+	 * @param array $settings Full settings array to save
+	 * @return bool
+	 */
+	public static function update_settings( $settings ) {
+		if ( is_multisite() && self::is_network_mode_enabled() ) {
+			return self::update_network_settings( $settings );
+		}
+
+		return self::update_site_settings( $settings );
+	}
+
+	/**
+	 * Whether the current user may change offloader configuration or run destructive
+	 * operations (delete local files, remove objects from the bucket, drop tables).
+	 *
+	 * On a single site this is manage_options. On a multisite running in network mode the
+	 * bucket and credentials are shared by every site, so a subsite administrator (who has
+	 * manage_options on their own site) must not be able to wipe objects or read the secret
+	 * key — only network admins may.
+	 *
+	 * @return bool
+	 */
+	public static function current_user_can_manage() {
+		if ( is_multisite() && self::is_network_mode_enabled() ) {
+			return current_user_can( 'manage_network_options' );
+		}
+
+		return current_user_can( 'manage_options' );
+	}
+
+	/**
+	 * Get settings with multisite support
+	 * Priority: wp-config constants (for provider only) > network settings > site settings > defaults
+	 * Note: Region, bucket, and base_path are ALWAYS from database, never from wp-config
+	 *
+	 * @return array Settings array
+	 */
+	public static function get_settings() {
+		$blog_id = is_multisite() ? get_current_blog_id() : 0;
+		if ( isset( self::$settings_cache[ $blog_id ] ) ) {
+			return self::$settings_cache[ $blog_id ];
+		}
+
+		// Run migration check on first load
+		self::migrate_old_constants_to_database();
+
+		// Default settings
+		$defaults = self::get_defaults();
+
 		// Get database settings
 		$db_settings = array();
 		if ( ! is_multisite() ) {
@@ -71,7 +143,17 @@ class Clockwork_Offloader_Settings_Helper {
 		}
 		
 		// Region, bucket, and base_path are ALWAYS from database, never from wp-config
-		
+
+		/**
+		 * Filter the effective settings for the current site.
+		 *
+		 * @param array $settings Merged settings
+		 * @param int   $blog_id  Current blog ID (0 on single site)
+		 */
+		$settings = apply_filters( 'clockwork_offloader_settings', $settings, $blog_id );
+
+		self::$settings_cache[ $blog_id ] = $settings;
+
 		return $settings;
 	}
 	
@@ -121,6 +203,8 @@ class Clockwork_Offloader_Settings_Helper {
 			return false;
 		}
 		
+		self::clear_cache();
+
 		return update_site_option( 'clockwork_offloader_network_mode', (bool) $enable );
 	}
 	
@@ -135,6 +219,8 @@ class Clockwork_Offloader_Settings_Helper {
 			return false;
 		}
 		
+		self::clear_cache();
+
 		return update_site_option( 'clockwork_offloader_network_settings', $settings );
 	}
 	
@@ -145,15 +231,34 @@ class Clockwork_Offloader_Settings_Helper {
 	 * @return bool True on success, false on failure
 	 */
 	public static function update_site_settings( $settings ) {
+		self::clear_cache();
+
 		return update_option( 'clockwork_offloader_settings', $settings );
 	}
-	
+
 	/**
 	 * Get credentials from wp-config.php (serialized constant)
+	 *
+	 * Result is cached for the request: constants can't change mid-request, and the
+	 * last-resort branch below reads wp-config.php from disk, which must not happen once
+	 * per attachment URL.
 	 *
 	 * @return array|false Array with provider, access-key-id, secret-access-key, or false if not defined
 	 */
 	public static function get_wp_config_credentials() {
+		if ( null === self::$wp_config_creds_cache ) {
+			self::$wp_config_creds_cache = self::read_wp_config_credentials();
+		}
+
+		return self::$wp_config_creds_cache;
+	}
+
+	/**
+	 * Uncached implementation of get_wp_config_credentials().
+	 *
+	 * @return array|false
+	 */
+	private static function read_wp_config_credentials() {
 		// Check for new serialized constant first (with backward compatibility for old constant)
 		if ( defined( 'CLOCKWORK_OFFLOADER_SETTINGS' ) ) {
 			$settings = CLOCKWORK_OFFLOADER_SETTINGS;

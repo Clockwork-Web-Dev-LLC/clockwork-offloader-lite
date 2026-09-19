@@ -247,6 +247,67 @@ class Clockwork_Offloader_Tracker {
 	}
 	
 	/**
+	 * Look up offloaded records by their local file paths, in one query.
+	 *
+	 * Used by the content rewriter: a hard-coded image URL in post_content is mapped back
+	 * to the local path it was served from, then matched against original_path here.
+	 *
+	 * @param string[] $paths Absolute local paths
+	 * @return array<string, object> original_path => record (only 'offloaded' rows)
+	 */
+	public function get_records_by_paths( array $paths ) {
+		$paths = array_values( array_unique( array_filter( $paths ) ) );
+		if ( empty( $paths ) ) {
+			return array();
+		}
+
+		$this->ensure_table_exists();
+		global $wpdb;
+
+		$table_name = $this->get_table_name();
+		$records = array();
+
+		foreach ( array_chunk( $paths, 500 ) as $chunk ) {
+			$placeholders = implode( ',', array_fill( 0, count( $chunk ), '%s' ) );
+			$rows = $wpdb->get_results( $wpdb->prepare(
+				"SELECT * FROM $table_name WHERE status = 'offloaded' AND original_path IN ($placeholders)",
+				$chunk
+			) );
+			foreach ( (array) $rows as $row ) {
+				$records[ $row->original_path ] = $row;
+			}
+		}
+
+		return $records;
+	}
+
+	/**
+	 * Build the public URL for a stored record (CDN domain if set, else provider URL).
+	 *
+	 * @param object $record Row from the offloads table
+	 * @return string
+	 */
+	public function get_record_url( $record ) {
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+
+		if ( ! empty( $settings['cdn_domain'] ) ) {
+			return rtrim( $settings['cdn_domain'], '/' ) . '/' . $record->s3_key;
+		}
+
+		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-s3-service.php';
+		$s3_service = new Clockwork_Offloader_S3_Service();
+		$credentials = $s3_service->get_credentials();
+		$region = ! empty( $credentials['region'] ) ? $credentials['region'] : 'us-east-1';
+		$provider = ! empty( $credentials['provider'] ) ? $credentials['provider'] : 'aws';
+
+		if ( $provider === 'digitalocean' ) {
+			return 'https://' . $record->bucket . '.' . $region . '.digitaloceanspaces.com/' . $record->s3_key;
+		}
+
+		return 'https://' . $record->bucket . '.s3.' . $region . '.amazonaws.com/' . $record->s3_key;
+	}
+
+	/**
 	 * Get S3 URL for an attachment
 	 *
 	 * @param int    $attachment_id Attachment ID

@@ -644,18 +644,34 @@ class Clockwork_Offloader_S3_Service {
 	private function generate_s3_key( $file_path, $attachment_id, $size_name = '' ) {
 		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
 		$base_path = ! empty( $settings['s3_base_path'] ) ? trim( $settings['s3_base_path'], '/' ) : '';
-		
-		// Get upload directory info
+
+		// Path relative to THIS site's uploads directory (e.g. 2024/01/photo.jpg)
 		$upload_dir = wp_upload_dir();
-		$relative_path = str_replace( $upload_dir['basedir'], '', $file_path );
+		$relative_path = str_replace( wp_normalize_path( $upload_dir['basedir'] ), '', wp_normalize_path( $file_path ) );
 		$relative_path = ltrim( $relative_path, '/' );
-		
+
+		// Multisite: a subsite's basedir is already .../uploads/sites/N (or blogs.dir/N/files
+		// on old networks), so the relative path above has lost the site segment and two
+		// sites uploading 2024/01/photo.jpg would share one object. Put the site back so keys
+		// mirror the network's on-disk layout: sites/N/2024/01/photo.jpg.
+		if ( is_multisite() && ! is_main_site() ) {
+			$relative_path = 'sites/' . get_current_blog_id() . '/' . $relative_path;
+		}
+
 		// If base path is set, prepend it
 		if ( ! empty( $base_path ) ) {
 			$relative_path = $base_path . '/' . $relative_path;
 		}
-		
-		return $relative_path;
+
+		/**
+		 * Filter the object key a local file is stored under.
+		 *
+		 * @param string $relative_path Key (no leading slash)
+		 * @param string $file_path     Absolute local path
+		 * @param int    $attachment_id Attachment ID
+		 * @param string $size_name     Image size name ('' for the original)
+		 */
+		return apply_filters( 'clockwork_offloader_s3_key', $relative_path, $file_path, $attachment_id, $size_name );
 	}
 }
 

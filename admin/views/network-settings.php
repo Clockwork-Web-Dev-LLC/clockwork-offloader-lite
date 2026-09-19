@@ -120,6 +120,75 @@ if ( ! is_multisite() || ! is_network_admin() || ! current_user_can( 'manage_net
 						<input type="text" name="clockwork_network_settings[s3_region]" id="clockwork_network_settings_s3_region" value="<?php echo esc_attr( $network_settings['s3_region'] ?? 'us-east-1' ); ?>" class="regular-text" />
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">
+						<label for="clockwork_network_settings_s3_base_path"><?php esc_html_e( 'Base Path (Optional)', 'clockwork-offloader' ); ?></label>
+					</th>
+					<td>
+						<input type="text" name="clockwork_network_settings[s3_base_path]" id="clockwork_network_settings_s3_base_path" value="<?php echo esc_attr( $network_settings['s3_base_path'] ?? '' ); ?>" class="regular-text" />
+						<p class="description">
+							<?php esc_html_e( 'Prefix for every object key. Subsites are always stored under sites/{id}/ beneath this, mirroring the uploads directory.', 'clockwork-offloader' ); ?>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="clockwork_network_settings_cdn_domain"><?php esc_html_e( 'CDN Domain (Optional)', 'clockwork-offloader' ); ?></label>
+					</th>
+					<td>
+						<input type="url" name="clockwork_network_settings[cdn_domain]" id="clockwork_network_settings_cdn_domain" value="<?php echo esc_attr( $network_settings['cdn_domain'] ?? '' ); ?>" class="regular-text" placeholder="https://cdn.example.com" />
+					</td>
+				</tr>
+			</table>
+
+			<h2><?php esc_html_e( 'Behavior', 'clockwork-offloader' ); ?></h2>
+			<table class="form-table">
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Auto-Offload', 'clockwork-offloader' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="clockwork_network_settings[auto_offload]" value="1" <?php checked( ! empty( $network_settings['auto_offload'] ) ); ?> />
+							<?php esc_html_e( 'Automatically offload new uploads on every site', 'clockwork-offloader' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Delete After Upload', 'clockwork-offloader' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="clockwork_network_settings[delete_after_upload]" value="1" <?php checked( ! empty( $network_settings['delete_after_upload'] ) ); ?> />
+							<?php esc_html_e( 'Remove local copies once a file and all its sizes are confirmed in the bucket', 'clockwork-offloader' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Rewrite URLs', 'clockwork-offloader' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="clockwork_network_settings[rewrite_urls]" value="1" <?php checked( ! empty( $network_settings['rewrite_urls'] ) ); ?> />
+							<?php esc_html_e( 'Serve offloaded media from the bucket / CDN instead of the local server', 'clockwork-offloader' ); ?>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">
+						<label for="clockwork_network_settings_queue_batch_size"><?php esc_html_e( 'Queue Batch Size', 'clockwork-offloader' ); ?></label>
+					</th>
+					<td>
+						<input type="number" min="1" max="100" name="clockwork_network_settings[queue_batch_size]" id="clockwork_network_settings_queue_batch_size" value="<?php echo esc_attr( $network_settings['queue_batch_size'] ?? 10 ); ?>" class="small-text" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Throttle Uploads', 'clockwork-offloader' ); ?></th>
+					<td>
+						<label>
+							<input type="checkbox" name="clockwork_network_settings[enable_throttle]" value="1" <?php checked( ! empty( $network_settings['enable_throttle'] ) ); ?> />
+							<?php esc_html_e( 'Limit uploads to', 'clockwork-offloader' ); ?>
+						</label>
+						<input type="number" min="1" max="10000" name="clockwork_network_settings[throttle_rate]" value="<?php echo esc_attr( $network_settings['throttle_rate'] ?? 100 ); ?>" class="small-text" />
+						<?php esc_html_e( 'per minute', 'clockwork-offloader' ); ?>
+					</td>
+				</tr>
 			</table>
 		<?php endif; ?>
 		
