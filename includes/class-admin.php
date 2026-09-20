@@ -227,6 +227,14 @@ class Clockwork_Offloader_Admin {
 		
 		// S3 Fields
 		add_settings_field(
+			'provider',
+			__( 'Storage Provider', 'clockwork-offloader' ),
+			array( $this, 'render_s3_provider_field' ),
+			'clockwork-offloader-settings',
+			'clockwork_offloader_s3_section'
+		);
+
+		add_settings_field(
 			's3_access_key',
 			__( 'AWS Access Key ID', 'clockwork-offloader' ),
 			array( $this, 'render_s3_access_key_field' ),
@@ -254,6 +262,14 @@ class Clockwork_Offloader_Admin {
 			's3_region',
 			__( 'S3 Region', 'clockwork-offloader' ),
 			array( $this, 'render_s3_region_field' ),
+			'clockwork-offloader-settings',
+			'clockwork_offloader_s3_section'
+		);
+
+		add_settings_field(
+			's3_custom_endpoint',
+			__( 'Custom S3 Endpoint (Optional)', 'clockwork-offloader' ),
+			array( $this, 'render_s3_custom_endpoint_field' ),
 			'clockwork-offloader-settings',
 			'clockwork_offloader_s3_section'
 		);
@@ -383,8 +399,8 @@ class Clockwork_Offloader_Admin {
 		// Sanitize provider field
 		if ( isset( $input['provider'] ) ) {
 			$provider = sanitize_text_field( $input['provider'] );
-			// Allow 'aws' or 'digitalocean' only
-			if ( in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+			$allowed_providers = array( 'aws', 'digitalocean', 'cloudflare_r2', 'wasabi', 'backblaze', 'minio', 'custom' );
+			if ( in_array( $provider, $allowed_providers, true ) ) {
 				$sanitized['provider'] = $provider;
 			} else {
 				$sanitized['provider'] = 'aws'; // Default to AWS
@@ -392,6 +408,10 @@ class Clockwork_Offloader_Admin {
 		} else {
 			// Default to AWS if not set (backward compatibility)
 			$sanitized['provider'] = 'aws';
+		}
+
+		if ( isset( $input['s3_custom_endpoint'] ) ) {
+			$sanitized['s3_custom_endpoint'] = esc_url_raw( trim( $input['s3_custom_endpoint'] ) );
 		}
 		
 		if ( isset( $input['s3_access_key'] ) ) {
@@ -926,7 +946,7 @@ class Clockwork_Offloader_Admin {
 					<div class="clockwork-offloader-header-right">
 						<div class="clockwork-offloader-status-indicator">
 							<?php if ( $offload_percentage >= 100 ) : ?>
-								<span class="dashicons dashicons-yes-alt" style="color: #00a32a; margin-right: 5px;"></span>
+								<span class="dashicons dashicons-yes-alt" style="color: var(--cwk-accent); margin-right: 5px;"></span>
 							<?php endif; ?>
 							<span class="clockwork-offloader-status-text"><?php echo esc_html( $offload_percentage ); ?>% Offloaded</span>
 							<div class="clockwork-offloader-progress-bar">
@@ -1110,7 +1130,7 @@ class Clockwork_Offloader_Admin {
 					
 					// Sanitize provider (must be in whitelist)
 					if ( isset( $post_settings['provider'] ) ) {
-						$allowed_providers = array( 'aws', 'digitalocean' );
+						$allowed_providers = array( 'aws', 'digitalocean', 'cloudflare_r2', 'wasabi', 'backblaze', 'minio', 'custom' );
 						$provider = sanitize_text_field( $post_settings['provider'] );
 						if ( in_array( $provider, $allowed_providers, true ) ) {
 							$new_settings['provider'] = $provider;
@@ -1887,15 +1907,32 @@ class Clockwork_Offloader_Admin {
 		}
 		
 		try {
-			// Create temporary S3 client with provided credentials
-			$s3_client = new Aws\S3\S3Client( array(
+			$provider = isset( $_POST['provider'] ) ? sanitize_text_field( wp_unslash( $_POST['provider'] ) ) : ( $credentials['provider'] ?? 'aws' );
+			$endpoint = isset( $_POST['endpoint'] ) ? esc_url_raw( wp_unslash( $_POST['endpoint'] ) ) : ( $credentials['endpoint'] ?? '' );
+			
+			$client_config = array(
 				'version' => 'latest',
 				'region' => $region,
 				'credentials' => array(
 					'key' => $access_key,
 					'secret' => $secret_key,
 				),
-			) );
+			);
+			if ( ! empty( $endpoint ) ) {
+				$client_config['endpoint'] = $endpoint;
+				$client_config['use_path_style_endpoint'] = true;
+			} elseif ( $provider === 'digitalocean' ) {
+				$client_config['endpoint'] = 'https://' . $region . '.digitaloceanspaces.com';
+				$client_config['use_path_style_endpoint'] = true;
+			} elseif ( $provider === 'wasabi' ) {
+				$client_config['endpoint'] = 'https://s3.' . $region . '.wasabisys.com';
+				$client_config['use_path_style_endpoint'] = true;
+			} elseif ( $provider === 'backblaze' ) {
+				$client_config['endpoint'] = 'https://s3.' . $region . '.backblazeb2.com';
+				$client_config['use_path_style_endpoint'] = true;
+			}
+			
+			$s3_client = new Aws\S3\S3Client( $client_config );
 			
 			// Try to list objects (limited to 1) to test connection
 			$s3_client->listObjects( array(
@@ -1960,15 +1997,32 @@ class Clockwork_Offloader_Admin {
 		}
 		
 		try {
-			// Create temporary S3 client with provided credentials
-			$s3_client = new Aws\S3\S3Client( array(
+			$provider = isset( $_POST['provider'] ) ? sanitize_text_field( wp_unslash( $_POST['provider'] ) ) : ( $credentials['provider'] ?? 'aws' );
+			$endpoint = isset( $_POST['endpoint'] ) ? esc_url_raw( wp_unslash( $_POST['endpoint'] ) ) : ( $credentials['endpoint'] ?? '' );
+			
+			$client_config = array(
 				'version' => 'latest',
 				'region' => $region,
 				'credentials' => array(
 					'key' => $access_key,
 					'secret' => $secret_key,
 				),
-			) );
+			);
+			if ( ! empty( $endpoint ) ) {
+				$client_config['endpoint'] = $endpoint;
+				$client_config['use_path_style_endpoint'] = true;
+			} elseif ( $provider === 'digitalocean' ) {
+				$client_config['endpoint'] = 'https://' . $region . '.digitaloceanspaces.com';
+				$client_config['use_path_style_endpoint'] = true;
+			} elseif ( $provider === 'wasabi' ) {
+				$client_config['endpoint'] = 'https://s3.' . $region . '.wasabisys.com';
+				$client_config['use_path_style_endpoint'] = true;
+			} elseif ( $provider === 'backblaze' ) {
+				$client_config['endpoint'] = 'https://s3.' . $region . '.backblazeb2.com';
+				$client_config['use_path_style_endpoint'] = true;
+			}
+			
+			$s3_client = new Aws\S3\S3Client( $client_config );
 			
 			// List buckets
 			$result = $s3_client->listBuckets();
@@ -3874,7 +3928,7 @@ class Clockwork_Offloader_Admin {
 		$secret_key = isset( $_POST['secret_key'] ) ? sanitize_text_field( wp_unslash( $_POST['secret_key'] ) ) : '';
 		
 		// Validate provider
-		if ( ! in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+		if ( ! in_array( $provider, array( 'aws', 'digitalocean', 'cloudflare_r2', 'wasabi', 'backblaze', 'minio', 'custom' ), true ) ) {
 			$provider = 'aws'; // Default to AWS
 		}
 		

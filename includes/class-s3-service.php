@@ -33,13 +33,13 @@ class Clockwork_Offloader_S3_Service {
 		// Check for constant first (with backward compatibility)
 		if ( defined( 'CLOCKWORK_OFFLOADER_PROVIDER' ) ) {
 			$provider = CLOCKWORK_OFFLOADER_PROVIDER;
-			if ( in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+			if ( in_array( $provider, array( 'aws', 'digitalocean', 'cloudflare_r2', 'wasabi', 'backblaze', 'minio', 'custom' ), true ) ) {
 				return $provider;
 			}
 		} elseif ( defined( 'CLOUDBOUND_OFFLOADER_PROVIDER' ) ) {
 			// Backward compatibility
 			$provider = CLOUDBOUND_OFFLOADER_PROVIDER;
-			if ( in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+			if ( in_array( $provider, array( 'aws', 'digitalocean', 'cloudflare_r2', 'wasabi', 'backblaze', 'minio', 'custom' ), true ) ) {
 				return $provider;
 			}
 		}
@@ -49,7 +49,7 @@ class Clockwork_Offloader_S3_Service {
 		$provider = isset( $settings['provider'] ) ? $settings['provider'] : 'aws';
 		
 		// Validate and default to 'aws' if invalid
-		if ( ! in_array( $provider, array( 'aws', 'digitalocean' ), true ) ) {
+		if ( ! in_array( $provider, array( 'aws', 'digitalocean', 'cloudflare_r2', 'wasabi', 'backblaze', 'minio', 'custom' ), true ) ) {
 			return 'aws';
 		}
 		
@@ -102,6 +102,25 @@ class Clockwork_Offloader_S3_Service {
 			$source = 'database';
 		}
 		
+		$custom_endpoint = '';
+		if ( ! empty( $wp_config_creds['endpoint'] ) ) {
+			$custom_endpoint = $wp_config_creds['endpoint'];
+		} elseif ( defined( 'CLOCKWORK_OFFLOADER_ENDPOINT' ) ) {
+			$custom_endpoint = CLOCKWORK_OFFLOADER_ENDPOINT;
+		} elseif ( ! empty( $settings['s3_custom_endpoint'] ) ) {
+			$custom_endpoint = $settings['s3_custom_endpoint'];
+		}
+
+		if ( empty( $custom_endpoint ) ) {
+			if ( $provider === 'digitalocean' ) {
+				$custom_endpoint = 'https://' . $region . '.digitaloceanspaces.com';
+			} elseif ( $provider === 'wasabi' ) {
+				$custom_endpoint = 'https://s3.' . $region . '.wasabisys.com';
+			} elseif ( $provider === 'backblaze' ) {
+				$custom_endpoint = 'https://s3.' . $region . '.backblazeb2.com';
+			}
+		}
+
 		return array(
 			'access_key' => $access_key,
 			'secret_key' => $secret_key,
@@ -109,6 +128,7 @@ class Clockwork_Offloader_S3_Service {
 			'bucket' => $bucket,
 			'source' => $source,
 			'provider' => $provider,
+			'endpoint' => $custom_endpoint,
 		);
 	}
 	
@@ -134,7 +154,7 @@ class Clockwork_Offloader_S3_Service {
 	 *
 	 * @return Aws\S3\S3Client|WP_Error
 	 */
-	private function get_client() {
+	public function get_client() {
 		if ( null !== $this->s3_client ) {
 			return $this->s3_client;
 		}
@@ -160,10 +180,13 @@ class Clockwork_Offloader_S3_Service {
 				),
 			);
 			
-			// Configure endpoint for Digital Ocean Spaces
-			if ( $credentials['provider'] === 'digitalocean' ) {
+			// Configure endpoint for custom endpoint, non-AWS providers, or Digital Ocean Spaces
+			if ( ! empty( $credentials['endpoint'] ) ) {
+				$config['endpoint'] = $credentials['endpoint'];
+				$config['use_path_style_endpoint'] = true;
+			} elseif ( $credentials['provider'] === 'digitalocean' ) {
 				$config['endpoint'] = 'https://' . $credentials['region'] . '.digitaloceanspaces.com';
-				$config['use_path_style_endpoint'] = true; // Required for DO Spaces
+				$config['use_path_style_endpoint'] = true;
 			}
 			
 			$this->s3_client = new Aws\S3\S3Client( $config );
@@ -223,7 +246,7 @@ class Clockwork_Offloader_S3_Service {
 			$result = $client->putObject( $upload_params );
 			
 			// Construct URL based on provider
-			$url = $this->construct_file_url( $bucket, $s3_key, $credentials['region'], $credentials['provider'] );
+			$url = $this->construct_file_url( $bucket, $s3_key, $credentials['region'], $credentials['provider'], $credentials['endpoint'] ?? '' );
 			
 			return array(
 				'bucket' => $bucket,
@@ -246,7 +269,7 @@ class Clockwork_Offloader_S3_Service {
 					$result = $client->putObject( $upload_params );
 					
 					// Construct URL based on provider
-					$url = $this->construct_file_url( $bucket, $s3_key, $credentials['region'], $credentials['provider'] );
+					$url = $this->construct_file_url( $bucket, $s3_key, $credentials['region'], $credentials['provider'], $credentials['endpoint'] ?? '' );
 					
 					return array(
 						'bucket' => $bucket,
@@ -360,6 +383,42 @@ class Clockwork_Offloader_S3_Service {
 			}
 			
 			return new WP_Error( 'delete_failed', sprintf( __( 'S3 delete failed: %s', 'clockwork-offloader' ), $error_message ) );
+		}
+	}
+
+	/**
+	 * Create a presigned expiring URL for private S3 access.
+	 *
+	 * @param string      $s3_key             Object key in S3.
+	 * @param int         $expires_in_seconds TTL in seconds (default 900 / 15 minutes).
+	 * @param string|null $bucket             Optional bucket override.
+	 * @return string|WP_Error Presigned URL or WP_Error.
+	 */
+	public function create_presigned_url( $s3_key, $expires_in_seconds = 900, $bucket = null ) {
+		$client = $this->get_client();
+		if ( is_wp_error( $client ) ) {
+			return $client;
+		}
+
+		if ( empty( $bucket ) ) {
+			$credentials = $this->get_credentials();
+			$bucket = $credentials['bucket'];
+		}
+
+		if ( empty( $bucket ) || empty( $s3_key ) ) {
+			return new WP_Error( 'invalid_presigned_params', __( 'Bucket and S3 key are required.', 'clockwork-offloader' ) );
+		}
+
+		try {
+			$cmd = $client->getCommand( 'GetObject', array(
+				'Bucket' => $bucket,
+				'Key'    => ltrim( (string) $s3_key, '/' ),
+			) );
+
+			$request = $client->createPresignedRequest( $cmd, '+' . (int) $expires_in_seconds . ' seconds' );
+			return (string) $request->getUri();
+		} catch ( Exception $e ) {
+			return new WP_Error( 'presigned_url_error', $e->getMessage() );
 		}
 	}
 	
@@ -490,8 +549,8 @@ class Clockwork_Offloader_S3_Service {
 	 * @param string $provider Provider ('aws' or 'digitalocean')
 	 * @return string File URL
 	 */
-	private function construct_file_url( $bucket, $s3_key, $region, $provider ) {
-		return self::build_public_url( $bucket, $s3_key, $region, $provider );
+	private function construct_file_url( $bucket, $s3_key, $region, $provider, $custom_endpoint = '' ) {
+		return self::build_public_url( $bucket, $s3_key, $region, $provider, $custom_endpoint );
 	}
 
 	/**
@@ -516,13 +575,29 @@ class Clockwork_Offloader_S3_Service {
 	 * @param string $provider 'aws' or 'digitalocean'.
 	 * @return string URL without a trailing slash when $s3_key is empty.
 	 */
-	public static function build_public_url( $bucket, $s3_key, $region, $provider = 'aws' ) {
+	public static function build_public_url( $bucket, $s3_key, $region, $provider = 'aws', $custom_endpoint = '' ) {
 		$s3_key = ltrim( (string) $s3_key, '/' );
 		$region = $region ? $region : 'us-east-1';
 		$suffix = $s3_key !== '' ? '/' . $s3_key : '';
 
+		if ( ! empty( $custom_endpoint ) ) {
+			$clean = rtrim( $custom_endpoint, '/' );
+			if ( strpos( $clean, '/' . $bucket ) !== false || strpos( $clean, $bucket . '.' ) !== false ) {
+				return $clean . $suffix;
+			}
+			return $clean . '/' . $bucket . $suffix;
+		}
+
 		if ( $provider === 'digitalocean' ) {
 			return 'https://' . $bucket . '.' . $region . '.digitaloceanspaces.com' . $suffix;
+		}
+
+		if ( $provider === 'wasabi' ) {
+			return 'https://s3.' . $region . '.wasabisys.com/' . $bucket . $suffix;
+		}
+
+		if ( $provider === 'backblaze' ) {
+			return 'https://s3.' . $region . '.backblazeb2.com/' . $bucket . $suffix;
 		}
 
 		if ( self::bucket_requires_path_style( $bucket ) ) {
@@ -564,7 +639,7 @@ class Clockwork_Offloader_S3_Service {
 	 *   @type string    $policy_json  Suggested bucket policy (AWS only).
 	 * }
 	 */
-	public function probe_public_read( $access_key, $secret_key, $bucket, $region, $provider = 'aws' ) {
+	public function probe_public_read( $access_key, $secret_key, $bucket, $region, $provider = 'aws', $endpoint = '' ) {
 		$result = array(
 			'public'      => null,
 			'status'      => 0,
@@ -583,13 +658,22 @@ class Clockwork_Offloader_S3_Service {
 			'region'      => $region,
 			'credentials' => array( 'key' => $access_key, 'secret' => $secret_key ),
 		);
-		if ( $provider === 'digitalocean' ) {
+		if ( ! empty( $endpoint ) ) {
+			$config['endpoint']                = $endpoint;
+			$config['use_path_style_endpoint'] = true;
+		} elseif ( $provider === 'digitalocean' ) {
 			$config['endpoint']                = 'https://' . $region . '.digitaloceanspaces.com';
+			$config['use_path_style_endpoint'] = true;
+		} elseif ( $provider === 'wasabi' ) {
+			$config['endpoint']                = 'https://s3.' . $region . '.wasabisys.com';
+			$config['use_path_style_endpoint'] = true;
+		} elseif ( $provider === 'backblaze' ) {
+			$config['endpoint']                = 'https://s3.' . $region . '.backblazeb2.com';
 			$config['use_path_style_endpoint'] = true;
 		}
 
 		$key           = 'clockwork-offloader-public-read-test-' . wp_generate_password( 12, false ) . '.txt';
-		$result['url'] = self::build_public_url( $bucket, $key, $region, $provider );
+		$result['url'] = self::build_public_url( $bucket, $key, $region, $provider, $endpoint );
 
 		try {
 			$client = new Aws\S3\S3Client( $config );
@@ -669,7 +753,7 @@ class Clockwork_Offloader_S3_Service {
 	 * @param string $provider Optional provider for testing (overrides stored provider)
 	 * @return bool|WP_Error True on success, WP_Error on failure
 	 */
-	public function test_connection( $access_key = null, $secret_key = null, $bucket = null, $region = null, $provider = null, $account_id = null ) {
+	public function test_connection( $access_key = null, $secret_key = null, $bucket = null, $region = null, $provider = null, $account_id = null, $endpoint = null ) {
 		// If credentials provided, create temporary client
 		if ( $access_key !== null && $secret_key !== null ) {
 			if ( empty( $access_key ) || empty( $secret_key ) ) {
@@ -698,9 +782,17 @@ class Clockwork_Offloader_S3_Service {
 					),
 				);
 				
-				// Configure endpoint for Digital Ocean Spaces
-				if ( $provider === 'digitalocean' ) {
+				if ( ! empty( $endpoint ) ) {
+					$config['endpoint'] = $endpoint;
+					$config['use_path_style_endpoint'] = true;
+				} elseif ( $provider === 'digitalocean' ) {
 					$config['endpoint'] = 'https://' . $test_region . '.digitaloceanspaces.com';
+					$config['use_path_style_endpoint'] = true;
+				} elseif ( $provider === 'wasabi' ) {
+					$config['endpoint'] = 'https://s3.' . $test_region . '.wasabisys.com';
+					$config['use_path_style_endpoint'] = true;
+				} elseif ( $provider === 'backblaze' ) {
+					$config['endpoint'] = 'https://s3.' . $test_region . '.backblazeb2.com';
 					$config['use_path_style_endpoint'] = true;
 				}
 				

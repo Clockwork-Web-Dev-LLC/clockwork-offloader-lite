@@ -1,8 +1,34 @@
 /**
  * Clockwork Offloader Admin Styles
- *
- * Uses WordPress native styles and patterns
+ * Styled in the Clockwork Renegade / Companion design system
  */
+
+:root,
+.clockwork-offloader-wrap {
+    --cwk-primary: #6953C4;
+    --cwk-primary-dark: #2D2062;
+    --cwk-primary-soft: #D1C9F4;
+    --cwk-page-bg: #ffffff;
+    --cwk-accent: #7EFF83;
+    --cwk-accent-bg: #DCFFDD;
+    --cwk-text: #212025;
+    --cwk-text-muted: #5b5566;
+    --cwk-text-soft: #8a8294;
+    --cwk-card: #ffffff;
+    --cwk-border: #e3deef;
+    --cwk-success: #1f8a3b;
+    --cwk-warning: #b87b00;
+    --cwk-danger: #b91c1c;
+}
+
+.clockwork-offloader-wrap {
+    margin: 0 -20px 0 -22px;
+    color: var(--cwk-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--cwk-page-bg);
+    min-height: calc(100vh - 32px);
+}
+
 
 .clockwork-offloader-stats .stat-boxes {
 	display: grid;
@@ -28,7 +54,7 @@
 .clockwork-offloader-stats .stat-box .stat-number {
 	font-size: 32px;
 	font-weight: 600;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	margin: 0;
 	line-height: 1.2;
 }
@@ -207,7 +233,7 @@
 
 .queue-progress #queue-progress-bar {
 	height: 100%;
-	background: #2271b1;
+	background: var(--cwk-primary);
 	transition: width 0.3s ease;
 }
 
@@ -284,7 +310,7 @@
 }
 
 .clockwork-toggle-input:checked + .clockwork-toggle-slider {
-	background-color: #2271b1;
+	background-color: var(--cwk-primary);
 }
 
 .clockwork-toggle-input:checked + .clockwork-toggle-slider:before {
@@ -292,7 +318,7 @@
 }
 
 .clockwork-toggle-input:focus + .clockwork-toggle-slider {
-	outline: 2px solid #2271b1;
+	outline: 2px solid var(--cwk-primary);
 	outline-offset: 2px;
 }
 
@@ -356,7 +382,7 @@
 	background-color: #fff;
 	margin: 5% auto;
 	padding: 0;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	width: 90%;
 	max-width: 700px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -440,7 +466,7 @@
 }
 
 .clockwork-details-value a {
-	color: #2271b1;
+	color: var(--cwk-primary);
 	text-decoration: none;
 }
 
@@ -451,7 +477,7 @@
 .clockwork-details-copy {
 	margin-left: 8px;
 	cursor: pointer;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-size: 12px;
 }
 
@@ -464,7 +490,7 @@
 	padding: 12px;
 	margin-bottom: 10px;
 	border-radius: 3px;
-	border-left: 3px solid #2271b1;
+	border-left: 3px solid var(--cwk-primary);
 }
 
 .clockwork-offload-item:last-child {
@@ -500,7 +526,7 @@
 	overflow-y: auto;
 	padding: 10px;
 	background: #f6f7f7;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 3px;
 }
 
@@ -514,36 +540,26 @@
 }
 
 .clockwork-development-content table.widefat img {
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 3px;
 }
 
-/* Plugin Header Styles */
+/* Plugin Header Styles — Renegade / Companion Theme */
 .clockwork-offloader-header {
-	background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-	border: 1px solid #90caf9;
-	border-radius: 4px 4px 0 0;
-	padding: 20px 30px;
-	margin: -10px -20px 0 -20px;
+	background: var(--cwk-primary-dark);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 0;
+	padding: 22px 32px;
+	margin: 0;
 	position: relative;
 	overflow: hidden;
+	color: #ffffff;
 }
 
 /* Hide default WordPress h1 when using custom header */
-.wrap > h1:first-of-type {
-	display: none;
-}
-
-.clockwork-offloader-header::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 300px;
-	height: 300px;
-	background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
-	opacity: 0.6;
-	pointer-events: none;
+.wrap > h1:first-of-type,
+.clockwork-offloader-wrap > h1:first-of-type {
+	display: none !important;
 }
 
 .clockwork-offloader-header-content {
@@ -557,63 +573,56 @@
 .clockwork-offloader-header-left {
 	display: flex;
 	align-items: center;
-	gap: 20px;
+	gap: 16px;
 }
 
 .clockwork-offloader-header-right {
 	display: flex;
 	align-items: center;
-}
-
-.clockwork-offloader-header-right .clockwork-offloader-status-indicator {
-	background: #fff;
-	padding: 10px 20px;
-	border-radius: 8px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	gap: 12px;
 }
 
 .clockwork-offloader-logo {
-	width: 60px;
-	height: 60px;
+	width: 44px;
+	height: 44px;
 	flex-shrink: 0;
 }
 
 .clockwork-offloader-logo-placeholder {
-	width: 60px;
-	height: 60px;
-	border-radius: 50%;
-	background: #fff;
-	border: 3px solid #2196f3;
+	width: 44px;
+	height: 44px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.15);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
 	overflow: hidden;
 }
 
 .clockwork-offloader-logo-placeholder img {
-	width: 100%;
-	height: 100%;
+	width: 32px;
+	height: 32px;
 	object-fit: contain;
-	padding: 4px;
 	display: block;
 }
 
 .clockwork-offloader-logo-placeholder .dashicons {
-	font-size: 32px;
-	width: 32px;
-	height: 32px;
-	color: #1976d2;
+	font-size: 26px;
+	width: 26px;
+	height: 26px;
+	color: var(--cwk-accent);
 }
 
 .clockwork-offloader-title h1,
 .clockwork-offloader-title .clockwork-brand-heading {
 	display: block;
 	margin: 0;
-	font-size: 28px;
+	font-size: 22px;
 	font-weight: 600;
-	color: #1565c0;
+	color: #ffffff;
 	line-height: 1.2;
+	letter-spacing: -0.01em;
 }
 
 .clockwork-offloader-header .notice,
@@ -622,29 +631,50 @@
 	display: none !important;
 }
 
-.clockwork-offloader-header-right {
-	text-align: right;
+.clockwork-offloader-header-right .clockwork-offloader-status-indicator {
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	padding: 7px 16px;
+	border-radius: 999px;
+	box-shadow: none;
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
-.clockwork-offloader-user-info {
-	font-size: 13px;
-	color: #1565c0;
-	line-height: 1.5;
-}
-
-.clockwork-offloader-user-email {
-	color: #42a5f5;
+.clockwork-offloader-header-right .clockwork-offloader-status-text {
+	color: #ffffff;
 	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
 }
 
-/* Status Bar */
+.clockwork-offloader-header-right .clockwork-offloader-progress-bar {
+	background: rgba(255, 255, 255, 0.2);
+	width: 90px;
+	height: 6px;
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.clockwork-offloader-header-right .clockwork-offloader-progress-fill {
+	background: var(--cwk-accent);
+	height: 100%;
+	border-radius: 999px;
+	transition: width 0.3s ease;
+}
+
+/* Sub-tab strip below header — Renegade nav */
 .clockwork-offloader-status-bar {
-	background: #f6f7f7;
-	border: 1px solid #c3c4c7;
+	background: #ffffff;
+	border-bottom: 1px solid var(--cwk-border);
 	border-top: none;
-	border-radius: 0 0 4px 4px;
-	padding: 0;
-	margin: 0 0 20px -20px;
+	border-left: none;
+	border-right: none;
+	border-radius: 0;
+	padding: 0 32px;
+	margin: 0 0 24px 0;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -653,66 +683,46 @@
 .clockwork-offloader-nav-tabs {
 	border-bottom: none;
 	margin: 0;
+	display: flex;
+	gap: 4px;
 	flex: 1;
 }
 
 .clockwork-offloader-nav-tabs .nav-tab {
-	padding: 12px 20px;
+	padding: 14px 18px;
 	font-size: 13px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
+	font-weight: 500;
+	color: var(--cwk-text-muted);
+	text-decoration: none;
+	border: none;
 	border-bottom: 3px solid transparent;
+	background: transparent;
 	margin-bottom: 0;
+	transition: color 0.15s, border-color 0.15s;
 }
 
 .clockwork-offloader-nav-tabs .nav-tab:hover {
-	background: #fff;
-	border-bottom-color: #c3c4c7;
+	color: var(--cwk-primary);
+	border-bottom-color: var(--cwk-primary-soft);
+	background: transparent;
 }
 
-.clockwork-offloader-nav-tabs .nav-tab-active {
-	background: #fff;
-	border-bottom-color: #2196f3;
-	color: #1d2327;
+.clockwork-offloader-nav-tabs .nav-tab-active,
+.clockwork-offloader-nav-tabs .nav-tab-active:hover {
+	color: var(--cwk-primary);
+	border-bottom-color: var(--cwk-primary);
+	background: transparent;
+	font-weight: 600;
 }
 
 .clockwork-offloader-nav-tabs .nav-tab-upgrade {
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-weight: 600;
 }
 
-.clockwork-offloader-status-indicator {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 12px 20px;
-	background: #fff;
-	border-left: 1px solid #c3c4c7;
-	min-width: 200px;
-}
-
-.clockwork-offloader-status-text {
-	font-size: 13px;
-	font-weight: 600;
-	color: #1d2327;
-	white-space: nowrap;
-}
-
-.clockwork-offloader-progress-bar {
-	width: 100px;
-	height: 6px;
-	background: #f0f0f1;
-	border-radius: 3px;
-	overflow: hidden;
-	flex-shrink: 0;
-}
-
-.clockwork-offloader-progress-fill {
-	height: 100%;
-	background: #00a32a;
-	border-radius: 3px;
-	transition: width 0.3s ease;
+/* Tab Content Wrappers */
+.clockwork-offloader-tab-content {
+	padding: 0 32px 60px;
 }
 
 /* Tab Navigation Styles */
@@ -786,7 +796,7 @@
 .clockwork-bulk-tool-card,
 .clockwork-card {
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 	margin-bottom: 20px;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
@@ -807,7 +817,7 @@
 .clockwork-tool-icon,
 .clockwork-bulk-tool-icon {
 	font-size: 18px;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	width: 40px;
 	height: 40px;
 	display: flex;
@@ -826,7 +836,7 @@
 	width: 20px;
 	height: 20px;
 	line-height: 20px;
-	color: #2271b1;
+	color: var(--cwk-primary);
 }
 
 .clockwork-tool-title,
@@ -879,7 +889,7 @@
 .clockwork-guide-callout {
 	background: #f0f6fc;
 	border: 1px solid #c8d8ea;
-	border-left: 4px solid #2271b1;
+	border-left: 4px solid var(--cwk-primary);
 	border-radius: 4px;
 	padding: 16px 20px;
 	margin-bottom: 24px;
@@ -919,7 +929,7 @@
 
 .clockwork-guide-step-badge {
 	display: inline-block;
-	background: #2271b1;
+	background: var(--cwk-primary);
 	color: #fff;
 	font-size: 11px;
 	font-weight: 700;
@@ -944,7 +954,7 @@
 }
 
 .clockwork-guide-arrow {
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-size: 18px;
 	text-align: center;
 }
@@ -1020,9 +1030,9 @@
 }
 
 .clockwork-step-item.active .clockwork-step-circle {
-	background: #2271b1;
+	background: var(--cwk-primary);
 	color: #fff;
-	border-color: #2271b1;
+	border-color: var(--cwk-primary);
 	box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.15);
 }
 
@@ -1063,7 +1073,7 @@
 .clockwork-step-pill {
 	display: inline-block;
 	background: #f0f6fc;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-size: 11px;
 	font-weight: 700;
 	text-transform: uppercase;
@@ -1092,7 +1102,7 @@
 
 .clockwork-callout-info {
 	background: #f0f6fc;
-	border-left: 4px solid #2271b1;
+	border-left: 4px solid var(--cwk-primary);
 }
 
 .clockwork-callout-success {
@@ -1111,7 +1121,7 @@
 	flex-shrink: 0;
 }
 
-.clockwork-callout-info .clockwork-callout-icon { color: #2271b1; }
+.clockwork-callout-info .clockwork-callout-icon { color: var(--cwk-primary); }
 .clockwork-callout-success .clockwork-callout-icon { color: #00a32a; }
 .clockwork-callout-warning .clockwork-callout-icon { color: #dba617; }
 
@@ -1132,7 +1142,7 @@
 /* Inner Panels */
 .clockwork-inner-panel {
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 	padding: 20px;
 	margin: 16px 0 20px;
@@ -1250,7 +1260,7 @@
 	transition: width 0.3s ease;
 }
 
-.clockwork-meter--info    > span { background: #2271b1; }
+.clockwork-meter--info    > span { background: var(--cwk-primary); }
 .clockwork-meter--warning > span { background: #dba617; }
 .clockwork-meter--error   > span { background: #d63638; }
 
@@ -1284,7 +1294,7 @@
 
 .clockwork-progress-bar {
 	height: 100%;
-	background: #2271b1;
+	background: var(--cwk-primary);
 	transition: width 0.3s ease;
 	border-radius: 4px;
 }
@@ -1339,7 +1349,7 @@
 	margin: 30px 0;
 	padding: 20px;
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 }
 
@@ -1355,11 +1365,11 @@
 
 .clockwork-breadcrumb-link:hover:not(.disabled) {
 	background: #f0f0f1;
-	color: #2271b1;
+	color: var(--cwk-primary);
 }
 
 .clockwork-breadcrumb-link.active {
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-weight: 600;
 }
 
@@ -1383,7 +1393,7 @@
 }
 
 .clockwork-breadcrumb-link.active .clockwork-breadcrumb-number {
-	background: #2271b1;
+	background: var(--cwk-primary);
 	color: #fff;
 }
 
@@ -1395,7 +1405,7 @@
 
 .clockwork-setup-content {
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 	padding: 30px;
 	margin-top: 20px;
@@ -1444,7 +1454,7 @@
 	margin-top: 0;
 	font-size: 24px;
 	color: #1d2327;
-	border-bottom: 2px solid #2271b1;
+	border-bottom: 2px solid var(--cwk-primary);
 	padding-bottom: 10px;
 	margin-bottom: 20px;
 }
@@ -1472,14 +1482,14 @@
 }
 
 .clockwork-connection-option:hover {
-	border-color: #2271b1;
+	border-color: var(--cwk-primary);
 	background: #f0f6fc;
 }
 
 .clockwork-connection-option.selected {
-	border-color: #2271b1;
+	border-color: var(--cwk-primary);
 	background: #f0f6fc;
-	box-shadow: 0 0 0 1px #2271b1;
+	box-shadow: 0 0 0 1px var(--cwk-primary);
 }
 
 .clockwork-connection-option.clockwork-already-configured {
@@ -1524,7 +1534,7 @@
 	margin-top: 25px;
 	padding: 20px;
 	background: #f9f9f9;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 }
 
@@ -1596,7 +1606,7 @@
 	margin: 20px 0;
 	padding: 20px;
 	background: #f9f9f9;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 }
 
@@ -1608,7 +1618,7 @@
 	margin: 30px 0;
 	padding: 20px;
 	background: #f0f6fc;
-	border: 1px solid #2271b1;
+	border: 1px solid var(--cwk-primary);
 	border-radius: 4px;
 	text-align: center;
 }
@@ -1653,7 +1663,7 @@
 .clockwork-get-started {
 	background: linear-gradient(135deg, #f3f8fd 0%, #e8f1fb 100%);
 	border: 1px solid #90caf9;
-	border-left: 4px solid #2271b1;
+	border-left: 4px solid var(--cwk-primary);
 	border-radius: 4px;
 	padding: 20px 24px;
 	margin: 0 0 20px;
@@ -1671,7 +1681,7 @@
 	font-size: 32px;
 	width: 32px;
 	height: 32px;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	margin-top: 2px;
 }
 
@@ -1708,7 +1718,7 @@
 	display: flex;
 	gap: 12px;
 	background: #fff;
-	border: 1px solid #c3c4c7;
+	border: 1px solid var(--cwk-border);
 	border-radius: 4px;
 	padding: 16px;
 	margin: 0;
@@ -1727,7 +1737,7 @@
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
-	background: #2271b1;
+	background: var(--cwk-primary);
 	color: #fff;
 	font-size: 13px;
 	font-weight: 600;
@@ -1788,7 +1798,7 @@
 	color: #1e293b;
 	font-size: 13.5px;
 	line-height: 1.45;
-	border-left: 4px solid #2271b1;
+	border-left: 4px solid var(--cwk-primary);
 	animation: clockworkToastIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 	transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
 	box-sizing: border-box;
@@ -1816,10 +1826,10 @@
 }
 
 .clockwork-toast-info {
-	border-left-color: #2271b1;
+	border-left-color: var(--cwk-primary);
 }
 .clockwork-toast-info .clockwork-toast-icon-wrap {
-	color: #2271b1;
+	color: var(--cwk-primary);
 }
 
 .clockwork-toast-icon-wrap {
@@ -2092,7 +2102,7 @@
 	border: 1px solid #cbd5e1;
 	padding: 1px 6px;
 	border-radius: 4px;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-weight: 500;
 }
 
@@ -2274,7 +2284,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #2271b1;
+	color: var(--cwk-primary);
 	font-size: 22px;
 	flex-shrink: 0;
 }
@@ -2332,3 +2342,30 @@
 }
 
 
+
+/* Clockwork Renegade Button Overrides */
+.clockwork-offloader-wrap .button-primary,
+.clockwork-btn-primary {
+	background: var(--cwk-primary) !important;
+	border-color: var(--cwk-primary) !important;
+	color: #ffffff !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
+	font-weight: 600 !important;
+	transition: background 0.15s ease !important;
+}
+
+.clockwork-offloader-wrap .button-primary:hover,
+.clockwork-offloader-wrap .button-primary:focus,
+.clockwork-btn-primary:hover,
+.clockwork-btn-primary:focus {
+	background: #5844af !important;
+	border-color: #5844af !important;
+	color: #ffffff !important;
+}
+
+.status-badge.status-offloaded,
+.clockwork-pill--ok {
+	background: var(--cwk-accent-bg) !important;
+	color: var(--cwk-success) !important;
+}

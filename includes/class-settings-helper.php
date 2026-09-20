@@ -42,6 +42,7 @@ class Clockwork_Offloader_Settings_Helper {
 	public static function get_defaults() {
 		return array(
 			'provider' => 'aws',
+			's3_custom_endpoint' => '',
 			'auto_offload' => false,
 			'delete_after_upload' => false,
 			'rewrite_urls' => false,
@@ -334,9 +335,15 @@ class Clockwork_Offloader_Settings_Helper {
 				if ( isset( $settings['secret-access-key'] ) ) {
 					$credentials['secret-access-key'] = $settings['secret-access-key'];
 				}
+				if ( isset( $settings['endpoint'] ) ) {
+					$credentials['endpoint'] = $settings['endpoint'];
+				}
 				
 				// Return if we have at least the keys
 				if ( ! empty( $credentials['access-key-id'] ) && ! empty( $credentials['secret-access-key'] ) ) {
+					if ( defined( 'CLOCKWORK_OFFLOADER_ENDPOINT' ) && empty( $credentials['endpoint'] ) ) {
+						$credentials['endpoint'] = CLOCKWORK_OFFLOADER_ENDPOINT;
+					}
 					return $credentials;
 				}
 			}
