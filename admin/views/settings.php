@@ -24,7 +24,7 @@ if ( is_multisite() && class_exists( 'Clockwork_Offloader_Settings_Helper' ) ) {
 
 $settings = Clockwork_Offloader_Settings_Helper::get_settings();
 $wp_config_creds = Clockwork_Offloader_Settings_Helper::get_wp_config_credentials();
-$using_wp_config = ( $wp_config_creds && ! empty( $wp_config_creds['key'] ) );
+$using_wp_config = ( ! empty( $wp_config_creds ) && ( ! empty( $wp_config_creds['secret-access-key'] ) || ! empty( $wp_config_creds['access-key-id'] ) || ! empty( $wp_config_creds['key'] ) ) );
 
 // Extract settings
 $provider = isset( $settings['provider'] ) ? $settings['provider'] : 'aws';

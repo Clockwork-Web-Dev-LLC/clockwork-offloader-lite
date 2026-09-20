@@ -156,18 +156,24 @@ class Clockwork_Offloader_Admin {
 			);
 		}
 		
+		$css_file = CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/css/admin.css';
+		$css_ver  = file_exists( $css_file ) ? filemtime( $css_file ) : CLOCKWORK_OFFLOADER_VERSION;
+		
+		$js_file  = CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/js/admin.js';
+		$js_ver   = file_exists( $js_file ) ? filemtime( $js_file ) : CLOCKWORK_OFFLOADER_VERSION;
+
 		wp_enqueue_style(
 			'clockwork-offloader-admin',
 			CLOCKWORK_OFFLOADER_PLUGIN_URL . 'admin/css/admin.css',
 			array(),
-			CLOCKWORK_OFFLOADER_VERSION
+			$css_ver
 		);
 		
 		wp_enqueue_script(
 			'clockwork-offloader-admin',
 			CLOCKWORK_OFFLOADER_PLUGIN_URL . 'admin/js/admin.js',
 			array( 'jquery' ),
-			CLOCKWORK_OFFLOADER_VERSION,
+			$js_ver,
 			true
 		);
 		
