@@ -57,3 +57,140 @@
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
+/* ==========================================================================
+   Clockwork Toast Notification System
+   ========================================================================== */
+#clockwork-toast-container,
+.clockwork-toast-container {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	z-index: 170000;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	pointer-events: none;
+	max-width: 420px;
+	width: calc(100vw - 48px);
+}
+
+.clockwork-toast {
+	pointer-events: auto;
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 12px 16px;
+	background: #ffffff;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 25px -3px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
+	color: #1e293b;
+	font-size: 13.5px;
+	line-height: 1.45;
+	border-left: 4px solid #2271b1;
+	animation: clockworkToastIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
+	box-sizing: border-box;
+}
+
+.clockwork-toast-success {
+	border-left-color: #00a32a;
+}
+.clockwork-toast-success .clockwork-toast-icon-wrap {
+	color: #00a32a;
+}
+
+.clockwork-toast-error {
+	border-left-color: #d63638;
+}
+.clockwork-toast-error .clockwork-toast-icon-wrap {
+	color: #d63638;
+}
+
+.clockwork-toast-warning {
+	border-left-color: #dba617;
+}
+.clockwork-toast-warning .clockwork-toast-icon-wrap {
+	color: #dba617;
+}
+
+.clockwork-toast-info {
+	border-left-color: #2271b1;
+}
+.clockwork-toast-info .clockwork-toast-icon-wrap {
+	color: #2271b1;
+}
+
+.clockwork-toast-icon-wrap {
+	flex-shrink: 0;
+	width: 20px;
+	height: 20px;
+	margin-top: 1px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.clockwork-toast-icon-wrap svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.clockwork-toast-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.clockwork-toast-message {
+	word-break: break-word;
+	font-weight: 500;
+	color: #1e293b;
+}
+
+.clockwork-toast-close {
+	flex-shrink: 0;
+	background: transparent;
+	border: none;
+	padding: 0 4px;
+	margin: -2px -4px 0 4px;
+	color: #94a3b8;
+	font-size: 20px;
+	line-height: 1;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.clockwork-toast-close:hover {
+	color: #1e293b;
+	background: #f1f5f9;
+}
+
+.clockwork-toast-hiding {
+	opacity: 0;
+	transform: translateY(10px) scale(0.96);
+}
+
+@keyframes clockworkToastIn {
+	from {
+		opacity: 0;
+		transform: translateY(16px) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (max-width: 600px) {
+	#clockwork-toast-container,
+	.clockwork-toast-container {
+		bottom: 16px;
+		right: 16px;
+		left: 16px;
+		max-width: none;
+		width: auto;
+	}
+}
+
+

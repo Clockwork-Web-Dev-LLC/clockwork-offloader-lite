@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - Setup wizard step 2 hides "Browse existing buckets" when the key cannot list buckets, and explains that the bucket name (not the IAM user name) must be typed in.
 - Renamed user-facing "CDN" actions and status labels to "Cloud" (e.g. "Remove from Cloud", "Upload to Cloud", "Cloud Status") across admin views, notices, and media library controls to clearly separate cloud storage management from CDN edge caching.
 - Standardized admin tab layout, spacing, and card architecture to ensure consistent top margins, typography, and container styling across all tabs.
+- Redesigned AJAX action notifications: replaced intrusive top banners (which prepended above the header banner and pushed the layout down) with a sleek, non-intrusive floating toast notification system anchored at the bottom-right of the viewport with smooth stacking, auto-dismiss, and pause-on-hover.
+
 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
