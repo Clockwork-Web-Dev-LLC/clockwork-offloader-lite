@@ -421,6 +421,9 @@ class Clockwork_Offloader_Admin {
 		$sanitized['auto_offload'] = isset( $input['auto_offload'] ) && $input['auto_offload'];
 		$sanitized['delete_after_upload'] = isset( $input['delete_after_upload'] ) && $input['delete_after_upload'];
 		$sanitized['rewrite_urls'] = isset( $input['rewrite_urls'] ) && $input['rewrite_urls'];
+		if ( is_multisite() && is_main_site() ) {
+			$sanitized['force_multisite_subsites'] = ! empty( $input['force_multisite_subsites'] );
+		}
 		
 		if ( isset( $input['queue_batch_size'] ) ) {
 			$batch_size = absint( $input['queue_batch_size'] );

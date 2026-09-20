@@ -83,29 +83,64 @@ if ( ! empty( $cdn_domain ) ) {
 		<p class="clockwork-tab-description"><?php esc_html_e( 'Manage storage provider credentials, upload rules, and live media delivery settings.', 'clockwork-offloader' ); ?></p>
 	</div>
 
-	<?php if ( is_multisite() ) : ?>
-		<div class="notice notice-info inline" style="margin-bottom: 20px;">
-			<p>
-				<strong><?php esc_html_e( 'Settings Mode:', 'clockwork-offloader' ); ?></strong>
-				<?php if ( $is_network_mode ) : ?>
-					<span style="color: #00a32a; font-weight: 600;"><?php esc_html_e( 'Network Mode', 'clockwork-offloader' ); ?></span>
-					- <?php esc_html_e( 'Network-wide settings are active. These site settings will be used as a fallback or when network mode is disabled.', 'clockwork-offloader' ); ?>
-					<a href="<?php echo esc_url( network_admin_url( 'admin.php?page=clockwork-offloader' ) ); ?>"><?php esc_html_e( 'Manage network settings', 'clockwork-offloader' ); ?></a>
-				<?php else : ?>
-					<span style="color: #2271b1; font-weight: 600;"><?php esc_html_e( 'Site Mode', 'clockwork-offloader' ); ?></span>
-					- <?php esc_html_e( 'This site uses its own settings.', 'clockwork-offloader' ); ?>
-					<?php if ( current_user_can( 'manage_network_options' ) ) : ?>
-						<a href="<?php echo esc_url( network_admin_url( 'admin.php?page=clockwork-offloader' ) ); ?>"><?php esc_html_e( 'Enable network mode', 'clockwork-offloader' ); ?></a>
-					<?php endif; ?>
-				<?php endif; ?>
-			</p>
-			<?php if ( $settings_source === 'wp-config' ) : ?>
-				<p style="margin-top: 4px;">
-					<strong><?php esc_html_e( 'Note:', 'clockwork-offloader' ); ?></strong>
-					<?php esc_html_e( 'Settings are loaded from wp-config.php constants, which take priority over network and site settings.', 'clockwork-offloader' ); ?>
+	<?php if ( is_multisite() ) : 
+		$is_main_site = ( get_current_blog_id() === (int) get_main_site_id() );
+		$is_inherited = ! $is_main_site && Clockwork_Offloader_Settings_Helper::is_inherited_from_main();
+	?>
+		<?php if ( $is_inherited ) : ?>
+			<div class="notice notice-info inline" style="margin-bottom: 20px; border-left-color: #2271b1; padding: 14px 18px; background: #f0f6fc;">
+				<p style="margin: 0; font-size: 14px; line-height: 1.5;">
+					<span class="dashicons dashicons-networking" style="color: #2271b1; vertical-align: middle; margin-right: 6px; font-size: 20px;"></span>
+					<strong><?php esc_html_e( 'Network Managed Site:', 'clockwork-offloader' ); ?></strong>
+					<?php
+					$main_blog_details = get_blog_details( get_main_site_id() );
+					$main_site_name = $main_blog_details ? $main_blog_details->blogname : get_site_url( get_main_site_id() );
+					printf(
+						esc_html__( 'This site is automatically using the storage and delivery settings configured on the main network site (%s). Media uploaded on this site is stored under %s in bucket %s.', 'clockwork-offloader' ),
+						'<strong>' . esc_html( $main_site_name ) . '</strong>',
+						'<code>sites/' . esc_html( get_current_blog_id() ) . '/</code>',
+						'<strong>' . esc_html( $bucket ) . '</strong>'
+					);
+					?>
 				</p>
-			<?php endif; ?>
-		</div>
+				<?php if ( current_user_can( 'manage_network_options' ) ) : ?>
+					<p style="margin: 10px 0 0 0;">
+						<a href="<?php echo esc_url( get_admin_url( get_main_site_id(), 'options-general.php?page=clockwork-offloader&tab=settings' ) ); ?>" class="button button-secondary button-small">
+							<span class="dashicons dashicons-admin-generic" style="font-size: 14px; vertical-align: middle; margin-top: -2px;"></span>
+							<?php esc_html_e( 'Manage Global Settings on Main Site', 'clockwork-offloader' ); ?>
+						</a>
+					</p>
+				<?php endif; ?>
+			</div>
+		<?php elseif ( $is_main_site ) : ?>
+			<div class="notice notice-info inline" style="margin-bottom: 20px; border-left-color: #00a32a; padding: 14px 18px;">
+				<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+					<div>
+						<p style="margin: 0 0 4px 0; font-size: 14px;">
+							<span class="dashicons dashicons-admin-multisite" style="color: #00a32a; vertical-align: middle; margin-right: 6px; font-size: 20px;"></span>
+							<strong><?php esc_html_e( 'Multisite Primary Network Site', 'clockwork-offloader' ); ?></strong>
+						</p>
+						<p style="margin: 0; color: #50575e; font-size: 13px;">
+							<?php esc_html_e( 'Settings configured below serve as the network default for all subsites.', 'clockwork-offloader' ); ?>
+						</p>
+					</div>
+					<div class="clockwork-switch-item" style="margin: 0; padding: 0;">
+						<label class="clockwork-switch" for="force_multisite_subsites">
+							<input type="checkbox" name="clockwork_offloader_settings[force_multisite_subsites]" id="force_multisite_subsites" value="1" <?php checked( ! empty( $settings['force_multisite_subsites'] ) ); ?> />
+							<span class="clockwork-slider"></span>
+						</label>
+						<div class="clockwork-switch-content">
+							<label for="force_multisite_subsites" class="clockwork-switch-title" style="font-size: 13px;">
+								<?php esc_html_e( 'Force all subsites to use these settings', 'clockwork-offloader' ); ?>
+							</label>
+							<div class="clockwork-switch-desc" style="font-size: 12px;">
+								<?php esc_html_e( 'Automatically shares this bucket & delivery configuration with all subsites (uploads isolated under sites/{id}/).', 'clockwork-offloader' ); ?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		<?php endif; ?>
 	<?php endif; ?>
 	
 	<?php settings_errors( 'clockwork_offloader_settings' ); ?>
@@ -419,7 +454,14 @@ if ( ! empty( $cdn_domain ) ) {
 		</details>
 
 		<p class="submit" style="margin-top: 24px;">
-			<?php submit_button( __( 'Save Changes', 'clockwork-offloader' ), 'primary', 'submit', false, array( 'id' => 'clockwork-save-settings-btn' ) ); ?>
+			<?php if ( ! empty( $is_inherited ) ) : ?>
+				<button type="button" class="button button-primary" disabled="disabled">
+					<span class="dashicons dashicons-lock" style="vertical-align: middle; font-size: 14px; margin-top: -2px;"></span>
+					<?php esc_html_e( 'Settings Managed Globally by Main Site', 'clockwork-offloader' ); ?>
+				</button>
+			<?php else : ?>
+				<?php submit_button( __( 'Save Changes', 'clockwork-offloader' ), 'primary', 'submit', false, array( 'id' => 'clockwork-save-settings-btn' ) ); ?>
+			<?php endif; ?>
 		</p>
 	</form>
 </div>

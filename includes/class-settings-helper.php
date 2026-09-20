@@ -53,6 +53,7 @@ class Clockwork_Offloader_Settings_Helper {
 			'throttle_rate' => 100,
 			'show_media_library_status' => true,
 			'development_mode' => false,
+			'force_multisite_subsites' => true,
 		);
 	}
 
@@ -122,11 +123,29 @@ class Clockwork_Offloader_Settings_Helper {
 		if ( ! is_multisite() ) {
 			$db_settings = get_option( 'clockwork_offloader_settings', array() );
 		} else {
-		$network_mode = self::is_network_mode_enabled();
-		if ( $network_mode ) {
+			$network_mode = self::is_network_mode_enabled();
+			if ( $network_mode ) {
 				$db_settings = self::get_network_settings();
 			} else {
-				$db_settings = self::get_site_settings();
+				$main_site_id = get_main_site_id();
+				$is_main_site = ( get_current_blog_id() === (int) $main_site_id );
+
+				if ( $is_main_site ) {
+					$db_settings = self::get_site_settings();
+				} else {
+					$main_settings = get_blog_option( $main_site_id, 'clockwork_offloader_settings', array() );
+					$force_multisite = isset( $main_settings['force_multisite_subsites'] )
+						? ! empty( $main_settings['force_multisite_subsites'] )
+						: true;
+
+					$subsite_settings = self::get_site_settings();
+
+					if ( $force_multisite || empty( $subsite_settings['s3_bucket'] ) ) {
+						$db_settings = ! empty( $main_settings['s3_bucket'] ) ? $main_settings : $subsite_settings;
+					} else {
+						$db_settings = $subsite_settings;
+					}
+				}
 			}
 		}
 		
@@ -190,6 +209,35 @@ class Clockwork_Offloader_Settings_Helper {
 		}
 		
 		return (bool) get_site_option( 'clockwork_offloader_network_mode', false );
+	}
+	
+	/**
+	 * Check if the current site is a multisite subsite inheriting settings from the main site.
+	 *
+	 * @return bool True if inheriting settings from the main site
+	 */
+	public static function is_inherited_from_main() {
+		if ( ! is_multisite() ) {
+			return false;
+		}
+
+		$main_site_id = get_main_site_id();
+		if ( get_current_blog_id() === (int) $main_site_id ) {
+			return false;
+		}
+
+		if ( self::is_network_mode_enabled() ) {
+			return false;
+		}
+
+		$main_settings = get_blog_option( $main_site_id, 'clockwork_offloader_settings', array() );
+		$force_multisite = isset( $main_settings['force_multisite_subsites'] )
+			? ! empty( $main_settings['force_multisite_subsites'] )
+			: true;
+
+		$subsite_settings = self::get_site_settings();
+
+		return $force_multisite || empty( $subsite_settings['s3_bucket'] );
 	}
 	
 	/**
@@ -538,10 +586,10 @@ class Clockwork_Offloader_Settings_Helper {
 			$has_credentials = true;
 		} else {
 			// Check database settings
-			$has_credentials = ! empty( $settings['s3_access_key'] ) && ! empty( $settings['s3_secret_key'] ) && ! empty( $settings['s3_bucket'] );
+			$has_credentials = ! empty( $settings['s3_access_key'] ) && ! empty( $settings['s3_secret_key'] );
 		}
 		
-		return $has_credentials;
+		return $has_credentials && ! empty( $settings['s3_bucket'] );
 	}
 }
 
