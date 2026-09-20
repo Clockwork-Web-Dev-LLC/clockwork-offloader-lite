@@ -23,6 +23,12 @@ if ( is_multisite() && class_exists( 'Clockwork_Offloader_Settings_Helper' ) ) {
 }
 ?>
 
+<div class="clockwork-tab-content-wrapper clockwork-settings-tab">
+	<div class="clockwork-tab-header">
+		<h2 class="clockwork-tab-title"><?php esc_html_e( 'Settings', 'clockwork-offloader' ); ?></h2>
+		<p class="clockwork-tab-description"><?php esc_html_e( 'Configure storage provider credentials and offloading preferences.', 'clockwork-offloader' ); ?></p>
+	</div>
+
 	<?php if ( is_multisite() ) : ?>
 		<div class="notice notice-info">
 			<p>
@@ -60,3 +66,5 @@ if ( is_multisite() && class_exists( 'Clockwork_Offloader_Settings_Helper' ) ) {
 			<?php submit_button( __( 'Save Changes', 'clockwork-offloader' ), 'primary', 'submit', false ); ?>
 		</p>
 	</form>
+</div>
+

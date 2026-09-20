@@ -723,37 +723,82 @@
 	line-height: 1.71428571;
 }
 
-/* Bulk Tools Card Layout */
-.clockwork-bulk-tools-content {
+/* ==========================================================================
+   Clockwork Offloader Design System (Shared between Lite & Pro)
+   Consistent spacing, card architecture, headers, steppers, and panels.
+   ========================================================================== */
+
+/* Tab Content Wrappers & Consistent Spacing */
+.clockwork-offloader-tab-content {
 	margin-top: 20px;
 }
 
-.clockwork-bulk-tools-title {
+.clockwork-tab-content-wrapper,
+.clockwork-bulk-tools-content,
+.clockwork-migration-tools,
+.clockwork-license-settings,
+.clockwork-cloudfront-settings,
+.clockwork-settings-tab {
+	margin-top: 20px;
+	max-width: 1100px;
+}
+
+.clockwork-tab-header {
+	margin-bottom: 20px;
+}
+
+.clockwork-tab-title,
+.clockwork-bulk-tools-title,
+.clockwork-migration-tools > h2,
+.clockwork-license-settings > h2,
+.clockwork-cloudfront-settings > h2,
+.clockwork-settings-tab > h2 {
 	font-size: 20px;
 	font-weight: 600;
-	margin: 0 0 20px;
+	margin: 0 0 6px 0;
 	padding: 0;
 	color: #1d2327;
+	line-height: 1.3;
 }
 
-.clockwork-bulk-tool-card {
+.clockwork-tab-description,
+.clockwork-tab-subtitle,
+.clockwork-migration-tools > .description,
+.clockwork-license-settings > .description,
+.clockwork-cloudfront-settings > .description,
+.clockwork-settings-tab > .description {
+	font-size: 13px;
+	color: #646970;
+	margin: 0 0 20px 0;
+	line-height: 1.5;
+}
+
+/* Card System */
+.clockwork-tool-card,
+.clockwork-bulk-tool-card,
+.clockwork-card {
 	background: #fff;
 	border: 1px solid #c3c4c7;
-	border-radius: 2px;
+	border-radius: 4px;
 	margin-bottom: 20px;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	overflow: hidden;
 }
 
-.clockwork-bulk-tool-header {
+.clockwork-tool-header,
+.clockwork-bulk-tool-header,
+.clockwork-card-header {
 	display: flex;
 	align-items: center;
-	padding: 20px;
+	padding: 18px 20px;
 	border-bottom: 1px solid #f0f0f1;
 	gap: 15px;
+	background: #fff;
 }
 
+.clockwork-tool-icon,
 .clockwork-bulk-tool-icon {
-	font-size: 24px;
+	font-size: 18px;
 	color: #2271b1;
 	width: 40px;
 	height: 40px;
@@ -761,15 +806,29 @@
 	align-items: center;
 	justify-content: center;
 	background: #f0f6fc;
-	border-radius: 3px;
+	border-radius: 6px;
 	flex-shrink: 0;
 }
 
+.clockwork-tool-icon i,
+.clockwork-bulk-tool-icon i,
+.clockwork-tool-icon .dashicons,
+.clockwork-card-header .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	color: #2271b1;
+}
+
+.clockwork-tool-title,
 .clockwork-bulk-tool-title {
 	flex: 1;
 }
 
-.clockwork-bulk-tool-title h3 {
+.clockwork-tool-title h3,
+.clockwork-bulk-tool-title h3,
+.clockwork-card-header h3 {
 	margin: 0;
 	font-size: 16px;
 	font-weight: 600;
@@ -777,15 +836,329 @@
 	line-height: 1.4;
 }
 
-.clockwork-bulk-tool-action {
+.clockwork-tool-action,
+.clockwork-bulk-tool-action,
+.clockwork-card-header-aside {
 	flex-shrink: 0;
 	display: flex;
 	align-items: center;
-	gap: 5px;
+	gap: 8px;
+	margin-left: auto;
 }
 
-.clockwork-bulk-tool-content {
+.clockwork-tool-content,
+.clockwork-bulk-tool-content,
+.clockwork-card-body {
 	padding: 20px;
+}
+
+.clockwork-card-footer {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	padding: 14px 20px;
+	background: #fbfbfc;
+	border-top: 1px solid #dcdcde;
+}
+
+.clockwork-card-footer .description {
+	margin: 0 0 0 auto;
+	color: #646970;
+}
+
+/* Stepper (Migration Wizard) */
+.clockwork-stepper-bar {
+	background: #fbfbfc;
+	border-bottom: 1px solid #f0f0f1;
+	padding: 16px 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.clockwork-stepper {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.clockwork-step-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	font-weight: 500;
+	color: #646970;
+}
+
+.clockwork-step-circle {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: 600;
+	background: #f0f0f1;
+	color: #646970;
+	border: 1px solid #dcdcde;
+	transition: all 0.2s ease;
+}
+
+.clockwork-step-item.active {
+	color: #1d2327;
+	font-weight: 600;
+}
+
+.clockwork-step-item.active .clockwork-step-circle {
+	background: #2271b1;
+	color: #fff;
+	border-color: #2271b1;
+	box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.15);
+}
+
+.clockwork-step-item.completed {
+	color: #00a32a;
+}
+
+.clockwork-step-item.completed .clockwork-step-circle {
+	background: #00a32a;
+	color: #fff;
+	border-color: #00a32a;
+}
+
+.clockwork-step-line {
+	width: 28px;
+	height: 2px;
+	background: #dcdcde;
+	display: inline-block;
+	border-radius: 1px;
+}
+
+.clockwork-step-line.is-completed {
+	background: #00a32a;
+}
+
+/* Step Header & Kickers */
+.clockwork-step-intro-wrapper {
+	margin-bottom: 20px;
+}
+
+.clockwork-step-kicker-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 6px;
+}
+
+.clockwork-step-pill {
+	display: inline-block;
+	background: #f0f6fc;
+	color: #2271b1;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	padding: 3px 10px;
+	border-radius: 12px;
+	border: 1px solid rgba(34, 113, 177, 0.25);
+}
+
+.clockwork-step-heading {
+	margin: 0;
+	font-size: 17px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+/* Callouts & Notices */
+.clockwork-callout {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 14px 18px;
+	border-radius: 0 4px 4px 0;
+	margin: 16px 0 20px;
+}
+
+.clockwork-callout-info {
+	background: #f0f6fc;
+	border-left: 4px solid #2271b1;
+}
+
+.clockwork-callout-success {
+	background: #f2f9f4;
+	border-left: 4px solid #00a32a;
+}
+
+.clockwork-callout-warning {
+	background: #fcf9e8;
+	border-left: 4px solid #dba617;
+}
+
+.clockwork-callout-icon {
+	font-size: 18px;
+	margin-top: 1px;
+	flex-shrink: 0;
+}
+
+.clockwork-callout-info .clockwork-callout-icon { color: #2271b1; }
+.clockwork-callout-success .clockwork-callout-icon { color: #00a32a; }
+.clockwork-callout-warning .clockwork-callout-icon { color: #dba617; }
+
+.clockwork-callout-body strong {
+	display: block;
+	font-size: 13px;
+	margin-bottom: 4px;
+	color: #1d2327;
+}
+
+.clockwork-callout-body p {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #1d2327;
+}
+
+/* Inner Panels */
+.clockwork-inner-panel {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 20px;
+	margin: 16px 0 20px;
+}
+
+/* Card Actions */
+.clockwork-card-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 20px;
+	padding-top: 16px;
+	border-top: 1px solid #f0f0f1;
+}
+
+/* Grid Layout for Side-by-Side Cards */
+.clockwork-card-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+	gap: 20px;
+	align-items: start;
+}
+
+@media (max-width: 960px) {
+	.clockwork-card-grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+/* Status Pills */
+.clockwork-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.clockwork-pill .dashicons {
+	font-size: 14px;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+}
+
+.clockwork-pill--success { background: #d4edda; color: #155724; }
+.clockwork-pill--error   { background: #f8d7da; color: #721c24; }
+.clockwork-pill--warning { background: #fff3cd; color: #856404; }
+.clockwork-pill--neutral { background: #f0f0f1; color: #50575e; }
+
+/* Status Lines */
+.clockwork-status-line {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.clockwork-status-line .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 16px;
+}
+
+.clockwork-status-line--neutral { color: #646970; }
+.clockwork-status-line--success { color: #00a32a; }
+.clockwork-status-line--error   { color: #d63638; }
+
+/* Fact Lists */
+.clockwork-fact-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.clockwork-fact-list li {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	padding: 8px 0;
+	border-bottom: 1px solid #f0f0f1;
+	font-size: 13px;
+	color: #1d2327;
+}
+
+.clockwork-fact-list li:last-child {
+	border-bottom: 0;
+}
+
+.clockwork-fact-list .dashicons {
+	color: #00a32a;
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+/* Usage Meter */
+.clockwork-meter {
+	height: 10px;
+	background: #f0f0f1;
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.clockwork-meter > span {
+	display: block;
+	height: 100%;
+	background: #00a32a;
+	transition: width 0.3s ease;
+}
+
+.clockwork-meter--info    > span { background: #2271b1; }
+.clockwork-meter--warning > span { background: #dba617; }
+.clockwork-meter--error   > span { background: #d63638; }
+
+.clockwork-meter-labels {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-bottom: 8px;
+}
+
+.clockwork-meter-labels strong {
+	font-size: 18px;
+	color: #1d2327;
 }
 
 .clockwork-progress-text {
