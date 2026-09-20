@@ -606,12 +606,20 @@
 	color: #1976d2;
 }
 
-.clockwork-offloader-title h1 {
+.clockwork-offloader-title h1,
+.clockwork-offloader-title .clockwork-brand-heading {
+	display: block;
 	margin: 0;
 	font-size: 28px;
 	font-weight: 600;
 	color: #1565c0;
 	line-height: 1.2;
+}
+
+.clockwork-offloader-header .notice,
+.clockwork-offloader-header div.updated,
+.clockwork-offloader-header div.error {
+	display: none !important;
 }
 
 .clockwork-offloader-header-right {

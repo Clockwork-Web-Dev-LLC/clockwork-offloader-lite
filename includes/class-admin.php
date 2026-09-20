@@ -898,7 +898,10 @@ class Clockwork_Offloader_Admin {
 		
 		// Render tab navigation
 		?>
-		<div class="wrap">
+		<div class="wrap clockwork-offloader-wrap">
+			<h1 class="wp-heading-inline screen-reader-text"><?php echo esc_html( Clockwork_Offloader_Lite_Restrictions::is_pro_active() ? __( 'Clockwork Offloader Pro', 'clockwork-offloader' ) : __( 'Clockwork Offloader Lite', 'clockwork-offloader' ) ); ?></h1>
+			<hr class="wp-header-end">
+
 			<!-- Plugin Header -->
 			<div class="clockwork-offloader-header">
 				<div class="clockwork-offloader-header-content">
@@ -917,7 +920,7 @@ class Clockwork_Offloader_Admin {
 							</div>
 						</div>
 						<div class="clockwork-offloader-title">
-							<h1><?php echo esc_html( Clockwork_Offloader_Lite_Restrictions::is_pro_active() ? __( 'Clockwork Offloader Pro', 'clockwork-offloader' ) : __( 'Clockwork Offloader Lite', 'clockwork-offloader' ) ); ?></h1>
+							<span class="clockwork-brand-heading"><?php echo esc_html( Clockwork_Offloader_Lite_Restrictions::is_pro_active() ? __( 'Clockwork Offloader Pro', 'clockwork-offloader' ) : __( 'Clockwork Offloader Lite', 'clockwork-offloader' ) ); ?></span>
 						</div>
 					</div>
 					<div class="clockwork-offloader-header-right">

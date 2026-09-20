@@ -5,6 +5,11 @@
 	'use strict';
 	
 	$(document).ready(function() {
+		// Hoist any external admin notices out of the header banner to above it
+		$('.clockwork-offloader-header').find('.notice, div.updated, div.error').each(function() {
+			$(this).insertBefore('.clockwork-offloader-header');
+		});
+
 		// Safety check: ensure clockworkOffloader is defined
 		if (typeof clockworkOffloader === 'undefined') {
 			console.error('clockworkOffloader is not defined! Make sure the script is properly enqueued.');
