@@ -147,6 +147,10 @@ class Clockwork_Offloader {
 	 * @param bool $network_wide True when network-activated on a multisite.
 	 */
 	public static function activate( $network_wide = false ) {
+		// Yield to Pro if already active
+		if ( class_exists( 'Clockwork_Offloader_Pro' ) || ( function_exists( 'is_plugin_active' ) && is_plugin_active( 'clockwork-offloader-pro/clockwork-offloader-pro.php' ) ) ) {
+			wp_die( esc_html__( 'Clockwork Offloader Pro is already active. The Lite version is not needed and cannot be activated alongside Pro.', 'clockwork-offloader' ) );
+		}
 		// Run migration from old plugin name if needed
 		self::migrate_from_cloudbound();
 
@@ -773,6 +777,10 @@ class Clockwork_Offloader {
  * Initialize the plugin
  */
 function clockwork_offloader_init() {
+	// Yield to Pro if already active to prevent duplicate hooks or collision
+	if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
+		return null;
+	}
 	return Clockwork_Offloader::get_instance();
 }
 
