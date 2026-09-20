@@ -96,7 +96,7 @@ class Clockwork_Offloader_Lite_Restrictions {
 	 * @return string Upgrade URL
 	 */
 	public static function get_upgrade_url() {
-		return 'https://aaronreimann.com/clockwork-offloader-pro';
+		return 'https://clockworkplugins.com/plugins/clockwork-offloader';
 	}
 }
 

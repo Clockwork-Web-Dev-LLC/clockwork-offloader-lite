@@ -4731,38 +4731,54 @@ class Clockwork_Offloader_Admin {
 	 * Render upgrade page
 	 */
 	public function render_upgrade_page() {
+		$upgrade_url = 'https://clockworkplugins.com/plugins/clockwork-offloader';
 		?>
 		<div class="clockwork-offloader-upgrade-page">
-			<div class="clockwork-offloader-upgrade-hero">
-				<h2><?php esc_html_e( 'Upgrade to Clockwork Offloader Pro', 'clockwork-offloader' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Unlock powerful features to manage your media library at scale.', 'clockwork-offloader' ); ?></p>
+			<?php
+			if ( file_exists( CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/pro-upgrade-ad.php' ) ) {
+				include CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/pro-upgrade-ad.php';
+			}
+			?>
+			
+			<div class="clockwork-offloader-upgrade-features" style="margin-top: 24px;">
+				<div class="clockwork-offloader-upgrade-feature">
+					<h3><span class="dashicons dashicons-cloud" style="color: var(--cwk-primary);"></span> <?php esc_html_e( 'CloudFront CDN & Assets Pull', 'clockwork-offloader' ); ?></h3>
+					<p><?php esc_html_e( 'Deliver media and static assets (CSS, JS, fonts) from worldwide CloudFront edge locations with automatic cache invalidation.', 'clockwork-offloader' ); ?></p>
+				</div>
+				
+				<div class="clockwork-offloader-upgrade-feature">
+					<h3><span class="dashicons dashicons-lock" style="color: var(--cwk-primary);"></span> <?php esc_html_e( 'Private Media & Expiring Signed URLs', 'clockwork-offloader' ); ?></h3>
+					<p><?php esc_html_e( 'Protect downloadable digital goods for WooCommerce and Easy Digital Downloads with secure, time-limited pre-signed S3 links.', 'clockwork-offloader' ); ?></p>
+				</div>
+				
+				<div class="clockwork-offloader-upgrade-feature">
+					<h3><span class="dashicons dashicons-update" style="color: var(--cwk-primary);"></span> <?php esc_html_e( 'Bulk Queue & Background Processing', 'clockwork-offloader' ); ?></h3>
+					<p><?php esc_html_e( 'Offload existing media libraries in bulk, download files back to local server on demand, and handle 600,000+ items without timeouts.', 'clockwork-offloader' ); ?></p>
+				</div>
+				
+				<div class="clockwork-offloader-upgrade-feature">
+					<h3><span class="dashicons dashicons-migrate" style="color: var(--cwk-primary);"></span> <?php esc_html_e( 'Zero-Downtime Migration Tools', 'clockwork-offloader' ); ?></h3>
+					<p><?php esc_html_e( 'Switch seamlessly from other offload plugins with 1-click migration. Preserves your existing S3 bucket, paths, and URLs.', 'clockwork-offloader' ); ?></p>
+				</div>
+
+				<div class="clockwork-offloader-upgrade-feature">
+					<h3><span class="dashicons dashicons-admin-multisite" style="color: var(--cwk-primary);"></span> <?php esc_html_e( 'WordPress Multisite Network Support', 'clockwork-offloader' ); ?></h3>
+					<p><?php esc_html_e( 'Single-click network-wide activation with automated per-subsite isolation under sites/{id}/ and global settings inheritance.', 'clockwork-offloader' ); ?></p>
+				</div>
+
+				<div class="clockwork-offloader-upgrade-feature">
+					<h3><span class="dashicons dashicons-terminal" style="color: var(--cwk-primary);"></span> <?php esc_html_e( 'Full WP-CLI Command Suite', 'clockwork-offloader' ); ?></h3>
+					<p><?php esc_html_e( 'Script, automate, and inspect large fleet migrations from the terminal with wp clockwork-offloader commands.', 'clockwork-offloader' ); ?></p>
+				</div>
 			</div>
 			
-			<div class="clockwork-offloader-upgrade-features">
-				<div class="clockwork-offloader-upgrade-feature">
-					<h3><?php esc_html_e( 'Bulk Operations', 'clockwork-offloader' ); ?></h3>
-					<p><?php esc_html_e( 'Offload existing media files in bulk, restore files from S3, and manage large media libraries efficiently.', 'clockwork-offloader' ); ?></p>
-				</div>
-				
-				<div class="clockwork-offloader-upgrade-feature">
-					<h3><?php esc_html_e( 'Queue System', 'clockwork-offloader' ); ?></h3>
-					<p><?php esc_html_e( 'Background processing for large operations. Handle 600,000+ media items without timeouts.', 'clockwork-offloader' ); ?></p>
-				</div>
-				
-				<div class="clockwork-offloader-upgrade-feature">
-					<h3><?php esc_html_e( 'Migration Tools', 'clockwork-offloader' ); ?></h3>
-					<p><?php esc_html_e( 'Migrate from WP Offload Media, Acowebs Offload Media, and other plugins. Preserve your existing S3 setup.', 'clockwork-offloader' ); ?></p>
-				</div>
-				
-				<div class="clockwork-offloader-upgrade-feature">
-					<h3><?php esc_html_e( 'Development Mode', 'clockwork-offloader' ); ?></h3>
-					<p><?php esc_html_e( 'Diagnostic tools, test file generation, and advanced debugging features for developers.', 'clockwork-offloader' ); ?></p>
-				</div>
-			</div>
-			
-			<div class="clockwork-offloader-upgrade-cta">
-				<a href="<?php echo esc_url( Clockwork_Offloader_Lite_Restrictions::get_upgrade_url() ); ?>" target="_blank" class="button button-primary button-large">
-					<?php esc_html_e( 'Upgrade to Pro', 'clockwork-offloader' ); ?>
+			<div class="clockwork-offloader-upgrade-cta" style="text-align: center; margin-top: 30px; padding: 24px; background: #fff; border: 1px solid #e3deef; border-radius: 12px;">
+				<h3 style="margin: 0 0 8px 0; font-size: 18px; color: #212025;"><?php esc_html_e( 'Ready to unlock Pro features?', 'clockwork-offloader' ); ?></h3>
+				<p style="margin: 0 0 16px 0; font-size: 13px; color: #5b5566;">
+					<?php esc_html_e( 'Get Clockwork Offloader Pro today starting at just $50/yr with our locked-in 50% launch discount and 14-day money-back guarantee.', 'clockwork-offloader' ); ?>
+				</p>
+				<a href="<?php echo esc_url( $upgrade_url ); ?>" target="_blank" rel="noopener noreferrer" class="button clockwork-btn-upgrade">
+					<span><?php esc_html_e( 'View Pricing &amp; Upgrade to Pro (50% Off) &rarr;', 'clockwork-offloader' ); ?></span>
 				</a>
 			</div>
 		</div>

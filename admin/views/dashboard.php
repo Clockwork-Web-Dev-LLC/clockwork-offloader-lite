@@ -240,6 +240,14 @@ if ( ! isset( $has_credentials ) ) {
 			</div>
 		</div>
 	</div>
+
+	<?php
+	// Pro Upgrade Callout Banner (Lite only)
+	if ( ! class_exists( 'Clockwork_Offloader_Pro' ) && file_exists( CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/pro-upgrade-ad.php' ) ) {
+		include CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/pro-upgrade-ad.php';
+	}
+	?>
+
 	
 	<?php
 	// Check if Migrator plugin is active

@@ -453,6 +453,13 @@ if ( ! empty( $cdn_domain ) ) {
 			</div>
 		</details>
 
+		<?php
+		// Pro Upgrade Callout Banner (Lite only)
+		if ( ! class_exists( 'Clockwork_Offloader_Pro' ) && file_exists( CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/pro-upgrade-ad.php' ) ) {
+			include CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/pro-upgrade-ad.php';
+		}
+		?>
+
 		<p class="submit" style="margin-top: 24px;">
 			<?php if ( ! empty( $is_inherited ) ) : ?>
 				<button type="button" class="button button-primary" disabled="disabled">
