@@ -1480,12 +1480,11 @@ class Clockwork_Offloader_Admin {
 			WHERE q.status IN ('pending', 'processing') AND p.post_type = 'attachment' AND p.post_status = 'inherit'"
 		);
 		
-		// Calculate not offloaded count (total - offloaded - queued)
-		$total_not_offloaded = max( 0, $total_attachments - $offloaded_count - $queued_count );
+		// Calculate not offloaded count (total - offloaded)
+		$total_not_offloaded = max( 0, $total_attachments - $offloaded_count );
 		
-		// Calculate percentage: (offloaded + queued) / total * 100
-		// This shows progress including items currently being processed
-		$offload_percentage = $total_attachments > 0 ? round( ( ( $offloaded_count + $queued_count ) / $total_attachments ) * 100 ) : 0;
+		// Calculate actual offload percentage: offloaded / total * 100
+		$offload_percentage = $total_attachments > 0 ? round( ( $offloaded_count / $total_attachments ) * 100 ) : 0;
 		
 		// Cap at 100% to prevent display issues
 		$offload_percentage = min( $offload_percentage, 100 );
@@ -2648,11 +2647,11 @@ class Clockwork_Offloader_Admin {
 			WHERE q.status IN ('pending', 'processing') AND p.post_type = 'attachment' AND p.post_status = 'inherit'"
 		);
 		
-		// Calculate not offloaded count
-		$total_not_offloaded = max( 0, $total_attachments - $offloaded_count - $queued_count );
+		// Calculate not offloaded count (total - offloaded)
+		$total_not_offloaded = max( 0, $total_attachments - $offloaded_count );
 		
-		// Calculate percentage: (offloaded + queued) / total * 100
-		$offload_percentage = $total_attachments > 0 ? round( ( ( $offloaded_count + $queued_count ) / $total_attachments ) * 100 ) : 0;
+		// Calculate actual offload percentage: offloaded / total * 100
+		$offload_percentage = $total_attachments > 0 ? round( ( $offloaded_count / $total_attachments ) * 100 ) : 0;
 		$offload_percentage = min( $offload_percentage, 100 );
 		
 		// Check if there are items still processing in the queue

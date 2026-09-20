@@ -597,7 +597,7 @@
 						// Update Offload Statistics
 						var $offloadPercentage = $('.clockwork-offload-percentage');
 						var $offloadCount = $('.clockwork-offload-count');
-						var $offloadProgressBar = $('.clockwork-progress-bar').not('.clockwork-rewrite-progress-bar');
+						var $offloadProgressBar = $('.clockwork-offload-progress-bar, .clockwork-progress-bar').not('.clockwork-rewrite-progress-bar, #clockwork-bulk-queue-progress-bar, #remove-progress-bar, #download-progress-bar');
 						
 						if ($offloadPercentage.length) {
 							var currentOffloadPct = parseInt($offloadPercentage.text().replace('%', '')) || 0;
@@ -609,7 +609,7 @@
 						
 						if ($offloadCount.length) {
 							var currentText = $offloadCount.text();
-							var offloadedDisplay = stats.total_attachments - stats.total_not_offloaded;
+							var offloadedDisplay = stats.offloaded_count;
 							var newText = offloadedDisplay.toLocaleString() + ' of ' + stats.total_attachments.toLocaleString() + ' media items';
 							if (currentText !== newText) {
 								var currentCount = parseInt(currentText.match(/([\d,]+)\s+of/)?.[1]?.replace(/,/g, '') || '0') || 0;
@@ -635,7 +635,7 @@
 								$offloadButton.hide();
 							}
 							if (!$successMessage.length) {
-								$offloadButton.after('<span class="clockwork-success-message" style="color: #00a32a; font-weight: 600;">100% of your media has been offloaded, congratulations!</span>');
+								$offloadButton.after('<span class="clockwork-success-message" style="color: #00a32a; font-weight: 600;"><i class="fa-solid fa-circle-check" style="margin-right: 4px;"></i>100% of your media has been offloaded to S3!</span>');
 							}
 						} else {
 							if ($successMessage.is(':visible')) {
@@ -649,7 +649,22 @@
 						// Update status text
 						var $statusText = $('.clockwork-offload-stats .description strong');
 						if ($statusText.length && stats.has_active_queue) {
-							$statusText.parent().html('<strong>' + (stats.offload_percentage >= 100 && !stats.has_active_queue ? 'All media has been offloaded, congratulations!' : 'Status:</strong> Offloading in progress...'));
+							$statusText.parent().html('<strong>' + (stats.offload_percentage >= 100 && !stats.has_active_queue ? 'All media has been offloaded to S3!' : 'Status:</strong> Offloading in progress — files are uploading to S3 in the background.'));
+						}
+
+						// Update Queue Progress Bar & Text
+						if (stats.queue_stats && stats.has_active_queue) {
+							var qTotal = stats.queue_stats.total || 0;
+							var qCompleted = stats.queue_stats.completed || 0;
+							var qProgress = qTotal > 0 ? Math.round((qCompleted / qTotal) * 100) : 0;
+							var $queueText = $('#clockwork-bulk-queue-progress-text');
+							var $queueBar = $('#clockwork-bulk-queue-progress-bar');
+							if ($queueText.length) {
+								$queueText.text(qProgress + '% (' + qCompleted.toLocaleString() + ' of ' + qTotal.toLocaleString() + ') Offloading...');
+							}
+							if ($queueBar.length) {
+								$queueBar.css('width', qProgress + '%');
+							}
 						}
 						
 						// Stop updating if everything is done and no active queue
