@@ -52,7 +52,7 @@ class Clockwork_Offloader_Media_Library {
 	 * @return array Modified columns
 	 */
 	public function add_offload_column( $columns ) {
-		$columns['clockwork_offload_status'] = __( 'CDN Status', 'clockwork-offloader' );
+		$columns['clockwork_offload_status'] = __( 'Cloud Status', 'clockwork-offloader' );
 		return $columns;
 	}
 	
@@ -116,9 +116,9 @@ class Clockwork_Offloader_Media_Library {
 		// Build label
 		$parts = array();
 		if ( $cdn_on_cdn ) {
-			$parts[] = __( 'On CDN', 'clockwork-offloader' );
+			$parts[] = __( 'On Cloud', 'clockwork-offloader' );
 		} else {
-			$parts[] = __( 'Not on CDN', 'clockwork-offloader' );
+			$parts[] = __( 'Not on Cloud', 'clockwork-offloader' );
 		}
 		if ( $server_on_server ) {
 			$parts[] = __( 'On Server', 'clockwork-offloader' );
@@ -148,7 +148,7 @@ class Clockwork_Offloader_Media_Library {
 		$cdn_on_cdn = $status['cdn_on_cdn'];
 		$server_on_server = $status['server_on_server'];
 		
-		$cdn_label = $cdn_on_cdn ? __( 'On CDN', 'clockwork-offloader' ) : __( 'Not on CDN', 'clockwork-offloader' );
+		$cdn_label = $cdn_on_cdn ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' );
 		$server_label = $server_on_server ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' );
 		
 		printf(
@@ -211,11 +211,11 @@ class Clockwork_Offloader_Media_Library {
 				'nonce' => wp_create_nonce( 'clockwork_offloader_media_nonce' ),
 				'statuses' => $statuses,
 				'strings' => array(
-					'notOffloaded' => __( 'Not on CDN', 'clockwork-offloader' ),
-					'offloadedAndLocal' => __( 'On CDN & Server', 'clockwork-offloader' ),
-					'cdnOnly' => __( 'CDN Only', 'clockwork-offloader' ),
-					'onCdn' => __( 'On CDN', 'clockwork-offloader' ),
-					'notOnCdn' => __( 'Not on CDN', 'clockwork-offloader' ),
+					'notOffloaded' => __( 'Not on Cloud', 'clockwork-offloader' ),
+					'offloadedAndLocal' => __( 'On Cloud & Server', 'clockwork-offloader' ),
+					'cdnOnly' => __( 'Cloud Only', 'clockwork-offloader' ),
+					'onCdn' => __( 'On Cloud', 'clockwork-offloader' ),
+					'notOnCdn' => __( 'Not on Cloud', 'clockwork-offloader' ),
 					'onServer' => __( 'On Server', 'clockwork-offloader' ),
 					'notOnServer' => __( 'Not on Server', 'clockwork-offloader' ),
 				),
@@ -260,9 +260,9 @@ class Clockwork_Offloader_Media_Library {
 		
 		// Status display
 		$controls_html .= '<div class="clockwork-status-display" style="margin-bottom: 15px; padding: 10px; background: #f0f0f1; border-radius: 3px;">';
-		$controls_html .= '<strong>' . __( 'CDN Status:', 'clockwork-offloader' ) . '</strong> ';
+		$controls_html .= '<strong>' . __( 'Cloud Status:', 'clockwork-offloader' ) . '</strong> ';
 		$controls_html .= '<span class="clockwork-status-icons" style="margin-left: 10px;">';
-		$controls_html .= '<i class="fa-solid fa-cloud" style="color: ' . esc_attr( $status['cdn_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['cdn_on_cdn'] ? __( 'On CDN', 'clockwork-offloader' ) : __( 'Not on CDN', 'clockwork-offloader' ) ) . '"></i>';
+		$controls_html .= '<i class="fa-solid fa-cloud" style="color: ' . esc_attr( $status['cdn_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ) . '"></i>';
 		$controls_html .= '<i class="fa-solid fa-computer" style="color: ' . esc_attr( $status['server_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ) . '"></i>';
 		$controls_html .= '</span>';
 		$controls_html .= '</div>';
@@ -271,24 +271,24 @@ class Clockwork_Offloader_Media_Library {
 		$controls_html .= '<div class="clockwork-action-buttons" style="display: flex; flex-wrap: wrap; gap: 8px;">';
 		
 		if ( ! $status['cdn_on_cdn'] ) {
-			// Not on CDN - show upload button
+			// Not on Cloud - show upload button
 			$controls_html .= '<button type="button" class="button button-primary clockwork-action-btn" data-action="offload" data-attachment-id="' . esc_attr( $attachment_id ) . '">';
 			$controls_html .= '<i class="fa-solid fa-cloud-arrow-up" style="margin-right: 5px;"></i>';
-			$controls_html .= __( 'Upload to CDN', 'clockwork-offloader' );
+			$controls_html .= __( 'Upload to Cloud', 'clockwork-offloader' );
 			$controls_html .= '</button>';
 		} else {
-			// On CDN - show delete button
+			// On Cloud - show delete button
 			$controls_html .= '<button type="button" class="button button-secondary clockwork-action-btn" data-action="delete-from-cdn" data-attachment-id="' . esc_attr( $attachment_id ) . '" data-on-server="' . ( $status['server_on_server'] ? '1' : '0' ) . '">';
 			$controls_html .= '<i class="fa-solid fa-trash" style="margin-right: 5px;"></i>';
-			$controls_html .= __( 'Delete from CDN', 'clockwork-offloader' );
+			$controls_html .= __( 'Remove from Cloud', 'clockwork-offloader' );
 			$controls_html .= '</button>';
 		}
 		
-		// Only show download button if file is on CDN but NOT on server
+		// Only show download button if file is on Cloud but NOT on server
 		if ( $status['cdn_on_cdn'] && ! $status['server_on_server'] ) {
 			$controls_html .= '<button type="button" class="button button-secondary clockwork-action-btn" data-action="restore" data-attachment-id="' . esc_attr( $attachment_id ) . '">';
 			$controls_html .= '<i class="fa-solid fa-download" style="margin-right: 5px;"></i>';
-			$controls_html .= __( 'Download from CDN to Server', 'clockwork-offloader' );
+			$controls_html .= __( 'Download from Cloud to Server', 'clockwork-offloader' );
 			$controls_html .= '</button>';
 		}
 		
@@ -298,10 +298,10 @@ class Clockwork_Offloader_Media_Library {
 			$s3_url = $tracker->get_s3_url( $attachment_id );
 			if ( $s3_url ) {
 				$controls_html .= '<div style="width: 100%; margin-top: 10px;">';
-				$controls_html .= '<label style="display: block; margin-bottom: 5px;"><strong>' . __( 'CDN URL:', 'clockwork-offloader' ) . '</strong></label>';
+				$controls_html .= '<label style="display: block; margin-bottom: 5px;"><strong>' . __( 'Cloud URL:', 'clockwork-offloader' ) . '</strong></label>';
 				$controls_html .= '<input type="text" class="widefat" readonly value="' . esc_attr( $s3_url ) . '" id="clockwork-s3-url-' . esc_attr( $attachment_id ) . '" />';
 				$controls_html .= '<button type="button" class="button button-small copy-s3-url" data-url="' . esc_attr( $s3_url ) . '" style="margin-top: 5px;">';
-				$controls_html .= __( 'Copy CDN URL', 'clockwork-offloader' );
+				$controls_html .= __( 'Copy Cloud URL', 'clockwork-offloader' );
 				$controls_html .= '</button>';
 				$controls_html .= '</div>';
 			}
@@ -312,7 +312,7 @@ class Clockwork_Offloader_Media_Library {
 		$controls_html .= '</div>';
 		
 		$form_fields['clockwork_offloader_controls'] = array(
-			'label' => __( 'CDN Controls', 'clockwork-offloader' ),
+			'label' => __( 'Cloud Controls', 'clockwork-offloader' ),
 			'input' => 'html',
 			'html' => $controls_html,
 		);
@@ -351,10 +351,10 @@ class Clockwork_Offloader_Media_Library {
 		<div class="clockwork-offloader-attachment-controls">
 			<!-- Status display -->
 			<div class="clockwork-status-display" style="margin-bottom: 15px; padding: 10px; background: #f0f0f1; border-radius: 3px;">
-				<strong><?php esc_html_e( 'CDN Status:', 'clockwork-offloader' ); ?></strong>
+				<strong><?php esc_html_e( 'Cloud Status:', 'clockwork-offloader' ); ?></strong>
 				<div style="margin-top: 8px;">
 					<span class="clockwork-status-icons" style="margin-left: 10px;">
-						<i class="fa-solid fa-cloud" style="color: <?php echo esc_attr( $status['cdn_color'] ); ?>; margin: 0 5px; font-size: 18px;" title="<?php echo esc_attr( $status['cdn_on_cdn'] ? __( 'On CDN', 'clockwork-offloader' ) : __( 'Not on CDN', 'clockwork-offloader' ) ); ?>"></i>
+						<i class="fa-solid fa-cloud" style="color: <?php echo esc_attr( $status['cdn_color'] ); ?>; margin: 0 5px; font-size: 18px;" title="<?php echo esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ); ?>"></i>
 						<i class="fa-solid fa-computer" style="color: <?php echo esc_attr( $status['server_color'] ); ?>; margin: 0 5px; font-size: 18px;" title="<?php echo esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ); ?>"></i>
 					</span>
 				</div>
@@ -363,24 +363,24 @@ class Clockwork_Offloader_Media_Library {
 			<!-- Action buttons -->
 			<div class="clockwork-action-buttons" style="display: flex; flex-direction: column; gap: 8px;">
 				<?php if ( ! $status['cdn_on_cdn'] ) : ?>
-					<!-- Not on CDN - show upload button -->
+					<!-- Not on Cloud - show upload button -->
 					<button type="button" class="button button-primary clockwork-action-btn" data-action="offload" data-attachment-id="<?php echo esc_attr( $attachment_id ); ?>" style="width: 100%;">
 						<i class="fa-solid fa-cloud-arrow-up" style="margin-right: 5px;"></i>
-						<?php esc_html_e( 'Upload to CDN', 'clockwork-offloader' ); ?>
+						<?php esc_html_e( 'Upload to Cloud', 'clockwork-offloader' ); ?>
 					</button>
 				<?php else : ?>
-					<!-- On CDN - show delete button -->
+					<!-- On Cloud - show delete button -->
 					<button type="button" class="button button-secondary clockwork-action-btn" data-action="delete-from-cdn" data-attachment-id="<?php echo esc_attr( $attachment_id ); ?>" data-on-server="<?php echo $status['server_on_server'] ? '1' : '0'; ?>" style="width: 100%;">
 						<i class="fa-solid fa-trash" style="margin-right: 5px;"></i>
-						<?php esc_html_e( 'Delete from CDN', 'clockwork-offloader' ); ?>
+						<?php esc_html_e( 'Remove from Cloud', 'clockwork-offloader' ); ?>
 					</button>
 				<?php endif; ?>
 				
 				<?php if ( $status['cdn_on_cdn'] && ! $status['server_on_server'] ) : ?>
-					<!-- Only show download button if file is on CDN but NOT on server -->
+					<!-- Only show download button if file is on Cloud but NOT on server -->
 					<button type="button" class="button button-secondary clockwork-action-btn" data-action="restore" data-attachment-id="<?php echo esc_attr( $attachment_id ); ?>" style="width: 100%;">
 						<i class="fa-solid fa-download" style="margin-right: 5px;"></i>
-						<?php esc_html_e( 'Download from CDN to Server', 'clockwork-offloader' ); ?>
+						<?php esc_html_e( 'Download from Cloud to Server', 'clockwork-offloader' ); ?>
 					</button>
 				<?php endif; ?>
 			</div>
@@ -393,10 +393,10 @@ class Clockwork_Offloader_Media_Library {
 				if ( $s3_url ) :
 					?>
 					<div style="width: 100%; margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
-						<label style="display: block; margin-bottom: 5px;"><strong><?php esc_html_e( 'CDN URL:', 'clockwork-offloader' ); ?></strong></label>
+						<label style="display: block; margin-bottom: 5px;"><strong><?php esc_html_e( 'Cloud URL:', 'clockwork-offloader' ); ?></strong></label>
 						<input type="text" class="widefat" readonly value="<?php echo esc_attr( $s3_url ); ?>" id="clockwork-s3-url-<?php echo esc_attr( $attachment_id ); ?>" style="margin-bottom: 5px;" />
 						<button type="button" class="button button-small copy-s3-url" data-url="<?php echo esc_attr( $s3_url ); ?>" style="width: 100%;">
-							<?php esc_html_e( 'Copy CDN URL', 'clockwork-offloader' ); ?>
+							<?php esc_html_e( 'Copy Cloud URL', 'clockwork-offloader' ); ?>
 						</button>
 					</div>
 				<?php endif; ?>
@@ -451,14 +451,14 @@ class Clockwork_Offloader_Media_Library {
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'nonce' => wp_create_nonce( 'clockwork_offloader_attachment_nonce' ),
 				'strings' => array(
-					'offloadSuccess' => __( 'File uploaded to CDN successfully.', 'clockwork-offloader' ),
-					'offloadError' => __( 'Failed to upload file to CDN.', 'clockwork-offloader' ),
-					'deleteSuccess' => __( 'File deleted from CDN successfully.', 'clockwork-offloader' ),
-					'deleteError' => __( 'Failed to delete file from CDN.', 'clockwork-offloader' ),
-					'restoreSuccess' => __( 'File downloaded from CDN successfully.', 'clockwork-offloader' ),
-					'restoreError' => __( 'Failed to download file from CDN.', 'clockwork-offloader' ),
-					'confirmDelete' => __( 'Are you sure you want to delete this file from CDN?', 'clockwork-offloader' ),
-					'copyUrl' => __( 'Copy CDN URL', 'clockwork-offloader' ),
+					'offloadSuccess' => __( 'File uploaded to Cloud successfully.', 'clockwork-offloader' ),
+					'offloadError' => __( 'Failed to upload file to Cloud.', 'clockwork-offloader' ),
+					'deleteSuccess' => __( 'File deleted from Cloud successfully.', 'clockwork-offloader' ),
+					'deleteError' => __( 'Failed to delete file from Cloud.', 'clockwork-offloader' ),
+					'restoreSuccess' => __( 'File downloaded from Cloud successfully.', 'clockwork-offloader' ),
+					'restoreError' => __( 'Failed to download file from Cloud.', 'clockwork-offloader' ),
+					'confirmDelete' => __( 'Are you sure you want to delete this file from Cloud?', 'clockwork-offloader' ),
+					'copyUrl' => __( 'Copy Cloud URL', 'clockwork-offloader' ),
 				),
 			)
 		);

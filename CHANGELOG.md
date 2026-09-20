@@ -1,5 +1,23 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
+
+## 1.1.1 (unreleased)
+
+### Fixed
+- Offloaded files in AWS buckets whose name contains a dot (e.g. `example.org`) were served from `https://example.org.s3.{region}.amazonaws.com/…`, which fails TLS (`ERR_CERT_COMMON_NAME_INVALID`) because Amazon's wildcard certificate covers one label only. Such buckets now use path-style URLs, `https://s3.{region}.amazonaws.com/example.org/…`. URL construction was duplicated in five places (S3 service, tracker ×2, URL rewriter ×2, settings preview, verification pattern); all now go through `Clockwork_Offloader_S3_Service::build_public_url()`.
+- Setup wizard: bucket-scoped IAM keys (no `s3:ListAllMyBuckets`) no longer fail steps 1 and 2. `ListBuckets` returning `AccessDenied` is now treated as "authenticated, not authorised to list" and the bucket-level check runs instead.
+- Setup wizard: error notices stay visible until the next action and scroll into view instead of fading after five seconds.
+- Setup wizard: every Continue button now shows an inline status line (checking… / done / the exact error, including timeouts and HTTP errors) so a slow or failing request never looks like a frozen page.
+
+### Added
+- Setup wizard step 3 now probes public readability: it uploads a marker object, fetches its public URL anonymously, deletes it, and warns when the answer is 403. For AWS it explains the "Bucket owner enforced" / no-bucket-policy cause and prints a ready-to-paste `s3:GetObject` bucket policy. Uploads succeeding while every image 403s was previously invisible until a page was viewed.
+- Dashboard "Get started" panel: shown once credentials exist but nothing is being pushed (Auto Upload off, or zero files offloaded). It says plainly that connecting a bucket moves nothing by itself, and walks through Enable Auto Upload → push existing media (Bulk Offload in Pro, upgrade link in Lite) → check the Files tab. Disappears on its own once Auto Upload is on and files have landed.
+
+### Changed
+- Setup wizard step 2 hides "Browse existing buckets" when the key cannot list buckets, and explains that the bucket name (not the IAM user name) must be typed in.
+- Renamed user-facing "CDN" actions and status labels to "Cloud" (e.g. "Remove from Cloud", "Upload to Cloud", "Cloud Status") across admin views, notices, and media library controls to clearly separate cloud storage management from CDN edge caching.
+
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).

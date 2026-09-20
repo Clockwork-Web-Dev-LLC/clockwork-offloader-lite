@@ -1219,17 +1219,24 @@ class Clockwork_Offloader_Admin {
 					break;
 				default: // AWS
 					if ( ! empty( $bucket ) && ! empty( $region ) ) {
-						$domain = $bucket . '.s3.' . $region . '.amazonaws.com';
+						if ( Clockwork_Offloader_S3_Service::bucket_requires_path_style( $bucket ) ) {
+							// Dotted bucket names must be path-style over HTTPS (see build_public_url).
+							$domain              = 's3.' . $region . '.amazonaws.com';
+							$show_bucket_in_path = true;
+						} else {
+							$domain              = $bucket . '.s3.' . $region . '.amazonaws.com';
+							$show_bucket_in_path = false;
+						}
 					} else {
-						$domain = 'bucket.s3.region.amazonaws.com';
+						$domain              = 'bucket.s3.region.amazonaws.com';
+						$show_bucket_in_path = false;
 					}
-					$show_bucket_in_path = false;
 					break;
 			}
 		}
 		
-		// Build full URL
-		$full_url = $scheme . $domain . '/' . $s3_key;
+		// Build full URL (bucket goes in the path for path-style AWS buckets)
+		$full_url = $scheme . $domain . '/' . ( ( $show_bucket_in_path && ! empty( $bucket ) ) ? $bucket . '/' : '' ) . $s3_key;
 		
 		// Parse components for display
 		$components = array(
@@ -1964,9 +1971,20 @@ class Clockwork_Offloader_Admin {
 				}
 			}
 			
+			Clockwork_Offloader_S3_Service::remember_can_list_buckets( true );
 			wp_send_json_success( array( 'buckets' => $buckets ) );
 		} catch ( Exception $e ) {
 			$error_message = $e->getMessage();
+			
+			// Bucket-scoped IAM keys (no s3:ListAllMyBuckets) are valid but cannot
+			// browse. Tell the UI so it falls back to manual bucket entry.
+			if ( $e instanceof \Aws\S3\Exception\S3Exception && $e->getAwsErrorCode() === 'AccessDenied' ) {
+				Clockwork_Offloader_S3_Service::remember_can_list_buckets( false );
+				wp_send_json_error( array(
+					'message'       => __( 'This access key is scoped to a single bucket and cannot list buckets. Enter the bucket name manually instead.', 'clockwork-offloader' ),
+					'bucket_scoped' => true,
+				) );
+			}
 			
 			// Provide more helpful error messages for common SSL/certificate issues
 			if ( stripos( $error_message, 'certificate' ) !== false || 
@@ -2124,7 +2142,7 @@ class Clockwork_Offloader_Admin {
 		$offloads = $tracker->get_attachment_offloads( $attachment_id );
 		
 		if ( empty( $offloads ) ) {
-			wp_send_json_error( array( 'message' => __( 'Attachment is not offloaded to CDN.', 'clockwork-offloader' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Attachment is not offloaded to Cloud.', 'clockwork-offloader' ) ) );
 		}
 		
 		$deleted = 0;
@@ -2157,13 +2175,13 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array(
 				'deleted' => $deleted,
 				'errors' => $errors,
-				'message' => sprintf( __( 'Deleted %d file(s) from CDN. Some files could not be deleted: %s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
+				'message' => sprintf( __( 'Deleted %d file(s) from Cloud. Some files could not be deleted: %s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
 			) );
 		} else {
 			// All deletions succeeded
 			wp_send_json_success( array(
 				'deleted' => $deleted,
-				'message' => sprintf( __( 'Deleted %d file(s) from CDN.', 'clockwork-offloader' ), $deleted ),
+				'message' => sprintf( __( 'Deleted %d file(s) from Cloud.', 'clockwork-offloader' ), $deleted ),
 			) );
 		}
 	}
@@ -2184,10 +2202,10 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_error( array( 'message' => __( 'Invalid attachment ID.', 'clockwork-offloader' ) ) );
 		}
 		
-		// Verify file is on CDN
+		// Verify file is in Cloud
 		$tracker = new Clockwork_Offloader_Tracker();
 		if ( ! $tracker->is_offloaded( $attachment_id ) ) {
-			wp_send_json_error( array( 'message' => __( 'File must be on CDN before offloading from server.', 'clockwork-offloader' ) ) );
+			wp_send_json_error( array( 'message' => __( 'File must be in Cloud before offloading from server.', 'clockwork-offloader' ) ) );
 		}
 		
 		$deleted = 0;
@@ -2339,32 +2357,32 @@ class Clockwork_Offloader_Admin {
 			case 'both':
 				// Need both on CDN and on server
 				if ( ! $current_cdn_status ) {
-					// Upload to CDN
+					// Upload to Cloud
 					$result = $bulk_offloader->offload_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
-						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to CDN: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 					}
-					$actions_taken[] = __( 'Uploaded to CDN', 'clockwork-offloader' );
+					$actions_taken[] = __( 'Uploaded to Cloud', 'clockwork-offloader' );
 				}
 				if ( ! $current_server_status ) {
-					// Download from CDN to server
+					// Download from Cloud to server
 					$result = $bulk_offloader->restore_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
-						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from CDN: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 					}
 					$actions_taken[] = __( 'Downloaded to server', 'clockwork-offloader' );
 				}
 				break;
 				
 			case 'cdn-only':
-				// Need on CDN, not on server
+				// Need in Cloud, not on server
 				if ( ! $current_cdn_status ) {
-					// Upload to CDN
+					// Upload to Cloud
 					$result = $bulk_offloader->offload_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
-						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to CDN: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 					}
-					$actions_taken[] = __( 'Uploaded to CDN', 'clockwork-offloader' );
+					$actions_taken[] = __( 'Uploaded to Cloud', 'clockwork-offloader' );
 				}
 				if ( $current_server_status ) {
 					// Delete from server - call the method directly
@@ -2393,9 +2411,9 @@ class Clockwork_Offloader_Admin {
 				break;
 				
 			case 'server-only':
-				// Need on server, not on CDN
+				// Need on server, not in Cloud
 				if ( $current_cdn_status ) {
-					// Delete from CDN - call the method directly
+					// Delete from Cloud - call the method directly
 					$offloads = $tracker->get_attachment_offloads( $attachment_id );
 					$deleted = 0;
 					foreach ( $offloads as $offload ) {
@@ -2406,18 +2424,18 @@ class Clockwork_Offloader_Admin {
 						}
 					}
 					if ( $deleted > 0 ) {
-						$actions_taken[] = __( 'Deleted from CDN', 'clockwork-offloader' );
+						$actions_taken[] = __( 'Deleted from Cloud', 'clockwork-offloader' );
 					}
 				}
 				if ( ! $current_server_status ) {
-					wp_send_json_error( array( 'message' => __( 'Cannot set to server-only: file does not exist on server and is not on CDN to download.', 'clockwork-offloader' ) ) );
+					wp_send_json_error( array( 'message' => __( 'Cannot set to server-only: file does not exist on server and is not in Cloud to download.', 'clockwork-offloader' ) ) );
 				}
 				break;
 				
 			case 'neither':
-				// Need neither on CDN nor on server
+				// Need neither in Cloud nor on server
 				if ( $current_cdn_status ) {
-					// Delete from CDN
+					// Delete from Cloud
 					$offloads = $tracker->get_attachment_offloads( $attachment_id );
 					$deleted = 0;
 					foreach ( $offloads as $offload ) {
@@ -2428,7 +2446,7 @@ class Clockwork_Offloader_Admin {
 						}
 					}
 					if ( $deleted > 0 ) {
-						$actions_taken[] = __( 'Deleted from CDN', 'clockwork-offloader' );
+						$actions_taken[] = __( 'Deleted from Cloud', 'clockwork-offloader' );
 					}
 				}
 				if ( $current_server_status ) {
@@ -2505,13 +2523,13 @@ class Clockwork_Offloader_Admin {
 			$file_exists = $file_path && file_exists( $file_path );
 			
 			if ( $enabled ) {
-				// Enable server - download from CDN if available
+				// Enable server - download from Cloud if available
 				if ( ! $tracker->is_offloaded( $attachment_id ) ) {
-					wp_send_json_error( array( 'message' => __( 'Cannot add to server: file is not on CDN to download.', 'clockwork-offloader' ) ) );
+					wp_send_json_error( array( 'message' => __( 'Cannot add to server: file is not in Cloud to download.', 'clockwork-offloader' ) ) );
 				}
 				$result = $bulk_offloader->restore_attachment( $attachment_id );
 				if ( is_wp_error( $result ) ) {
-					wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from CDN: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+					wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 				}
 				wp_send_json_success( array( 'message' => __( 'File downloaded to server.', 'clockwork-offloader' ) ) );
 			} else {
@@ -2539,23 +2557,23 @@ class Clockwork_Offloader_Admin {
 				wp_send_json_success( array( 'message' => sprintf( __( 'Deleted %d file(s) from server.', 'clockwork-offloader' ), $deleted ) ) );
 			}
 		} else {
-			// Toggling CDN status
+			// Toggling Cloud status
 			$is_offloaded = $tracker->is_offloaded( $attachment_id );
 			
 			if ( $enabled ) {
-				// Enable CDN - upload to CDN
+				// Enable Cloud - upload to Cloud
 				if ( $is_offloaded ) {
-					wp_send_json_success( array( 'message' => __( 'File already on CDN.', 'clockwork-offloader' ) ) );
+					wp_send_json_success( array( 'message' => __( 'File already in Cloud.', 'clockwork-offloader' ) ) );
 				}
 				$result = $bulk_offloader->offload_attachment( $attachment_id );
 				if ( is_wp_error( $result ) ) {
-					wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to CDN: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+					wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 				}
-				wp_send_json_success( array( 'message' => __( 'File uploaded to CDN.', 'clockwork-offloader' ) ) );
+				wp_send_json_success( array( 'message' => __( 'File uploaded to Cloud.', 'clockwork-offloader' ) ) );
 			} else {
-				// Disable CDN - delete from CDN
+				// Disable Cloud - delete from Cloud
 				if ( ! $is_offloaded ) {
-					wp_send_json_success( array( 'message' => __( 'File already not on CDN.', 'clockwork-offloader' ) ) );
+					wp_send_json_success( array( 'message' => __( 'File already not in Cloud.', 'clockwork-offloader' ) ) );
 				}
 				$s3_service = new Clockwork_Offloader_S3_Service();
 				$offloads = $tracker->get_attachment_offloads( $attachment_id );
@@ -2567,7 +2585,7 @@ class Clockwork_Offloader_Admin {
 						$tracker->delete_record( $attachment_id, $offload->size_name );
 					}
 				}
-				wp_send_json_success( array( 'message' => sprintf( __( 'Deleted %d file(s) from CDN.', 'clockwork-offloader' ), $deleted ) ) );
+				wp_send_json_success( array( 'message' => sprintf( __( 'Deleted %d file(s) from Cloud.', 'clockwork-offloader' ), $deleted ) ) );
 			}
 		}
 	}
@@ -4113,9 +4131,33 @@ class Clockwork_Offloader_Admin {
 			) );
 		}
 		
-		wp_send_json_success( array( 
-			'message' => __( 'Connection test successful! Your S3 configuration is working correctly.', 'clockwork-offloader' )
-		) );
+		// Uploads work. Now check the part users actually notice: can a browser read what we upload?
+		$probe    = $s3_service->probe_public_read( $access_key, $secret_key, $bucket, $region, $provider );
+		$response = array(
+			'message' => __( 'Connection test successful! Your S3 configuration is working correctly.', 'clockwork-offloader' ),
+		);
+
+		if ( $probe['public'] === false ) {
+			$response['message'] = __( 'Connected: uploads to the bucket work.', 'clockwork-offloader' );
+			$response['warning'] = sprintf(
+				/* translators: 1: HTTP status code, 2: provider name */
+				__( 'But files in this bucket are not publicly readable (a test object returned HTTP %1$d). Offloaded images will upload fine and then fail to display. %2$s', 'clockwork-offloader' ),
+				$probe['status'],
+				( $provider === 'digitalocean' )
+					? __( 'In the DigitalOcean control panel set the Space\'s file listing / permissions so uploaded files are public, or serve through a CDN endpoint.', 'clockwork-offloader' )
+					: __( 'This bucket most likely has "Bucket owner enforced" object ownership (the default for new buckets), which disables ACLs, so public access has to come from a bucket policy. Add this policy under Permissions → Bucket policy in the S3 console, then re-run the test:', 'clockwork-offloader' )
+			);
+			$response['policy_json'] = $probe['policy_json'];
+			$response['probe_url']   = $probe['url'];
+		} elseif ( $probe['public'] === null && ! empty( $probe['error'] ) ) {
+			$response['warning'] = sprintf(
+				/* translators: %s: error text */
+				__( 'Could not confirm that uploaded files are publicly readable: %s. Check an offloaded image in a browser after setup.', 'clockwork-offloader' ),
+				$probe['error']
+			);
+		}
+
+		wp_send_json_success( $response );
 	}
 	
 	/**
@@ -4493,7 +4535,8 @@ class Clockwork_Offloader_Admin {
 		// Build expected S3 URL pattern
 		$s3_url_pattern = '';
 		if ( $bucket && $region ) {
-			$s3_url_pattern = "https://{$bucket}.s3.{$region}.amazonaws.com";
+			$provider       = ! empty( $credentials['provider'] ) ? $credentials['provider'] : 'aws';
+			$s3_url_pattern = Clockwork_Offloader_S3_Service::build_public_url( $bucket, '', $region, $provider );
 		}
 		
 		// Get site URL for local comparison
@@ -4530,7 +4573,8 @@ class Clockwork_Offloader_Admin {
 			
 			$checked_count++;
 			$is_s3 = ( $s3_url_pattern && strpos( $url, $s3_url_pattern ) === 0 ) || 
-			         ( strpos( $url, 's3.' ) !== false && strpos( $url, 'amazonaws.com' ) !== false );
+			         ( strpos( $url, 's3.' ) !== false && strpos( $url, 'amazonaws.com' ) !== false ) ||
+			         ( strpos( $url, 'digitaloceanspaces.com' ) !== false );
 			$is_local = strpos( $url, $local_url_pattern ) === 0 || strpos( $url, $site_url ) === 0;
 			
 			if ( $expected_location === 's3' ) {

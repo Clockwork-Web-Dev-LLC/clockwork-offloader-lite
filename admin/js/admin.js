@@ -364,10 +364,10 @@
 			var confirmMessage;
 			if (!onServer) {
 				// File is not on server - show severe warning
-				confirmMessage = 'WARNING: This file is NOT on the server. Deleting from CDN will permanently delete this file. Are you absolutely sure you want to continue?';
+				confirmMessage = 'WARNING: This file is NOT on the server. Deleting from Cloud will permanently delete this file. Are you absolutely sure you want to continue?';
 			} else {
 				// File is on server - regular warning
-				confirmMessage = 'Are you sure you want to delete this file from CDN? The file will remain on the server.';
+				confirmMessage = 'Are you sure you want to delete this file from Cloud? The file will remain on the server.';
 			}
 			
 			if (!confirm(confirmMessage)) {
@@ -392,19 +392,19 @@
 				},
 				success: function(response) {
 					if (response.success) {
-						showNotice('File deleted from CDN successfully.', 'success');
+						showNotice('File deleted from Cloud successfully.', 'success');
 						setTimeout(function() {
 							window.location.reload();
 						}, 1000);
 					} else {
-						var errorMsg = response.data && response.data.message ? response.data.message : 'Failed to delete file from CDN.';
+						var errorMsg = response.data && response.data.message ? response.data.message : 'Failed to delete file from Cloud.';
 						showNotice(errorMsg, 'error');
 						$button.prop('disabled', false);
 						$spinner.removeClass('is-active');
 					}
 				},
 				error: function(xhr, status, error) {
-					var errorMsg = 'An error occurred while deleting from CDN.';
+					var errorMsg = 'An error occurred while deleting from Cloud.';
 					
 					// Try to parse error response if available
 					if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
@@ -452,19 +452,19 @@
 				},
 				success: function(response) {
 					if (response.success) {
-						showNotice('File downloaded from CDN successfully.', 'success');
+						showNotice('File downloaded from Cloud successfully.', 'success');
 						setTimeout(function() {
 							window.location.reload();
 						}, 1000);
 					} else {
-						var errorMsg = response.data && response.data.message ? response.data.message : 'Failed to download file from CDN.';
+						var errorMsg = response.data && response.data.message ? response.data.message : 'Failed to download file from Cloud.';
 						showNotice(errorMsg, 'error');
 						$button.prop('disabled', false);
 						$spinner.removeClass('is-active');
 					}
 				},
 				error: function() {
-					showNotice('An error occurred while downloading from CDN.', 'error');
+					showNotice('An error occurred while downloading from Cloud.', 'error');
 					$button.prop('disabled', false);
 					$spinner.removeClass('is-active');
 				},
@@ -2357,6 +2357,7 @@
 				// Save step 1 data, then proceed to step 2
 				var originalHtml = $button.html();
 				$button.prop('disabled', true).html('Saving...');
+				setSetupStatus('Checking your credentials with the storage provider. This can take up to 30 seconds.', 'info');
 				
 				var postData = {
 					action: 'clockwork_offloader_setup_step1',
@@ -2380,6 +2381,7 @@
 						console.log('Step 1 AJAX response:', response);
 						if (response && response.success) {
 							// Proceed to step 2
+							setSetupStatus('Credentials verified. Loading step 2…', 'success');
 							console.log('Navigating to step 2...');
 							window.location.href = '?page=clockwork-offloader&step=2';
 						} else {
@@ -2395,8 +2397,12 @@
 					error: function(xhr, status, error) {
 						console.log('Step 1 AJAX error:', status, error, xhr.responseText);
 						var errorMsg = 'An error occurred while saving.';
-						if (status === 'timeout') {
-							errorMsg = 'Request timed out. Please try again.';
+						if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
+							errorMsg = xhr.responseJSON.data.message;
+						} else if (status === 'timeout') {
+							errorMsg = 'The server did not answer within 30 seconds. It may be unable to reach the storage provider; try again or check the server\'s outbound connectivity.';
+						} else if (xhr.status) {
+							errorMsg = 'The server returned HTTP ' + xhr.status + ' while saving step 1. Check the PHP error log for details.';
 						}
 						showSetupNotice(errorMsg, 'error');
 						$button.prop('disabled', false).html(originalHtml);
@@ -2490,10 +2496,17 @@
 								showSetupNotice('No buckets found in your AWS account.', 'warning');
 							}
 						} else {
+							$select.html('<option value="">Unable to list buckets</option>');
+							if (response.data && response.data.bucket_scoped) {
+								// Key can't list buckets: fall back to manual entry and hide browse.
+								$('input[name="bucket_method"][value="manual"]').prop('checked', true).trigger('change');
+								$('input[name="bucket_method"][value="browse"]').closest('div').hide();
+							}
 							showSetupNotice(response.data.message || 'Failed to load buckets.', 'error');
 						}
 					},
 					error: function(xhr, status, error) {
+						$select.html('<option value="">Unable to list buckets</option>');
 						var errorMsg = 'An error occurred while loading buckets.';
 						if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
 							errorMsg = xhr.responseJSON.data.message;
@@ -2602,6 +2615,18 @@
 							var successHtml = '<div class="notice notice-success clockwork-notice inline" style="margin: 15px 0; padding: 15px; border-left: 4px solid #00a32a; background: #fff; display: flex; align-items: center; gap: 10px;"><span style="color: #00a32a; font-size: 24px;">✓</span><p style="margin: 0; font-size: 14px; font-weight: 600; color: #00a32a;">' + message + '</p></div>';
 							console.log('Showing success message:', message);
 							console.log('Result element:', $result, 'length:', $result.length);
+							if (response.data && response.data.warning) {
+								var esc = function(t) { return $('<div>').text(t).html(); };
+								successHtml += '<div class="notice notice-warning clockwork-notice inline" style="margin: 0 0 15px; padding: 15px; border-left: 4px solid #dba617; background: #fcf9e8; border-radius: 4px;">' +
+									'<p style="margin: 0 0 8px; font-weight: 600;">' + esc(response.data.warning) + '</p>';
+								if (response.data.policy_json) {
+									successHtml += '<pre style="margin: 8px 0 0; padding: 12px; background: #1d2327; color: #f0f0f1; border-radius: 4px; font-size: 12px; overflow: auto; user-select: all;">' + esc(response.data.policy_json) + '</pre>';
+								}
+								if (response.data.probe_url) {
+									successHtml += '<p style="margin: 8px 0 0; color: #646970; font-size: 12px;">Probe URL tried: ' + esc(response.data.probe_url) + '</p>';
+								}
+								successHtml += '</div>';
+							}
 							$result.html(successHtml);
 							console.log('Result div after update:', $result.html());
 							$('#clockwork-setup-complete-btn').show();
@@ -2797,6 +2822,9 @@
 				var $button = $('.clockwork-setup-next[data-step="' + step + '"]');
 				var originalHtml = $button.html();
 				$button.prop('disabled', true).html('Processing...');
+				setSetupStatus(step === 2
+					? 'Checking that your key can access the bucket in the selected region. This can take up to 30 seconds.'
+					: 'Saving settings. This can take up to 30 seconds.', 'info');
 				
 				console.log('Sending AJAX request for step', step, 'with data:', data);
 				
@@ -2808,6 +2836,7 @@
 					success: function(response) {
 						console.log('Step', step, 'AJAX response:', response);
 						if (response.success) {
+							setSetupStatus('Done. Loading the next step…', 'success');
 							if (response.data.next_step) {
 								navigateToStep(response.data.next_step);
 							} else {
@@ -2843,9 +2872,11 @@
 						if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
 							errorMsg = xhr.responseJSON.data.message;
 						} else if (status === 'timeout') {
-							errorMsg = 'Request timed out. Please check your connection and try again.';
+							errorMsg = 'The server did not answer within 30 seconds. It may be unable to reach the storage provider; try again or check the server\'s outbound connectivity.';
 						} else if (xhr.status === 0) {
 							errorMsg = 'Network error. Please check your connection.';
+						} else if (xhr.status) {
+							errorMsg = 'The server returned HTTP ' + xhr.status + '. Check the PHP error log for details.';
 						}
 						console.error('Step ' + step + ' error:', status, error, xhr);
 						showSetupNotice(errorMsg, 'error');
@@ -2862,15 +2893,42 @@
 				window.location.href = url.toString();
 			}
 			
+			// Inline status line under the wizard buttons, so a slow or failing
+			// request never looks like a frozen page.
+			function setSetupStatus(message, state) {
+				var $actions = $('.clockwork-setup-step .clockwork-setup-actions').first();
+				if (!$actions.length) { return; }
+				var $status = $actions.find('.clockwork-setup-status');
+				if (!$status.length) {
+					$status = $('<p class="clockwork-setup-status" style="flex-basis: 100%; width: 100%; margin: 12px 0 0; font-size: 13px;"></p>');
+					$actions.css('flex-wrap', 'wrap').append($status);
+				}
+				if (!message) { $status.hide().empty(); return; }
+				var color = state === 'error' ? '#d63638' : (state === 'success' ? '#00a32a' : '#646970');
+				var prefix = state === 'error' ? '✕ ' : (state === 'success' ? '✓ ' : '⏳ ');
+				$status.css('color', color).html(prefix + message).show();
+			}
+
 			function showSetupNotice(message, type) {
 				type = type || 'info';
-				var $notice = $('<div class="notice notice-' + type + ' is-dismissible"><p>' + message + '</p></div>');
+				// Replace any previous wizard notice so errors don't stack up.
+				$('.clockwork-setup-content > .clockwork-setup-notice').remove();
+				var $notice = $('<div class="notice notice-' + type + ' is-dismissible clockwork-setup-notice"><p>' + message + '</p></div>');
 				$('.clockwork-setup-content').prepend($notice);
-				setTimeout(function() {
-					$notice.fadeOut(function() {
-						$(this).remove();
-					});
-				}, 5000);
+				if ($notice[0] && $notice[0].scrollIntoView) {
+					$notice[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+				}
+				if (type === 'error') {
+					setSetupStatus(message, 'error');
+				}
+				// Errors stay until the next action; informational notices fade.
+				if (type !== 'error') {
+					setTimeout(function() {
+						$notice.fadeOut(function() {
+							$(this).remove();
+						});
+					}, 5000);
+				}
 			}
 		}
 		

@@ -491,15 +491,174 @@ class Clockwork_Offloader_S3_Service {
 	 * @return string File URL
 	 */
 	private function construct_file_url( $bucket, $s3_key, $region, $provider ) {
+		return self::build_public_url( $bucket, $s3_key, $region, $provider );
+	}
+
+	/**
+	 * Build the public HTTPS URL for an object.
+	 *
+	 * This is the single place the URL shape is decided; every other class must
+	 * call it rather than concatenating hostnames itself.
+	 *
+	 * AWS: bucket names that contain a dot (e.g. "example.org") cannot use the
+	 * virtual-hosted form {bucket}.s3.{region}.amazonaws.com over HTTPS, because
+	 * Amazon's wildcard certificate only covers a single label — browsers show
+	 * ERR_CERT_COMMON_NAME_INVALID. Those buckets get the path-style form
+	 * s3.{region}.amazonaws.com/{bucket}/{key} instead, which is what WP Offload
+	 * Media does too. Dot-free buckets keep the virtual-hosted form.
+	 *
+	 * DigitalOcean Spaces names cannot contain dots, so they are always
+	 * {space}.{region}.digitaloceanspaces.com/{key}.
+	 *
+	 * @param string $bucket   Bucket / Space name.
+	 * @param string $s3_key   Object key (may be empty to get the base URL).
+	 * @param string $region   Region code.
+	 * @param string $provider 'aws' or 'digitalocean'.
+	 * @return string URL without a trailing slash when $s3_key is empty.
+	 */
+	public static function build_public_url( $bucket, $s3_key, $region, $provider = 'aws' ) {
+		$s3_key = ltrim( (string) $s3_key, '/' );
+		$region = $region ? $region : 'us-east-1';
+		$suffix = $s3_key !== '' ? '/' . $s3_key : '';
+
 		if ( $provider === 'digitalocean' ) {
-			// DO Spaces URL format: https://{space-name}.{region}.digitaloceanspaces.com/{key}
-			return 'https://' . $bucket . '.' . $region . '.digitaloceanspaces.com/' . $s3_key;
-		} else {
-			// AWS S3 URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
-			return 'https://' . $bucket . '.s3.' . $region . '.amazonaws.com/' . $s3_key;
+			return 'https://' . $bucket . '.' . $region . '.digitaloceanspaces.com' . $suffix;
 		}
+
+		if ( self::bucket_requires_path_style( $bucket ) ) {
+			return 'https://s3.' . $region . '.amazonaws.com/' . $bucket . $suffix;
+		}
+
+		return 'https://' . $bucket . '.s3.' . $region . '.amazonaws.com' . $suffix;
+	}
+
+	/**
+	 * Whether an AWS bucket must be addressed path-style over HTTPS.
+	 *
+	 * @param string $bucket Bucket name.
+	 * @return bool
+	 */
+	public static function bucket_requires_path_style( $bucket ) {
+		return strpos( (string) $bucket, '.' ) !== false;
 	}
 	
+	/**
+	 * Check whether objects written to the bucket are publicly readable.
+	 *
+	 * Uploads a tiny marker object with the same (ACL-less) request the plugin
+	 * uses for media, fetches its public URL anonymously, then deletes it.
+	 * Buckets created since April 2023 default to "Bucket owner enforced"
+	 * ownership, which disables ACLs, so public delivery needs a bucket policy;
+	 * without one every offloaded file returns 403 even though uploads succeed.
+	 *
+	 * @param string $access_key Access key.
+	 * @param string $secret_key Secret key.
+	 * @param string $bucket     Bucket name.
+	 * @param string $region     Region.
+	 * @param string $provider   'aws' or 'digitalocean'.
+	 * @return array {
+	 *   @type bool|null $public       True if anonymously readable, false if not, null if the probe itself failed.
+	 *   @type int       $status       HTTP status of the anonymous request (0 if none).
+	 *   @type string    $url          Public URL that was probed.
+	 *   @type string    $error        Error text when $public is null.
+	 *   @type string    $policy_json  Suggested bucket policy (AWS only).
+	 * }
+	 */
+	public function probe_public_read( $access_key, $secret_key, $bucket, $region, $provider = 'aws' ) {
+		$result = array(
+			'public'      => null,
+			'status'      => 0,
+			'url'         => '',
+			'error'       => '',
+			'policy_json' => '',
+		);
+
+		if ( ! class_exists( 'Aws\S3\S3Client' ) ) {
+			$result['error'] = __( 'AWS SDK is not installed.', 'clockwork-offloader' );
+			return $result;
+		}
+
+		$config = array(
+			'version'     => 'latest',
+			'region'      => $region,
+			'credentials' => array( 'key' => $access_key, 'secret' => $secret_key ),
+		);
+		if ( $provider === 'digitalocean' ) {
+			$config['endpoint']                = 'https://' . $region . '.digitaloceanspaces.com';
+			$config['use_path_style_endpoint'] = true;
+		}
+
+		$key           = 'clockwork-offloader-public-read-test-' . wp_generate_password( 12, false ) . '.txt';
+		$result['url'] = self::build_public_url( $bucket, $key, $region, $provider );
+
+		try {
+			$client = new Aws\S3\S3Client( $config );
+			$client->putObject( array(
+				'Bucket'      => $bucket,
+				'Key'         => $key,
+				'Body'        => 'clockwork offloader public-read probe',
+				'ContentType' => 'text/plain',
+			) );
+
+			$response = wp_remote_head( $result['url'], array( 'timeout' => 10, 'redirection' => 0 ) );
+			if ( is_wp_error( $response ) ) {
+				$result['error'] = $response->get_error_message();
+			} else {
+				$result['status'] = (int) wp_remote_retrieve_response_code( $response );
+				$result['public'] = ( $result['status'] === 200 );
+			}
+
+			try {
+				$client->deleteObject( array( 'Bucket' => $bucket, 'Key' => $key ) );
+			} catch ( Exception $cleanup_exception ) {
+				// Leaving a 40-byte text file behind is not worth failing the probe over.
+			}
+		} catch ( Exception $e ) {
+			$result['error'] = $e->getMessage();
+		}
+
+		if ( $provider !== 'digitalocean' ) {
+			$result['policy_json'] = wp_json_encode( array(
+				'Version'   => '2012-10-17',
+				'Statement' => array(
+					array(
+						'Sid'       => 'ClockworkOffloaderPublicRead',
+						'Effect'    => 'Allow',
+						'Principal' => '*',
+						'Action'    => 's3:GetObject',
+						'Resource'  => 'arn:aws:s3:::' . $bucket . '/*',
+					),
+				),
+			), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Remember whether the configured access key may call ListBuckets.
+	 *
+	 * Bucket-scoped IAM users (no s3:ListAllMyBuckets) are denied ListBuckets even
+	 * though they are otherwise valid, so the setup wizard uses this to decide
+	 * whether "Browse existing buckets" can work at all.
+	 *
+	 * @param bool $can_list True if ListBuckets succeeded, false if it was denied.
+	 */
+	public static function remember_can_list_buckets( $can_list ) {
+		set_transient( 'clockwork_offloader_can_list_buckets', $can_list ? 'yes' : 'no', DAY_IN_SECONDS );
+	}
+
+	/**
+	 * Whether the access key is known to be allowed to call ListBuckets.
+	 *
+	 * Defaults to true when nothing has been recorded yet.
+	 *
+	 * @return bool
+	 */
+	public static function can_list_buckets() {
+		return get_transient( 'clockwork_offloader_can_list_buckets' ) !== 'no';
+	}
+
 	/**
 	 * Test S3 connection
 	 *
@@ -547,8 +706,21 @@ class Clockwork_Offloader_S3_Service {
 				
 				$test_client = new Aws\S3\S3Client( $config );
 				
-				// Test by listing buckets (doesn't require bucket parameter)
-				$test_client->listBuckets();
+				// Test by listing buckets (doesn't require bucket parameter).
+				// A bucket-scoped IAM policy (no s3:ListAllMyBuckets) returns
+				// AccessDenied here even though the credentials are valid, so
+				// treat that as "authenticated, not authorised to list" and fall
+				// through to the bucket-level check below. Genuine credential
+				// failures (InvalidAccessKeyId, SignatureDoesNotMatch) still throw.
+				try {
+					$test_client->listBuckets();
+					self::remember_can_list_buckets( true );
+				} catch ( \Aws\S3\Exception\S3Exception $list_exception ) {
+					if ( $list_exception->getAwsErrorCode() !== 'AccessDenied' ) {
+						throw $list_exception;
+					}
+					self::remember_can_list_buckets( false );
+				}
 				
 				// If bucket provided, test bucket access
 				if ( $bucket ) {

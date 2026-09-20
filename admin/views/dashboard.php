@@ -155,6 +155,8 @@ if ( ! isset( $has_credentials ) ) {
 	}
 	?>
 	
+	<?php include CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/views/partials/get-started.php'; ?>
+
 	<div class="clockwork-offloader-stats">
 		<div class="postbox">
 			<div class="postbox-header">

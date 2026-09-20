@@ -300,11 +300,7 @@ class Clockwork_Offloader_Tracker {
 		$region = ! empty( $credentials['region'] ) ? $credentials['region'] : 'us-east-1';
 		$provider = ! empty( $credentials['provider'] ) ? $credentials['provider'] : 'aws';
 
-		if ( $provider === 'digitalocean' ) {
-			return 'https://' . $record->bucket . '.' . $region . '.digitaloceanspaces.com/' . $record->s3_key;
-		}
-
-		return 'https://' . $record->bucket . '.s3.' . $region . '.amazonaws.com/' . $record->s3_key;
+		return Clockwork_Offloader_S3_Service::build_public_url( $record->bucket, $record->s3_key, $region, $provider );
 	}
 
 	/**
@@ -337,14 +333,8 @@ class Clockwork_Offloader_Tracker {
 		$region = ! empty( $credentials['region'] ) ? $credentials['region'] : 'us-east-1';
 		$provider = ! empty( $credentials['provider'] ) ? $credentials['provider'] : 'aws';
 		
-		// Construct URL based on provider
-		if ( $provider === 'digitalocean' ) {
-			// DO Spaces URL format: https://{space-name}.{region}.digitaloceanspaces.com/{key}
-			return 'https://' . $record->bucket . '.' . $region . '.digitaloceanspaces.com/' . $record->s3_key;
-		} else {
-			// AWS S3 URL format: https://{bucket}.s3.{region}.amazonaws.com/{key}
-		return 'https://' . $record->bucket . '.s3.' . $region . '.amazonaws.com/' . $record->s3_key;
-		}
+		// Path-style for dotted AWS buckets, virtual-hosted otherwise (see build_public_url).
+		return Clockwork_Offloader_S3_Service::build_public_url( $record->bucket, $record->s3_key, $region, $provider );
 	}
 	
 	/**

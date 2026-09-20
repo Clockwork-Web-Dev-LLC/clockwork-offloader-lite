@@ -23,10 +23,10 @@
 			
 			if (!onServer) {
 				// File is not on server - show severe warning
-				confirmMessage = 'WARNING: This file is NOT on the server. Deleting from CDN will permanently delete this file. Are you absolutely sure you want to continue?';
+				confirmMessage = 'WARNING: This file is NOT on the server. Deleting from Cloud will permanently delete this file. Are you absolutely sure you want to continue?';
 			} else {
 				// File is on server - regular warning
-				confirmMessage = 'Are you sure you want to delete this file from CDN? The file will remain on the server.';
+				confirmMessage = 'Are you sure you want to delete this file from Cloud? The file will remain on the server.';
 			}
 			
 			if (!confirm(confirmMessage)) {

@@ -267,6 +267,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</label>
 						</th>
 						<td>
+							<?php $can_list_buckets = Clockwork_Offloader_S3_Service::can_list_buckets(); ?>
 							<div class="clockwork-bucket-selector" style="display: block;">
 								<div style="display: flex; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #c3c4c7; clear: both; width: 100%;">
 									<label style="display: flex; align-items: center; margin-right: 12px; margin-bottom: 0; white-space: nowrap;">
@@ -276,6 +277,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<input type="text" id="setup_bucket" name="bucket" value="<?php echo esc_attr( isset( $setup_data['bucket'] ) ? $setup_data['bucket'] : '' ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'Enter bucket name...', 'clockwork-offloader' ); ?>" style="flex: 1; max-width: 400px;" />
 								</div>
 								
+								<?php if ( $can_list_buckets ) : ?>
 								<div style="display: flex; align-items: center; clear: both; width: 100%;">
 									<label style="display: flex; align-items: center; margin-right: 12px; margin-bottom: 0; white-space: nowrap;">
 										<input type="radio" name="bucket_method" value="browse" style="margin-right: 6px;" />
@@ -288,8 +290,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<span class="spinner" id="setup-bucket-spinner" style="float: none; margin-left: 5px; display: none;"></span>
 									</div>
 								</div>
+								<?php endif; ?>
 							</div>
-							<p class="description"><?php esc_html_e( 'Enter your S3 bucket name manually or browse your existing buckets.', 'clockwork-offloader' ); ?></p>
+							<?php if ( $can_list_buckets ) : ?>
+								<p class="description"><?php esc_html_e( 'Enter your S3 bucket name manually or browse your existing buckets.', 'clockwork-offloader' ); ?></p>
+							<?php else : ?>
+								<p class="description"><?php esc_html_e( 'Enter the bucket name exactly as it appears in your storage console.', 'clockwork-offloader' ); ?></p>
+								<div class="notice notice-info inline" style="margin: 12px 0 0;">
+									<p><?php esc_html_e( 'Your access key is scoped to a single bucket and is not allowed to list buckets, so browsing is unavailable. That is the recommended setup for security; just type the bucket name (not the IAM user name) and pick the region it lives in.', 'clockwork-offloader' ); ?></p>
+								</div>
+							<?php endif; ?>
 						</td>
 					</tr>
 				</table>
