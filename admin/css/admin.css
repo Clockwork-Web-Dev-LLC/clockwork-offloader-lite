@@ -1887,3 +1887,440 @@
 	}
 }
 
+/* ==========================================================================
+   iOS-Style Toggle Switch Component
+   ========================================================================== */
+.clockwork-switch-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 16px 0;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.clockwork-switch-item:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.clockwork-switch-item:first-child {
+	padding-top: 4px;
+}
+
+.clockwork-switch {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+	flex-shrink: 0;
+	margin-top: 2px;
+	cursor: pointer;
+}
+
+.clockwork-switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.clockwork-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #cbd5e1;
+	transition: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+	border-radius: 24px;
+}
+
+.clockwork-slider:before {
+	position: absolute;
+	content: "";
+	height: 18px;
+	width: 18px;
+	left: 3px;
+	bottom: 3px;
+	background-color: #ffffff;
+	transition: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+	border-radius: 50%;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.clockwork-switch input:checked + .clockwork-slider {
+	background-color: #10b981;
+}
+
+.clockwork-switch input:focus + .clockwork-slider {
+	box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.clockwork-switch input:checked + .clockwork-slider:before {
+	transform: translateX(20px);
+}
+
+.clockwork-switch-content {
+	flex: 1;
+	min-width: 0;
+}
+
+.clockwork-switch-title {
+	font-size: 14px;
+	font-weight: 600;
+	color: #1e293b;
+	line-height: 1.35;
+	margin-bottom: 3px;
+}
+
+.clockwork-switch-desc {
+	font-size: 13px;
+	line-height: 1.45;
+	color: #64748b;
+}
+
+.clockwork-switch-subfield {
+	margin-top: 10px;
+	padding-top: 10px;
+	border-top: 1px dashed #e2e8f0;
+}
+
+/* ==========================================================================
+   2-Column Settings Layout (Storage vs Delivery)
+   ========================================================================== */
+.clockwork-settings-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+	margin-top: 20px;
+}
+
+@media (max-width: 960px) {
+	.clockwork-settings-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.clockwork-settings-card {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	padding: 24px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+	display: flex;
+	flex-direction: column;
+}
+
+.clockwork-settings-card .clockwork-card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 18px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.clockwork-settings-card .clockwork-card-header h3 {
+	margin: 0;
+	font-size: 17px;
+	font-weight: 600;
+	color: #0f172a;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Provider Box */
+.clockwork-provider-box {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 14px 16px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	margin-bottom: 16px;
+}
+
+.clockwork-provider-icon {
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	color: #e07a14;
+	font-size: 20px;
+	flex-shrink: 0;
+}
+
+.clockwork-provider-details {
+	flex: 1;
+	min-width: 0;
+}
+
+.clockwork-provider-name {
+	font-weight: 600;
+	font-size: 14px;
+	color: #0f172a;
+}
+
+.clockwork-provider-meta {
+	font-size: 12.5px;
+	color: #64748b;
+	margin-top: 2px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.clockwork-bucket-tag {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	background: #ffffff;
+	border: 1px solid #cbd5e1;
+	padding: 1px 6px;
+	border-radius: 4px;
+	color: #2271b1;
+	font-weight: 500;
+}
+
+.clockwork-region-tag {
+	color: #64748b;
+}
+
+/* Health Connection Banner */
+.clockwork-health-box {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 14px;
+	border-radius: 6px;
+	margin-bottom: 20px;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.clockwork-health-connected {
+	background: #f0fdf4;
+	border: 1px solid #bbf7d0;
+	color: #166534;
+}
+
+.clockwork-health-connected .dashicons {
+	color: #15803d;
+	font-size: 19px;
+	flex-shrink: 0;
+}
+
+.clockwork-health-warning {
+	background: #fffbeb;
+	border: 1px solid #fef3c7;
+	color: #92400e;
+}
+
+.clockwork-health-warning .dashicons {
+	color: #d97706;
+	font-size: 19px;
+	flex-shrink: 0;
+}
+
+.clockwork-health-text {
+	flex: 1;
+}
+
+.clockwork-recheck-link {
+	color: #15803d;
+	text-decoration: underline;
+	font-size: 12px;
+	flex-shrink: 0;
+	margin-left: auto;
+}
+
+.clockwork-recheck-link:hover {
+	color: #0f5132;
+}
+
+/* Credentials Drawer */
+.clockwork-creds-drawer {
+	padding: 18px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	margin-bottom: 20px;
+}
+
+.clockwork-creds-drawer .form-group {
+	margin-bottom: 14px;
+}
+
+.clockwork-creds-drawer .form-group:last-child {
+	margin-bottom: 0;
+}
+
+.clockwork-creds-drawer label {
+	display: block;
+	font-weight: 600;
+	font-size: 13px;
+	color: #334155;
+	margin-bottom: 4px;
+}
+
+.clockwork-creds-drawer input[type="text"],
+.clockwork-creds-drawer input[type="password"],
+.clockwork-creds-drawer input[type="url"],
+.clockwork-creds-drawer select {
+	width: 100%;
+	max-width: 100%;
+	border-radius: 4px;
+	border: 1px solid #cbd5e1;
+	padding: 6px 10px;
+	font-size: 13.5px;
+	box-sizing: border-box;
+}
+
+.clockwork-creds-drawer .description {
+	font-size: 12px;
+	color: #64748b;
+	margin-top: 4px;
+}
+
+/* URL Preview Card */
+.clockwork-preview-card {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	padding: 18px 24px;
+	margin-top: 24px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.clockwork-preview-card h4 {
+	margin: 0 0 8px 0;
+	font-size: 14px;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.clockwork-preview-url {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	padding: 10px 14px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 13px;
+	color: #0f172a;
+	word-break: break-all;
+}
+
+/* Collapsible Advanced Accordion */
+.clockwork-advanced-settings {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	margin-top: 24px;
+	padding: 16px 24px;
+}
+
+.clockwork-advanced-settings summary {
+	font-size: 14px;
+	font-weight: 600;
+	color: #334155;
+	cursor: pointer;
+	user-select: none;
+}
+
+.clockwork-advanced-settings summary:hover {
+	color: #0f172a;
+}
+
+.clockwork-advanced-content {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #f1f5f9;
+}
+
+/* ==========================================================================
+   Streamlined Bulk Tool Cards
+   ========================================================================== */
+.clockwork-tool-row {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 22px 24px;
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	margin-bottom: 16px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.clockwork-tool-icon-col {
+	width: 48px;
+	height: 48px;
+	background: #f0f7ff;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #2271b1;
+	font-size: 22px;
+	flex-shrink: 0;
+}
+
+.clockwork-tool-icon-col.tool-icon-download {
+	background: #eff6ff;
+	color: #3b82f6;
+}
+
+.clockwork-tool-icon-col.tool-icon-trash {
+	background: #fef2f2;
+	color: #ef4444;
+}
+
+.clockwork-tool-info-col {
+	flex: 1;
+	min-width: 0;
+}
+
+.clockwork-tool-title {
+	font-size: 16px;
+	font-weight: 600;
+	color: #0f172a;
+	margin-bottom: 6px;
+}
+
+.clockwork-tool-desc {
+	font-size: 13px;
+	line-height: 1.5;
+	color: #64748b;
+	margin: 0;
+}
+
+.clockwork-tool-action-col {
+	flex-shrink: 0;
+	margin-left: auto;
+}
+
+.button-salmon {
+	background-color: #f06a5b !important;
+	border-color: #e55b4b !important;
+	color: #ffffff !important;
+	font-weight: 600 !important;
+	padding: 6px 18px !important;
+	height: auto !important;
+	border-radius: 6px !important;
+	transition: background-color 0.15s ease !important;
+}
+
+.button-salmon:hover,
+.button-salmon:focus {
+	background-color: #e25443 !important;
+	border-color: #d14636 !important;
+	color: #ffffff !important;
+}
+
+

@@ -144,10 +144,12 @@
 		
 		// Enable/disable throttle rate field based on throttle toggle
 		$('#enable_throttle').on('change', function() {
+			var $throttleField = $('#throttle_rate_field');
 			var $throttleRate = $('#throttle_rate');
 			var $throttleWrapper = $throttleRate.closest('.throttle-rate-wrapper');
 			
 			if ($(this).is(':checked')) {
+				$throttleField.slideDown(150);
 				$throttleRate.prop('disabled', false);
 				$throttleWrapper.css('opacity', '1');
 				// Set default to 100 if empty or 0
@@ -156,6 +158,7 @@
 					$throttleRate.val('100');
 				}
 			} else {
+				$throttleField.slideUp(150);
 				$throttleRate.prop('disabled', true);
 				$throttleWrapper.css('opacity', '0.5');
 			}
@@ -165,6 +168,65 @@
 		if ($('#enable_throttle').length) {
 			$('#enable_throttle').trigger('change');
 		}
+
+		// Toggle Storage Credentials Drawer
+		$('#toggle-storage-creds').on('click', function(e) {
+			e.preventDefault();
+			var $drawer = $('#storage-creds-drawer');
+			$drawer.slideToggle(200);
+			var isVisible = $drawer.is(':visible');
+			$(this).text(isVisible ? 'Close' : 'Edit');
+		});
+
+		// Toggle Delivery Drawer
+		$('#toggle-delivery-drawer').on('click', function(e) {
+			e.preventDefault();
+			var $drawer = $('#delivery-creds-drawer');
+			$drawer.slideToggle(200);
+			var isVisible = $drawer.is(':visible');
+			$(this).text(isVisible ? 'Close' : 'Edit');
+		});
+
+		// Prefix Toggle
+		$('#enable_bucket_prefix').on('change', function() {
+			var $prefixField = $('#bucket_prefix_field');
+			if ($(this).is(':checked')) {
+				$prefixField.slideDown(150);
+				if (!$('#s3_base_path').val()) {
+					$('#s3_base_path').val('wp-content/uploads/').trigger('input');
+				}
+			} else {
+				$prefixField.slideUp(150);
+				$('#s3_base_path').val('').trigger('input');
+			}
+			updateLiveUrlPreview();
+		});
+
+		// Dynamic URL Preview Updates
+		function updateLiveUrlPreview() {
+			if (!$('#clockwork-live-url-preview').length) return;
+			var cdn = ($('#cdn_domain').val() || '').trim();
+			var bucket = ($('#s3_bucket_text').val() || '').trim() || 'example-bucket';
+			var region = $('#s3_region').val() || 'us-east-1';
+			var prefix = $('#enable_bucket_prefix').is(':checked') ? ($('#s3_base_path').val() || '').trim() : '';
+			if (prefix && prefix.substr(-1) !== '/') prefix += '/';
+			if (prefix && prefix.charAt(0) === '/') prefix = prefix.substr(1);
+			var sampleKey = (prefix || 'wp-content/uploads/') + '2026/09/sample-image.jpg';
+
+			var url = '';
+			if (cdn) {
+				url = cdn.replace(/\/+$/, '') + '/' + sampleKey;
+			} else {
+				if (bucket.indexOf('.') !== -1) {
+					url = 'https://s3.' + region + '.amazonaws.com/' + bucket + '/' + sampleKey;
+				} else {
+					url = 'https://' + bucket + '.s3.' + region + '.amazonaws.com/' + sampleKey;
+				}
+			}
+			$('#clockwork-live-url-preview').text(url);
+		}
+
+		$('#cdn_domain, #s3_bucket_text, #s3_region, #s3_base_path').on('input change', updateLiveUrlPreview);
 		
 		// Before form submission, ensure the correct field value is used
 		$('form').on('submit', function() {
