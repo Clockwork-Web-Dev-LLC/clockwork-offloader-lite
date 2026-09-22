@@ -79,4 +79,52 @@ class UrlRewriterTest extends TestCase {
 	public function test_rewrite_content_returns_unchanged_for_empty_string(): void {
 		$this->assertSame( '', $this->rewriter->rewrite_content( '' ) );
 	}
+
+	public function test_rewrite_content_replaces_beaver_builder_css_urls(): void {
+		Functions\when( 'is_multisite' )->justReturn( false );
+		Functions\when( 'wp_parse_args' )->alias( fn( $a, $d ) => array_merge( $d, (array) $a ) );
+		Functions\when( 'get_option' )->alias( function( $name, $default = false ) {
+			if ( 'clockwork_offloader_settings' === $name ) {
+				return array(
+					'rewrite_urls' => true,
+					'provider'     => 'aws',
+					's3_bucket'    => 'test-bucket',
+					's3_region'    => 'us-east-1',
+					'cdn_domain'   => 'https://cdn.example.com',
+				);
+			}
+			if ( 'clockwork_offloader_table_exists' === $name ) {
+				return true;
+			}
+			return $default;
+		} );
+		Functions\when( 'wp_upload_dir' )->justReturn( array(
+			'baseurl' => 'https://example.com/wp-content/uploads',
+			'basedir' => '/var/www/html/wp-content/uploads',
+		) );
+
+		$mockWpdb = \Mockery::mock( 'wpdb' );
+		$mockWpdb->prefix = 'wp_';
+		$mockWpdb->shouldReceive( 'get_var' )->andReturn( 'wp_clockwork_offloads' )->byDefault();
+		$mockWpdb->shouldReceive( 'prepare' )->andReturn( 'PREPARED' );
+		$row = (object) array(
+			'id'            => 1,
+			'attachment_id' => 19494,
+			'bucket'        => 'test-bucket',
+			's3_key'        => '2026/04/Lake-George.jpg',
+			'original_path' => '/var/www/html/wp-content/uploads/2026/04/Lake-George.jpg',
+			'status'        => 'offloaded',
+			'size_name'     => 'full',
+			'file_size'     => 1024,
+			'offload_date'  => '2026-09-22 12:00:00',
+		);
+		$mockWpdb->shouldReceive( 'get_results' )->andReturn( array( $row ) );
+		$GLOBALS['wpdb'] = $mockWpdb;
+
+		$css = '.fl-node-123 > .fl-row-content-wrap { background-image: url(https://example.com/wp-content/uploads/2026/04/Lake-George.jpg); }';
+		$result = $this->rewriter->rewrite_content( $css );
+
+		$this->assertStringContainsString( 'https://cdn.example.com/2026/04/Lake-George.jpg', $result );
+		unset( $GLOBALS['wpdb'] );
+	}
 }

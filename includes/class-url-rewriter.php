@@ -63,6 +63,13 @@ class Clockwork_Offloader_URL_Rewriter {
 		add_filter( 'the_excerpt', array( $this, 'rewrite_content' ), 99 );
 		add_filter( 'widget_text_content', array( $this, 'rewrite_content' ), 99 );
 		add_filter( 'widget_block_content', array( $this, 'rewrite_content' ), 99 );
+
+		// Page builders (Beaver Builder, Elementor) compiled layout CSS filters.
+		// Rewrites background images and other assets embedded in generated CSS files.
+		add_filter( 'fl_builder_render_css', array( $this, 'rewrite_content' ), 99 );
+		add_filter( 'fl_builder_global_css_string', array( $this, 'rewrite_content' ), 99 );
+		add_filter( 'elementor/css-file/post/parse', array( $this, 'rewrite_content' ), 99 );
+		add_filter( 'elementor/css-file/global/parse', array( $this, 'rewrite_content' ), 99 );
 	}
 
 	/**
