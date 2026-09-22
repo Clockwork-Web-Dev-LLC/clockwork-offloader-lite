@@ -5,8 +5,18 @@
  * Configures the test environment, autoloading, and mocks for WordPress functions.
  */
 
+// Increase memory limit for in-memory token stream processing
+@ini_set( 'memory_limit', '512M' );
+
 // Autoload dependencies
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+
+if ( ! defined( 'WP_DEBUG' ) ) {
+	define( 'WP_DEBUG', true );
+}
+if ( ! defined( 'WP_ENVIRONMENT_TYPE' ) ) {
+	define( 'WP_ENVIRONMENT_TYPE', 'local' );
+}
 
 // Define WordPress constants if not defined
 if ( ! defined( 'ABSPATH' ) ) {
@@ -175,3 +185,37 @@ if ( ! function_exists( 'untrailingslashit' ) ) {
 		return rtrim( (string) $string, '/\\' );
 	}
 }
+
+if ( ! function_exists( 'wp_check_filetype' ) ) {
+	function wp_check_filetype( $filename, $mimes = null ) {
+		return array( 'ext' => pathinfo( $filename, PATHINFO_EXTENSION ), 'type' => 'image/jpeg' );
+	}
+}
+
+if ( ! function_exists( 'plugin_dir_path' ) ) {
+	function plugin_dir_path( $file ) {
+		return dirname( $file ) . '/';
+	}
+}
+
+if ( ! function_exists( 'plugin_dir_url' ) ) {
+	function plugin_dir_url( $file ) {
+		return 'https://example.com/wp-content/plugins/' . basename( dirname( $file ) ) . '/';
+	}
+}
+
+if ( ! function_exists( 'plugin_basename' ) ) {
+	function plugin_basename( $file ) {
+		return basename( dirname( $file ) ) . '/' . basename( $file );
+	}
+}
+
+if ( ! function_exists( 'register_activation_hook' ) ) {
+	function register_activation_hook( $file, $callback ) {}
+}
+
+if ( ! function_exists( 'register_deactivation_hook' ) ) {
+	function register_deactivation_hook( $file, $callback ) {}
+}
+
+

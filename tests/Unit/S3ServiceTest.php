@@ -246,4 +246,75 @@ class S3ServiceTest extends TestCase {
 		$custom_url = Clockwork_Offloader_S3_Service::build_public_url( 'minio-bucket', '2026/09/pic.jpg', 'us-east-1', 'custom', 'https://minio.example.com' );
 		$this->assertEquals( 'https://minio.example.com/minio-bucket/2026/09/pic.jpg', $custom_url );
 	}
+
+	public function test_upload_file_successful_put_object_via_mock_handler(): void {
+		Functions\when( 'get_option' )->justReturn( array(
+			'provider'      => 'aws',
+			's3_access_key' => 'TEST_KEY',
+			's3_secret_key' => 'TEST_SECRET',
+			's3_bucket'     => 'test-bucket',
+			's3_region'     => 'us-east-1',
+		) );
+
+		$tmp_file = tempnam( sys_get_temp_dir(), 's3_test_' );
+		file_put_contents( $tmp_file, 'test file contents' );
+
+		$mock = new MockHandler();
+		$mock->append( new Result( array(
+			'ObjectURL' => 'https://test-bucket.s3.amazonaws.com/uploads/sample.jpg',
+			'@metadata' => array( 'statusCode' => 200 ),
+		) ) );
+
+		$client = new S3Client( array(
+			'version'     => 'latest',
+			'region'      => 'us-east-1',
+			'credentials' => array( 'key' => 'k', 'secret' => 's' ),
+			'handler'     => $mock,
+		) );
+
+		$ref = new ReflectionProperty( Clockwork_Offloader_S3_Service::class, 's3_client' );
+		$ref->setValue( $this->service, $client );
+
+		$res = $this->service->upload_file( $tmp_file, 101, '', 'uploads/sample.jpg' );
+
+		unlink( $tmp_file );
+
+		$this->assertIsArray( $res );
+		$this->assertEquals( 'test-bucket', $res['bucket'] );
+		$this->assertEquals( 'uploads/sample.jpg', $res['s3_key'] );
+	}
+
+	public function test_upload_file_handles_403_access_denied_exception(): void {
+		Functions\when( 'get_option' )->justReturn( array(
+			'provider'      => 'aws',
+			's3_access_key' => 'TEST_KEY',
+			's3_secret_key' => 'TEST_SECRET',
+			's3_bucket'     => 'test-bucket',
+			's3_region'     => 'us-east-1',
+		) );
+
+		$tmp_file = tempnam( sys_get_temp_dir(), 's3_test_' );
+		file_put_contents( $tmp_file, 'test file contents' );
+
+		$mock = new MockHandler();
+		$cmd = Mockery::mock( CommandInterface::class );
+		$mock->append( new S3Exception( 'Access Denied', $cmd, array( 'code' => 'AccessDenied', 'status_code' => 403 ) ) );
+
+		$client = new S3Client( array(
+			'version'     => 'latest',
+			'region'      => 'us-east-1',
+			'credentials' => array( 'key' => 'k', 'secret' => 's' ),
+			'handler'     => $mock,
+		) );
+
+		$ref = new ReflectionProperty( Clockwork_Offloader_S3_Service::class, 's3_client' );
+		$ref->setValue( $this->service, $client );
+
+		$res = $this->service->upload_file( $tmp_file, 101, '', 'uploads/sample.jpg' );
+
+		unlink( $tmp_file );
+
+		$this->assertTrue( is_wp_error( $res ) );
+		$this->assertEquals( 'upload_failed', $res->get_error_code() );
+	}
 }

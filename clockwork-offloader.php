@@ -21,10 +21,57 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'CLOCKWORK_OFFLOADER_VERSION', '1.1.2' );
-define( 'CLOCKWORK_OFFLOADER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'CLOCKWORK_OFFLOADER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'CLOCKWORK_OFFLOADER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+if ( ! defined( 'CLOCKWORK_OFFLOADER_VERSION' ) ) {
+	define( 'CLOCKWORK_OFFLOADER_VERSION', '1.1.2' );
+}
+if ( ! defined( 'CLOCKWORK_OFFLOADER_PLUGIN_DIR' ) ) {
+	define( 'CLOCKWORK_OFFLOADER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+if ( ! defined( 'CLOCKWORK_OFFLOADER_PLUGIN_URL' ) ) {
+	define( 'CLOCKWORK_OFFLOADER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+if ( ! defined( 'CLOCKWORK_OFFLOADER_PLUGIN_BASENAME' ) ) {
+	define( 'CLOCKWORK_OFFLOADER_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+}
+
+/**
+ * Check if Clockwork Offloader Pro is active (or network-active).
+ *
+ * @return bool
+ */
+function clockwork_offloader_is_pro_active() {
+	if ( class_exists( 'Clockwork_Offloader_Pro' ) ) {
+		return true;
+	}
+	if ( function_exists( 'get_option' ) ) {
+		$active_plugins = (array) get_option( 'active_plugins', array() );
+		if ( in_array( 'clockwork-offloader-pro/clockwork-offloader-pro.php', $active_plugins, true ) ) {
+			return true;
+		}
+		if ( function_exists( 'is_multisite' ) && is_multisite() && function_exists( 'get_site_option' ) ) {
+			$network_plugins = (array) get_site_option( 'active_sitewide_plugins', array() );
+			if ( isset( $network_plugins['clockwork-offloader-pro/clockwork-offloader-pro.php'] ) ) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// Activation hook guard: prevent co-activation if Pro is active
+register_activation_hook( __FILE__, function( $network_wide = false ) {
+	if ( clockwork_offloader_is_pro_active() ) {
+		wp_die( esc_html__( 'Clockwork Offloader Pro is already active. Clockwork Offloader Lite cannot be activated alongside Pro.', 'clockwork-offloader' ) );
+	}
+	if ( class_exists( 'Clockwork_Offloader' ) ) {
+		Clockwork_Offloader::activate( $network_wide );
+	}
+} );
+
+// If Pro is active, yield immediately — do not define classes or wire runtime hooks
+if ( clockwork_offloader_is_pro_active() ) {
+	return;
+}
 
 /**
  * Main plugin class
