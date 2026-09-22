@@ -1,0 +1,35 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Continuous Integration & Automation
+.github
+
+# Testing Suite & Configurations
+tests
+phpunit.xml
+phpunit.xml.dist
+.phpunit.cache
+.phpunit.result.cache
+
+# Development Environments
+.wp-env.json
+docker-compose.yml
+Dockerfile
+
+# Build, Dependency, & Project Management Files
+composer.json
+composer.lock
+package.json
+package-lock.json
+node_modules
+
+# Internal Notes & Development Documentation
+.ai-chat.md
+LITE_PRO_SPLIT_PLAN.md
+SECURITY_AUDIT.md
+scratch
+
+# Packaging Control
+.distignore

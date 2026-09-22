@@ -82,7 +82,7 @@ class Clockwork_Offloader_Lite_Restrictions {
 			<p>
 				<strong><?php esc_html_e( 'Clockwork Offloader Pro Required', 'clockwork-offloader' ); ?></strong><br>
 				<?php echo esc_html( $message ); ?>
-				<a href="https://aaronreimann.com/clockwork-offloader-pro" target="_blank" class="button button-primary" style="margin-left: 10px;">
+				<a href="<?php echo esc_url( self::get_upgrade_url() ); ?>" target="_blank" class="button button-primary" style="margin-left: 10px;">
 					<?php esc_html_e( 'Upgrade to Pro', 'clockwork-offloader' ); ?>
 				</a>
 			</p>
