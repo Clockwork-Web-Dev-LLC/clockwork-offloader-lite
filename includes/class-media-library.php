@@ -153,8 +153,8 @@ class Clockwork_Offloader_Media_Library {
 		
 		printf(
 			'<span class="clockwork-offload-status-indicator" title="%s">
-				<i class="fa-solid fa-cloud" style="color: %s;" aria-hidden="true" title="%s"></i>
-				<i class="fa-solid fa-computer" style="color: %s; margin-left: 5px;" aria-hidden="true" title="%s"></i>
+				<span class="dashicons dashicons-cloud" style="color: %s; font-size: 18px; width: 18px; height: 18px; vertical-align: middle;" aria-hidden="true" title="%s"></span>
+				<span class="dashicons dashicons-desktop" style="color: %s; margin-left: 2px; font-size: 18px; width: 18px; height: 18px; vertical-align: middle;" aria-hidden="true" title="%s"></span>
 				<span class="screen-reader-text">%s</span>
 			</span>',
 			esc_attr( $label ),
@@ -176,18 +176,13 @@ class Clockwork_Offloader_Media_Library {
 			return;
 		}
 		
-		// Enqueue Font Awesome
-		wp_enqueue_style(
-			'font-awesome',
-			'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-			array(),
-			'6.5.1'
-		);
+		// Enqueue Dashicons (WordPress native)
+		wp_enqueue_style( 'dashicons' );
 		
 		wp_enqueue_style(
 			'clockwork-offloader-media-library',
 			CLOCKWORK_OFFLOADER_PLUGIN_URL . 'admin/css/media-library.css',
-			array( 'font-awesome' ),
+			array( 'dashicons' ),
 			CLOCKWORK_OFFLOADER_VERSION
 		);
 		
@@ -231,8 +226,8 @@ class Clockwork_Offloader_Media_Library {
 		<script type="text/html" id="tmpl-clockwork-offload-indicator">
 			<# if ( data.status ) { #>
 				<span class="clockwork-offload-grid-indicator" title="{{ data.status.label }}">
-					<i class="fa-solid fa-cloud" style="color: {{ data.status.cdn_color }};" title="{{ data.status.cdn_on_cdn ? clockworkOffloaderMedia.strings.onCdn : clockworkOffloaderMedia.strings.notOnCdn }}"></i>
-					<i class="fa-solid fa-computer" style="color: {{ data.status.server_color }};" title="{{ data.status.server_on_server ? clockworkOffloaderMedia.strings.onServer : clockworkOffloaderMedia.strings.notOnServer }}"></i>
+					<i class="fa-solid fa-cloud" style="color: {{ data.status.cdn_color }};" title="{{ data.status.cdn_on_cdn ? clockworkOffloaderMedia.strings.onCdn : clockworkOffloaderMedia.strings.notOnCdn }}"></span>
+					<i class="fa-solid fa-computer" style="color: {{ data.status.server_color }};" title="{{ data.status.server_on_server ? clockworkOffloaderMedia.strings.onServer : clockworkOffloaderMedia.strings.notOnServer }}"></span>
 				</span>
 			<# } #>
 		</script>
@@ -262,8 +257,8 @@ class Clockwork_Offloader_Media_Library {
 		$controls_html .= '<div class="clockwork-status-display" style="margin-bottom: 15px; padding: 10px; background: #f0f0f1; border-radius: 3px;">';
 		$controls_html .= '<strong>' . __( 'Cloud Status:', 'clockwork-offloader' ) . '</strong> ';
 		$controls_html .= '<span class="clockwork-status-icons" style="margin-left: 10px;">';
-		$controls_html .= '<i class="fa-solid fa-cloud" style="color: ' . esc_attr( $status['cdn_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ) . '"></i>';
-		$controls_html .= '<i class="fa-solid fa-computer" style="color: ' . esc_attr( $status['server_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ) . '"></i>';
+		$controls_html .= '<i class="fa-solid fa-cloud" style="color: ' . esc_attr( $status['cdn_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ) . '"></span>';
+		$controls_html .= '<i class="fa-solid fa-computer" style="color: ' . esc_attr( $status['server_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ) . '"></span>';
 		$controls_html .= '</span>';
 		$controls_html .= '</div>';
 		
@@ -273,13 +268,13 @@ class Clockwork_Offloader_Media_Library {
 		if ( ! $status['cdn_on_cdn'] ) {
 			// Not on Cloud - show upload button
 			$controls_html .= '<button type="button" class="button button-primary clockwork-action-btn" data-action="offload" data-attachment-id="' . esc_attr( $attachment_id ) . '">';
-			$controls_html .= '<i class="fa-solid fa-cloud-arrow-up" style="margin-right: 5px;"></i>';
+			$controls_html .= '<span class="dashicons dashicons-upload" style="margin-right: 4px; vertical-align: text-bottom; font-size: 16px; width: 16px; height: 16px;"></span>';
 			$controls_html .= __( 'Upload to Cloud', 'clockwork-offloader' );
 			$controls_html .= '</button>';
 		} else {
 			// On Cloud - show delete button
 			$controls_html .= '<button type="button" class="button button-secondary clockwork-action-btn" data-action="delete-from-cdn" data-attachment-id="' . esc_attr( $attachment_id ) . '" data-on-server="' . ( $status['server_on_server'] ? '1' : '0' ) . '">';
-			$controls_html .= '<i class="fa-solid fa-trash" style="margin-right: 5px;"></i>';
+			$controls_html .= '<span class="dashicons dashicons-trash" style="margin-right: 4px; vertical-align: text-bottom; font-size: 16px; width: 16px; height: 16px;"></span>';
 			$controls_html .= __( 'Remove from Cloud', 'clockwork-offloader' );
 			$controls_html .= '</button>';
 		}
@@ -287,7 +282,7 @@ class Clockwork_Offloader_Media_Library {
 		// Only show download button if file is on Cloud but NOT on server
 		if ( $status['cdn_on_cdn'] && ! $status['server_on_server'] ) {
 			$controls_html .= '<button type="button" class="button button-secondary clockwork-action-btn" data-action="restore" data-attachment-id="' . esc_attr( $attachment_id ) . '">';
-			$controls_html .= '<i class="fa-solid fa-download" style="margin-right: 5px;"></i>';
+			$controls_html .= '<span class="dashicons dashicons-download" style="margin-right: 4px; vertical-align: text-bottom; font-size: 16px; width: 16px; height: 16px;"></span>';
 			$controls_html .= __( 'Download from Cloud to Server', 'clockwork-offloader' );
 			$controls_html .= '</button>';
 		}
@@ -354,8 +349,8 @@ class Clockwork_Offloader_Media_Library {
 				<strong><?php esc_html_e( 'Cloud Status:', 'clockwork-offloader' ); ?></strong>
 				<div style="margin-top: 8px;">
 					<span class="clockwork-status-icons" style="margin-left: 10px;">
-						<i class="fa-solid fa-cloud" style="color: <?php echo esc_attr( $status['cdn_color'] ); ?>; margin: 0 5px; font-size: 18px;" title="<?php echo esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ); ?>"></i>
-						<i class="fa-solid fa-computer" style="color: <?php echo esc_attr( $status['server_color'] ); ?>; margin: 0 5px; font-size: 18px;" title="<?php echo esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ); ?>"></i>
+						<span class="dashicons dashicons-cloud" style="color: <?php echo esc_attr( $status['cdn_color'] ); ?>; margin: 0 4px; font-size: 20px; width: 20px; height: 20px; vertical-align: middle;" title="<?php echo esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ); ?>"></span>
+						<span class="dashicons dashicons-desktop" style="color: <?php echo esc_attr( $status['server_color'] ); ?>; margin: 0 4px; font-size: 20px; width: 20px; height: 20px; vertical-align: middle;" title="<?php echo esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ); ?>"></span>
 					</span>
 				</div>
 			</div>
@@ -365,13 +360,13 @@ class Clockwork_Offloader_Media_Library {
 				<?php if ( ! $status['cdn_on_cdn'] ) : ?>
 					<!-- Not on Cloud - show upload button -->
 					<button type="button" class="button button-primary clockwork-action-btn" data-action="offload" data-attachment-id="<?php echo esc_attr( $attachment_id ); ?>" style="width: 100%;">
-						<i class="fa-solid fa-cloud-arrow-up" style="margin-right: 5px;"></i>
+						<span class="dashicons dashicons-upload" style="margin-right: 4px; vertical-align: text-bottom; font-size: 16px; width: 16px; height: 16px;"></span>
 						<?php esc_html_e( 'Upload to Cloud', 'clockwork-offloader' ); ?>
 					</button>
 				<?php else : ?>
 					<!-- On Cloud - show delete button -->
 					<button type="button" class="button button-secondary clockwork-action-btn" data-action="delete-from-cdn" data-attachment-id="<?php echo esc_attr( $attachment_id ); ?>" data-on-server="<?php echo $status['server_on_server'] ? '1' : '0'; ?>" style="width: 100%;">
-						<i class="fa-solid fa-trash" style="margin-right: 5px;"></i>
+						<span class="dashicons dashicons-trash" style="margin-right: 4px; vertical-align: text-bottom; font-size: 16px; width: 16px; height: 16px;"></span>
 						<?php esc_html_e( 'Remove from Cloud', 'clockwork-offloader' ); ?>
 					</button>
 				<?php endif; ?>
@@ -379,7 +374,7 @@ class Clockwork_Offloader_Media_Library {
 				<?php if ( $status['cdn_on_cdn'] && ! $status['server_on_server'] ) : ?>
 					<!-- Only show download button if file is on Cloud but NOT on server -->
 					<button type="button" class="button button-secondary clockwork-action-btn" data-action="restore" data-attachment-id="<?php echo esc_attr( $attachment_id ); ?>" style="width: 100%;">
-						<i class="fa-solid fa-download" style="margin-right: 5px;"></i>
+						<span class="dashicons dashicons-download" style="margin-right: 4px; vertical-align: text-bottom; font-size: 16px; width: 16px; height: 16px;"></span>
 						<?php esc_html_e( 'Download from Cloud to Server', 'clockwork-offloader' ); ?>
 					</button>
 				<?php endif; ?>
@@ -426,15 +421,8 @@ class Clockwork_Offloader_Media_Library {
 			return;
 		}
 		
-		// Enqueue Font Awesome if not already enqueued
-		if ( ! wp_style_is( 'font-awesome', 'enqueued' ) ) {
-			wp_enqueue_style(
-				'font-awesome',
-				'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-				array(),
-				'6.5.1'
-			);
-		}
+		// Enqueue Dashicons (WordPress native)
+		wp_enqueue_style( 'dashicons' );
 		
 		wp_enqueue_script(
 			'clockwork-offloader-attachment-details',

@@ -11,6 +11,7 @@
 	gap: 8px;
 }
 
+.clockwork-offload-status-indicator .dashicons,
 .clockwork-offload-status-indicator .fa-solid {
 	font-size: 18px;
 	width: 18px;
@@ -36,10 +37,11 @@
 	gap: 4px;
 }
 
+.clockwork-offload-grid-indicator .dashicons,
 .clockwork-offload-grid-indicator .fa-solid {
-	font-size: 14px;
-	width: 14px;
-	height: 14px;
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;

@@ -162,7 +162,7 @@ if ( ! empty( $cdn_domain ) ) {
 				<!-- Connected Provider Box -->
 				<div class="clockwork-provider-box">
 					<div class="clockwork-provider-icon">
-						<i class="fa-brands fa-aws"></i>
+						<span class="dashicons dashicons-database" style="font-size: 20px; width: 20px; height: 20px; line-height: 1;"></span>
 					</div>
 					<div class="clockwork-provider-details">
 						<div class="clockwork-provider-name">
@@ -308,7 +308,7 @@ if ( ! empty( $cdn_domain ) ) {
 				<!-- Connected Delivery Box -->
 				<div class="clockwork-provider-box">
 					<div class="clockwork-provider-icon" style="color: #2271b1;">
-						<i class="fa-solid fa-cloud"></i>
+						<span class="dashicons dashicons-cloud" style="font-size: 20px; width: 20px; height: 20px; line-height: 1;"></span>
 					</div>
 					<div class="clockwork-provider-details">
 						<div class="clockwork-provider-name">
@@ -392,7 +392,7 @@ if ( ! empty( $cdn_domain ) ) {
 		<div class="clockwork-preview-card">
 			<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
 				<h4 style="margin: 0; font-size: 14px; font-weight: 600; color: #0f172a;">
-					<i class="fa-solid fa-link" style="color: #2271b1; margin-right: 6px;"></i>
+					<span class="dashicons dashicons-admin-links" style="color: #2271b1; margin-right: 6px; font-size: 16px; width: 16px; height: 16px; vertical-align: middle;"></span>
 					<?php esc_html_e( 'URL Preview', 'clockwork-offloader' ); ?>
 				</h4>
 				<span style="font-size: 12px; color: #64748b;">
@@ -411,6 +411,16 @@ if ( ! empty( $cdn_domain ) ) {
 			</summary>
 			<div class="clockwork-advanced-content">
 				<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+					<div>
+						<label for="s3_base_path" style="display: block; font-weight: 600; margin-bottom: 4px;">
+							<?php esc_html_e( 'Custom Path Prefix', 'clockwork-offloader' ); ?>
+						</label>
+						<input type="text" id="s3_base_path" name="clockwork_offloader_settings[s3_base_path]" value="<?php echo esc_attr( $base_path ); ?>" class="regular-text" style="width: 100%; max-width: 240px;" placeholder="uploads/" />
+						<p class="description">
+							<?php esc_html_e( 'Optional folder path in your bucket (e.g. "uploads/"). Leave empty to offload to root.', 'clockwork-offloader' ); ?>
+						</p>
+					</div>
+
 					<div>
 						<label for="queue_batch_size" style="display: block; font-weight: 600; margin-bottom: 4px;">
 							<?php esc_html_e( 'Queue Batch Size', 'clockwork-offloader' ); ?>

@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Clockwork Offloader Lite
- * Plugin URI: https://aaronreimann.com/clockwork-offloader
- * Description: Offload media files to Amazon S3 with optional URL rewriting and delete-after-upload. Upgrade to Pro for bulk tools, migration, and more.
+ * Plugin Name: Clockwork Offloader
+ * Plugin URI: https://clockworkplugins.com/plugins/clockwork-offloader
+ * Description: High-performance cloud storage offloader for WordPress. Automatically offload media uploads to Amazon S3, Cloudflare R2, DigitalOcean Spaces, Wasabi, or Backblaze B2 with seamless URL delivery and local storage space reclamation.
  * Version: 1.1.2
  * Author: Aaron Reimann
  * Author URI: https://aaronreimann.com

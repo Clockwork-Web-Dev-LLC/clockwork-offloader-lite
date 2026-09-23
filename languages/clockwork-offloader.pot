@@ -1,0 +1,1968 @@
+# Copyright (C) 2026 Aaron Reimann
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Clockwork Offloader 1.1.2\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/clockwork-offloader\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-09-23 16:54\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: Clockwork Offloader POT Generator\n"
+"X-Domain: clockwork-offloader\n"
+
+#: admin/views/partials/get-started.php:101
+msgid "%1$s files are already in your bucket out of %2$s attachments."
+msgstr ""
+
+#: includes/class-admin.php:4672
+msgid "%d of %d URLs are pointing to S3."
+msgstr ""
+
+#: includes/class-admin.php:4683
+msgid "%d of %d URLs are pointing to local server."
+msgstr ""
+
+#: admin/views/setup-wizard.php:222
+msgid "%s Region"
+msgstr ""
+
+#: includes/class-admin.php:4061
+msgid "%s Region is required."
+msgstr ""
+
+#: admin/views/dashboard.php:213
+msgid "%s freed from web server disk"
+msgstr ""
+
+#: includes/class-lite-restrictions.php:77
+msgid "%s is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature."
+msgstr ""
+
+#: includes/class-admin.php:3892
+msgid "...and %d more."
+msgstr ""
+
+#: admin/views/dashboard.php:220
+msgid "0 B freed — local copies are preserved on your web server disk."
+msgstr ""
+
+#: admin/views/setup-wizard.php:61
+msgid "1. Provider & Connection Method"
+msgstr ""
+
+#: admin/views/setup-wizard.php:208
+msgid "2. Region & Bucket"
+msgstr ""
+
+#: admin/views/setup-wizard.php:321
+msgid "3. Test & Complete"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:34
+msgid "50% OFF LAUNCH SPECIAL"
+msgstr ""
+
+#: admin/views/dashboard.php:125
+msgid "<strong>Approaching Item Limit:</strong> You have %1$d of %2$d items (%3$s%% used). Consider upgrading soon."
+msgstr ""
+
+#: admin/views/dashboard.php:108
+msgid "<strong>Grace Period Active:</strong> You have %1$d items (limit: %2$d). Please upgrade before reaching %3$d items to avoid being blocked."
+msgstr ""
+
+#: admin/views/dashboard.php:100
+msgid "<strong>Item Limit Exceeded!</strong> You have %1$d items, which exceeds your grace period limit of %2$d items. Please upgrade your license to continue offloading files."
+msgstr ""
+
+#: admin/views/dashboard.php:117
+msgid "<strong>Item Limit Reached!</strong> You have %1$d items (limit: %2$d). You are now in a grace period. Please upgrade soon."
+msgstr ""
+
+#: admin/views/dashboard.php:134
+msgid "<strong>Item Usage:</strong> You have %1$d of %2$d items (%3$s%% used)."
+msgstr ""
+
+#: includes/class-admin.php:4057
+msgid "AWS"
+msgstr ""
+
+#: includes/class-admin.php:232
+msgid "AWS Access Key ID"
+msgstr ""
+
+#: admin/views/setup-wizard.php:359
+msgid "AWS Region"
+msgstr ""
+
+#: includes/class-admin.php:4369 admin/views/setup-wizard.php:143 admin/views/setup-wizard.php:212 admin/views/network-settings.php:80
+msgid "AWS S3"
+msgstr ""
+
+#: admin/views/dashboard.php:306
+msgid "AWS SDK"
+msgstr ""
+
+#: includes/class-s3-service.php:652 includes/class-admin.php:1899 includes/class-admin.php:1989
+msgid "AWS SDK is not installed."
+msgstr ""
+
+#: includes/class-s3-service.php:164 includes/class-s3-service.php:765
+msgid "AWS SDK is not installed. Please run composer install."
+msgstr ""
+
+#: includes/class-admin.php:240
+msgid "AWS Secret Access Key"
+msgstr ""
+
+#: includes/class-admin.php:592
+msgid "AWS region where your bucket is located (e.g., us-east-1, eu-west-1)."
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:40
+msgid "Accelerate your site with CloudFront CDN edge delivery, Assets Pull (cache CSS/JS globally), WooCommerce & EDD Private Media signed URLs, bulk background offloading queue, and developer WP-CLI tools."
+msgstr ""
+
+#: admin/views/network-settings.php:87
+msgid "Access Key"
+msgstr ""
+
+#: admin/views/settings.php:188 admin/views/setup-wizard.php:179
+msgid "Access Key ID"
+msgstr ""
+
+#: includes/class-s3-service.php:760 includes/class-admin.php:1886 includes/class-admin.php:1984 includes/class-admin.php:3957
+msgid "Access Key and Secret Key are required."
+msgstr ""
+
+#: admin/views/file-list.php:169
+msgid "Actions"
+msgstr ""
+
+#: admin/views/settings.php:287
+msgid "Add Prefix to Bucket Path"
+msgstr ""
+
+#: admin/views/setup-wizard.php:120
+msgid "Add to wp-config.php"
+msgstr ""
+
+#: includes/class-admin.php:2772
+msgid "Added %d item(s) to queue."
+msgstr ""
+
+#: admin/views/settings.php:410
+msgid "Advanced Performance & Queue Settings"
+msgstr ""
+
+#: admin/views/setup-wizard.php:168
+msgid "After adding the code to wp-config.php, click \"Verify wp-config.php\" to check if the constants are detected. Once verified, you can proceed to Step 2. Note: Region and bucket are stored in the database and can be configured in the next step."
+msgstr ""
+
+#: admin/views/file-list.php:131
+msgid "All"
+msgstr ""
+
+#: includes/class-admin.php:2833
+msgid "All items have been added to queue."
+msgstr ""
+
+#: includes/class-admin.php:3615 includes/class-admin.php:3828
+msgid "All items have been processed."
+msgstr ""
+
+#: includes/class-admin.php:4525
+msgid "All media URLs will now use S3 URLs."
+msgstr ""
+
+#: includes/class-admin.php:4563
+msgid "All media URLs will now use local URLs."
+msgstr ""
+
+#: includes/class-admin.php:3189
+msgid "All plugin data has been uninstalled successfully."
+msgstr ""
+
+#: admin/views/network-settings.php:33
+msgid "All sites will use these network-wide settings."
+msgstr ""
+
+#: admin/views/setup-wizard.php:103
+msgid "Already configured"
+msgstr ""
+
+#: admin/views/settings.php:169 admin/views/settings.php:315 admin/views/setup-wizard.php:71 admin/views/setup-wizard.php:336 admin/views/partials/get-started.php:35
+msgid "Amazon S3"
+msgstr ""
+
+#: includes/class-admin.php:195 admin/views/file-list.php:291 admin/views/file-list.php:339
+msgid "An error occurred."
+msgstr ""
+
+#: includes/class-media-library.php:448
+msgid "Are you sure you want to delete this file from Cloud?"
+msgstr ""
+
+#: includes/class-admin.php:3711
+msgid "Attachment %d: %s"
+msgstr ""
+
+#: includes/class-admin.php:2203
+msgid "Attachment is not offloaded to Cloud."
+msgstr ""
+
+#: includes/class-admin.php:296
+msgid "Auto Upload"
+msgstr ""
+
+#: admin/views/network-settings.php:147
+msgid "Auto-Offload"
+msgstr ""
+
+#: admin/views/network-settings.php:151
+msgid "Automatically offload new uploads on every site"
+msgstr ""
+
+#: admin/views/settings.php:137
+msgid "Automatically shares this bucket & delivery configuration with all subsites (uploads isolated under sites/{id}/)."
+msgstr ""
+
+#: includes/class-admin.php:630
+msgid "Automatically upload new media uploads to S3"
+msgstr ""
+
+#: admin/views/setup-wizard.php:310 admin/views/setup-wizard.php:393
+msgid "Back"
+msgstr ""
+
+#: includes/class-admin.php:272 admin/views/network-settings.php:125
+msgid "Base Path (Optional)"
+msgstr ""
+
+#: admin/views/network-settings.php:144
+msgid "Behavior"
+msgstr ""
+
+#: admin/views/setup-wizard.php:284
+msgid "Browse existing buckets"
+msgstr ""
+
+#: includes/class-admin.php:4379 admin/views/dashboard.php:357 admin/views/setup-wizard.php:151 admin/views/network-settings.php:109
+msgid "Bucket"
+msgstr ""
+
+#: includes/class-s3-service.php:409
+msgid "Bucket and S3 key are required."
+msgstr ""
+
+#: includes/class-admin.php:1890 includes/class-admin.php:4066
+msgid "Bucket name is required."
+msgstr ""
+
+#: admin/views/settings.php:176
+msgid "Bucket not configured"
+msgstr ""
+
+#: includes/class-admin.php:4101
+msgid "Bucket test failed: %s"
+msgstr ""
+
+#: includes/class-admin.php:851
+msgid "Bulk"
+msgstr ""
+
+#: includes/class-admin.php:4748
+msgid "Bulk Queue & Background Processing"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:58
+msgid "Bulk Queue & WP-CLI"
+msgstr ""
+
+#: includes/class-admin.php:995 includes/class-admin.php:1457
+msgid "Bulk Tools"
+msgstr ""
+
+#: includes/class-admin.php:3668
+msgid "Bulk download is a Pro feature. Please upgrade to Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:2573
+msgid "Bulk operations are a Pro feature. Please upgrade to Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:2674
+msgid "Bulk statistics are a Pro feature. Please upgrade to Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:4202
+msgid "But files in this bucket are not publicly readable (a test object returned HTTP %1$d). Offloaded images will upload fine and then fail to display. %2$s"
+msgstr ""
+
+#: includes/class-admin.php:860 includes/class-admin.php:1024 includes/class-admin.php:1650
+msgid "CDN / CloudFront"
+msgstr ""
+
+#: admin/views/settings.php:333
+msgid "CDN / Custom Domain"
+msgstr ""
+
+#: includes/class-media-library.php:327
+msgid "CDN Controls"
+msgstr ""
+
+#: includes/class-admin.php:280 admin/views/network-settings.php:136
+msgid "CDN Domain (Optional)"
+msgstr ""
+
+#: admin/views/dashboard.php:400
+msgid "CDN Domain Active:"
+msgstr ""
+
+#: includes/class-admin.php:3504
+msgid "Cancelled %d pending item(s)."
+msgstr ""
+
+#: includes/class-admin.php:2586
+msgid "Cannot add to server: file is not in Cloud to download."
+msgstr ""
+
+#: includes/class-admin.php:2489
+msgid "Cannot set to server-only: file does not exist on server and is not in Cloud to download."
+msgstr ""
+
+#: admin/views/setup-wizard.php:25
+msgid "Clockwork Offloader"
+msgstr ""
+
+#: admin/views/network-settings.php:21
+msgid "Clockwork Offloader - Network Settings"
+msgstr ""
+
+#: includes/class-admin.php:104 includes/class-admin.php:915 includes/class-admin.php:929 includes/class-admin.php:936
+msgid "Clockwork Offloader Lite"
+msgstr ""
+
+#: includes/class-admin.php:103 includes/class-admin.php:915 includes/class-admin.php:929 includes/class-admin.php:936
+msgid "Clockwork Offloader Pro"
+msgstr ""
+
+#: includes/class-lite-restrictions.php:83 admin/views/file-list.php:117
+msgid "Clockwork Offloader Pro Required"
+msgstr ""
+
+#: clockwork-offloader.php:64
+msgid "Clockwork Offloader Pro is already active. Clockwork Offloader Lite cannot be activated alongside Pro."
+msgstr ""
+
+#: clockwork-offloader.php:199
+msgid "Clockwork Offloader Pro is already active. The Lite version is not needed and cannot be activated alongside Pro."
+msgstr ""
+
+#: admin/views/partials/get-started.php:62
+msgid "Clockwork Offloader can reach %1$s bucket %2$s, but connecting a bucket doesn't move any files on its own. Finish these steps to start offloading."
+msgstr ""
+
+#: admin/views/partials/get-started.php:69
+msgid "Clockwork Offloader is connected to %s, but connecting doesn't move any files on its own. Finish these steps to start offloading."
+msgstr ""
+
+#: includes/class-admin.php:3211
+msgid "Clockwork Offloader is not available."
+msgstr ""
+
+#: clockwork-offloader.php:807
+msgid "Clockwork Offloader: Provider Migration"
+msgstr ""
+
+#: includes/class-admin.php:744
+msgid "Clockwork Offloader: Settings Migrated"
+msgstr ""
+
+#: includes/class-media-library.php:310
+msgid "Cloud Controls"
+msgstr ""
+
+#: includes/class-media-library.php:211
+msgid "Cloud Only"
+msgstr ""
+
+#: includes/class-media-library.php:55
+msgid "Cloud Status"
+msgstr ""
+
+#: includes/class-media-library.php:258 includes/class-media-library.php:349
+msgid "Cloud Status:"
+msgstr ""
+
+#: includes/class-media-library.php:296 includes/class-media-library.php:391
+msgid "Cloud URL:"
+msgstr ""
+
+#: admin/views/settings.php:315
+msgid "CloudFront / Custom CDN"
+msgstr ""
+
+#: includes/class-admin.php:4738 admin/views/partials/pro-upgrade-ad.php:50
+msgid "CloudFront CDN & Assets Pull"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:75
+msgid "Compare All Features &rarr;"
+msgstr ""
+
+#: admin/views/setup-wizard.php:397
+msgid "Complete Setup"
+msgstr ""
+
+#: includes/class-admin.php:3886
+msgid "Completed."
+msgstr ""
+
+#: admin/views/setup-wizard.php:325
+msgid "Configuration Summary"
+msgstr ""
+
+#: includes/class-admin.php:4176
+msgid "Configuration incomplete. Missing: %s. Please complete steps 1 and 2 first."
+msgstr ""
+
+#: includes/class-admin.php:4313
+msgid "Configuration incomplete. Please check your settings."
+msgstr ""
+
+#: admin/views/dashboard.php:223
+msgid "Configure in Settings →"
+msgstr ""
+
+#: includes/class-admin.php:485
+msgid "Configure your Amazon S3 credentials and settings."
+msgstr ""
+
+#: admin/views/dashboard.php:294
+msgid "Connected"
+msgstr ""
+
+#: includes/class-admin.php:4199
+msgid "Connected: uploads to the bucket work."
+msgstr ""
+
+#: admin/views/setup-wizard.php:42 admin/views/setup-wizard.php:88 admin/views/setup-wizard.php:343
+msgid "Connection Method"
+msgstr ""
+
+#: includes/class-admin.php:183
+msgid "Connection failed."
+msgstr ""
+
+#: includes/class-admin.php:182 includes/class-admin.php:1939
+msgid "Connection successful!"
+msgstr ""
+
+#: includes/class-admin.php:3978 includes/class-admin.php:4188
+msgid "Connection test failed: %s"
+msgstr ""
+
+#: includes/class-admin.php:4195
+msgid "Connection test successful! Your S3 configuration is working correctly."
+msgstr ""
+
+#: includes/class-admin.php:4394
+msgid "Constants not found"
+msgstr ""
+
+#: admin/views/setup-wizard.php:200
+msgid "Continue to Step 2"
+msgstr ""
+
+#: admin/views/setup-wizard.php:313
+msgid "Continue to Step 3"
+msgstr ""
+
+#: includes/class-admin.php:2914 includes/class-admin.php:3656 includes/class-admin.php:3886
+msgid "Continuing..."
+msgstr ""
+
+#: admin/views/settings.php:261
+msgid "Copies media files to the storage provider automatically after being uploaded, edited, or resized."
+msgstr ""
+
+#: includes/class-media-library.php:299 includes/class-media-library.php:394 includes/class-media-library.php:449
+msgid "Copy Cloud URL"
+msgstr ""
+
+#: admin/views/setup-wizard.php:126
+msgid "Copy Code"
+msgstr ""
+
+#: admin/views/setup-wizard.php:121
+msgid "Copy the following snippet to near the top of your wp-config.php file (before the \"That's all, stop editing!\" line). Replace the placeholder values with your actual credentials:"
+msgstr ""
+
+#: includes/class-admin.php:4213
+msgid "Could not confirm that uploaded files are publicly readable: %s. Check an offloaded image in a browser after setup."
+msgstr ""
+
+#: includes/class-admin.php:4076
+msgid "Credentials not found in wp-config.php. Please complete step 1."
+msgstr ""
+
+#: includes/class-admin.php:3996
+msgid "Credentials validated successfully!"
+msgstr ""
+
+#: admin/views/settings.php:416
+msgid "Custom Path Prefix"
+msgstr ""
+
+#: includes/class-admin.php:264
+msgid "Custom S3 Endpoint (Optional)"
+msgstr ""
+
+#: admin/views/setup-wizard.php:357
+msgid "DO Spaces Region"
+msgstr ""
+
+#: includes/class-admin.php:845
+msgid "Dashboard"
+msgstr ""
+
+#: admin/views/setup-wizard.php:348
+msgid "Database"
+msgstr ""
+
+#: includes/class-admin.php:3238
+msgid "Database table created successfully!"
+msgstr ""
+
+#: admin/views/setup-wizard.php:101
+msgid "Define access keys in wp-config.php"
+msgstr ""
+
+#: includes/class-admin.php:304 admin/views/network-settings.php:156
+msgid "Delete After Upload"
+msgstr ""
+
+#: admin/views/dashboard.php:216
+msgid "Delete After Upload is ON"
+msgstr ""
+
+#: includes/class-admin.php:645
+msgid "Delete files from local server after uploading to S3"
+msgstr ""
+
+#: includes/class-admin.php:2242 includes/class-admin.php:2646
+msgid "Deleted %d file(s) from Cloud."
+msgstr ""
+
+#: includes/class-admin.php:2236
+msgid "Deleted %d file(s) from Cloud. Some files could not be deleted: %s"
+msgstr ""
+
+#: includes/class-admin.php:2312 includes/class-admin.php:2376 includes/class-admin.php:2615
+msgid "Deleted %d file(s) from server."
+msgstr ""
+
+#: includes/class-admin.php:2307 includes/class-admin.php:2371
+msgid "Deleted %d file(s) from server. Some files could not be deleted: %s"
+msgstr ""
+
+#: includes/class-admin.php:2485 includes/class-admin.php:2507
+msgid "Deleted from Cloud"
+msgstr ""
+
+#: includes/class-admin.php:2466 includes/class-admin.php:2531
+msgid "Deleted from server"
+msgstr ""
+
+#: admin/views/settings.php:367
+msgid "Deliver Offloaded Media"
+msgstr ""
+
+#: includes/class-admin.php:4739
+msgid "Deliver media and static assets (CSS, JS, fonts) from worldwide CloudFront edge locations with automatic cache invalidation."
+msgstr ""
+
+#: admin/views/settings.php:304
+msgid "Delivery Settings"
+msgstr ""
+
+#: admin/views/settings.php:353
+msgid "Delivery is off: media is currently loaded from the local server. Enable \"Deliver Offloaded Media\" below to serve directly from S3 or CDN."
+msgstr ""
+
+#: admin/views/settings.php:346
+msgid "Delivery provider is successfully connected and serving offloaded media."
+msgstr ""
+
+#: includes/class-admin.php:364
+msgid "Development"
+msgstr ""
+
+#: includes/class-admin.php:371 includes/class-admin.php:866 includes/class-admin.php:1004 includes/class-admin.php:1588
+msgid "Development Mode"
+msgstr ""
+
+#: includes/class-admin.php:2938 includes/class-admin.php:2999
+msgid "Development Mode is not enabled."
+msgstr ""
+
+#: includes/class-admin.php:1598
+msgid "Development Mode is not enabled. Please enable it in Settings."
+msgstr ""
+
+#: includes/class-admin.php:2926 includes/class-admin.php:2987 includes/class-admin.php:3029 includes/class-admin.php:3052 includes/class-admin.php:3079
+msgid "Development mode is a Pro feature. Please upgrade to Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:4058
+msgid "Digital Ocean"
+msgstr ""
+
+#: admin/views/setup-wizard.php:79 admin/views/setup-wizard.php:213 admin/views/setup-wizard.php:334
+msgid "Digital Ocean Spaces"
+msgstr ""
+
+#: includes/class-admin.php:4369 admin/views/settings.php:169 admin/views/setup-wizard.php:143 admin/views/network-settings.php:81 admin/views/partials/get-started.php:35
+msgid "DigitalOcean Spaces"
+msgstr ""
+
+#: admin/views/settings.php:321
+msgid "Direct S3 URLs"
+msgstr ""
+
+#: includes/class-s3-service.php:319
+msgid "Directory is not writable: %s"
+msgstr ""
+
+#: admin/views/network-settings.php:35
+msgid "Disabled"
+msgstr ""
+
+#: admin/views/dashboard.php:193
+msgid "Disk Space Saved"
+msgstr ""
+
+#: includes/class-admin.php:1080
+msgid "Dismiss"
+msgstr ""
+
+#: admin/views/dashboard.php:71
+msgid "Dismiss this notice."
+msgstr ""
+
+#: admin/views/dashboard.php:350
+msgid "Domain"
+msgstr ""
+
+#: includes/class-admin.php:1087
+msgid "Don't show this message again"
+msgstr ""
+
+#: includes/class-media-library.php:286 includes/class-media-library.php:378
+msgid "Download from Cloud to Server"
+msgstr ""
+
+#: includes/class-admin.php:2977
+msgid "Downloaded %d file(s) successfully. %d failed."
+msgstr ""
+
+#: includes/class-admin.php:2431
+msgid "Downloaded to server"
+msgstr ""
+
+#: admin/views/network-settings.php:36
+msgid "Each site uses its own settings. Enable network mode to use shared settings across all sites."
+msgstr ""
+
+#: admin/views/settings.php:181 admin/views/settings.php:326
+msgid "Edit"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:58
+msgid "Effortless library-wide offload & migration"
+msgstr ""
+
+#: admin/views/partials/get-started.php:87
+msgid "Enable Auto Upload"
+msgstr ""
+
+#: includes/class-admin.php:760
+msgid "Enable Development Mode to access development tools and test file generation."
+msgstr ""
+
+#: admin/views/network-settings.php:58
+msgid "Enable network-wide settings"
+msgstr ""
+
+#: includes/class-admin.php:695
+msgid "Enable upload throttling"
+msgstr ""
+
+#: admin/views/network-settings.php:32
+msgid "Enabled"
+msgstr ""
+
+#: admin/views/setup-wizard.php:174
+msgid "Enter Credentials"
+msgstr ""
+
+#: admin/views/settings.php:221 admin/views/setup-wizard.php:275
+msgid "Enter bucket name"
+msgstr ""
+
+#: includes/class-admin.php:570
+msgid "Enter bucket name or select from list"
+msgstr ""
+
+#: admin/views/setup-wizard.php:277
+msgid "Enter bucket name..."
+msgstr ""
+
+#: admin/views/setup-wizard.php:298
+msgid "Enter the bucket name exactly as it appears in your storage console."
+msgstr ""
+
+#: includes/class-admin.php:578
+msgid "Enter the bucket name manually or click \"Load Buckets\" to select from your existing buckets."
+msgstr ""
+
+#: admin/views/setup-wizard.php:296
+msgid "Enter your S3 bucket name manually or browse your existing buckets."
+msgstr ""
+
+#: admin/views/file-list.php:285
+msgid "Error offloading file."
+msgstr ""
+
+#: admin/views/file-list.php:333
+msgid "Error restoring file."
+msgstr ""
+
+#: clockwork-offloader.php:605
+msgid "Every Minute (Clockwork Offloader Queue)"
+msgstr ""
+
+#: includes/class-s3-service.php:313
+msgid "Failed to create directory: %s"
+msgstr ""
+
+#: includes/class-admin.php:3241
+msgid "Failed to create table: %s"
+msgstr ""
+
+#: includes/class-admin.php:3869
+msgid "Failed to delete %s from S3: %s"
+msgstr ""
+
+#: includes/class-admin.php:2219 includes/class-admin.php:2295 includes/class-admin.php:2359
+msgid "Failed to delete %s: %s"
+msgstr ""
+
+#: includes/class-media-library.php:445
+msgid "Failed to delete file from Cloud."
+msgstr ""
+
+#: includes/class-admin.php:2278 includes/class-admin.php:2342
+msgid "Failed to delete original file: %s"
+msgstr ""
+
+#: includes/class-admin.php:3855
+msgid "Failed to download attachment %d: %s"
+msgstr ""
+
+#: includes/class-media-library.php:447
+msgid "Failed to download file from Cloud."
+msgstr ""
+
+#: includes/class-admin.php:2429 includes/class-admin.php:2590
+msgid "Failed to download from Cloud: %s"
+msgstr ""
+
+#: includes/class-s3-service.php:474
+msgid "Failed to list S3 objects: %s"
+msgstr ""
+
+#: includes/class-admin.php:193
+msgid "Failed to offload file."
+msgstr ""
+
+#: includes/class-admin.php:194
+msgid "Failed to restore file."
+msgstr ""
+
+#: includes/class-media-library.php:443
+msgid "Failed to upload file to Cloud."
+msgstr ""
+
+#: includes/class-admin.php:2421 includes/class-admin.php:2441 includes/class-admin.php:2628
+msgid "Failed to upload to Cloud: %s"
+msgstr ""
+
+#: admin/views/file-list.php:167
+msgid "File"
+msgstr ""
+
+#: includes/class-admin.php:3433
+msgid "File ID is required."
+msgstr ""
+
+#: includes/class-admin.php:2624
+msgid "File already in Cloud."
+msgstr ""
+
+#: includes/class-admin.php:2634
+msgid "File already not in Cloud."
+msgstr ""
+
+#: includes/class-admin.php:2596
+msgid "File already not on server."
+msgstr ""
+
+#: includes/class-media-library.php:444
+msgid "File deleted from Cloud successfully."
+msgstr ""
+
+#: includes/class-s3-service.php:210
+msgid "File does not exist."
+msgstr ""
+
+#: includes/class-s3-service.php:331
+msgid "File download completed but file does not exist locally."
+msgstr ""
+
+#: includes/class-media-library.php:446
+msgid "File downloaded from Cloud successfully."
+msgstr ""
+
+#: includes/class-admin.php:2592
+msgid "File downloaded to server."
+msgstr ""
+
+#: admin/views/file-list.php:118
+msgid "File management is a Pro feature. Upgrade to Clockwork Offloader Pro to offload, restore, and manage your media files."
+msgstr ""
+
+#: includes/class-admin.php:2266
+msgid "File must be in Cloud before offloading from server."
+msgstr ""
+
+#: includes/class-s3-service.php:382
+msgid "File not found in S3. It may have already been deleted."
+msgstr ""
+
+#: includes/class-admin.php:191
+msgid "File offloaded successfully."
+msgstr ""
+
+#: includes/class-admin.php:192
+msgid "File restored successfully."
+msgstr ""
+
+#: includes/class-admin.php:2105
+msgid "File uploaded but failed to record in database. Please check database connection."
+msgstr ""
+
+#: includes/class-media-library.php:442
+msgid "File uploaded to Cloud successfully."
+msgstr ""
+
+#: includes/class-admin.php:2630
+msgid "File uploaded to Cloud."
+msgstr ""
+
+#: admin/views/dashboard.php:384
+msgid "Filename"
+msgstr ""
+
+#: includes/class-admin.php:846
+msgid "Files"
+msgstr ""
+
+#: admin/views/settings.php:436
+msgid "Files Per Page (Files Tab)"
+msgstr ""
+
+#: includes/class-admin.php:4320
+msgid "Final connection test failed: %s"
+msgstr ""
+
+#: admin/views/setup-wizard.php:62
+msgid "First, choose your storage provider, then choose how you want to store your credentials. We recommend storing them in wp-config.php for better security."
+msgstr ""
+
+#: includes/class-admin.php:495
+msgid "For better security, consider storing your AWS credentials in wp-config.php instead of the database. Add this constant to your wp-config.php file:"
+msgstr ""
+
+#: admin/views/settings.php:381
+msgid "Force HTTPS"
+msgstr ""
+
+#: admin/views/settings.php:134
+msgid "Force all subsites to use these settings"
+msgstr ""
+
+#: admin/views/settings.php:275
+msgid "Frees up local web server storage space by deleting media files from the server after they are safely offloaded to S3."
+msgstr ""
+
+#: admin/views/dashboard.php:391
+msgid "Full URL:"
+msgstr ""
+
+#: includes/class-admin.php:4763
+msgid "Full WP-CLI Command Suite"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:71
+msgid "Get Clockwork Offloader Pro"
+msgstr ""
+
+#: includes/class-admin.php:4771
+msgid "Get Clockwork Offloader Pro today starting at just $50/yr with our locked-in 50% launch discount and 14-day money-back guarantee."
+msgstr ""
+
+#: admin/views/partials/get-started.php:44
+msgid "Get started"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:50
+msgid "Global edge caching for media + CSS/JS"
+msgstr ""
+
+#: admin/views/settings.php:289
+msgid "Groups media from this site together by organizing uploads into a common subfolder inside your bucket."
+msgstr ""
+
+#: admin/views/settings.php:399
+msgid "How offloaded media links will appear to website visitors"
+msgstr ""
+
+#: includes/class-admin.php:4205
+msgid "In the DigitalOcean control panel set the Space's file listing / permissions so uploaded files are public, or serve through a CDN endpoint."
+msgstr ""
+
+#: admin/views/dashboard.php:187
+msgid "Includes all image sizes"
+msgstr ""
+
+#: admin/views/network-settings.php:212
+msgid "Individual sites can still configure their own settings in Settings > Clockwork Offloader. Site settings are used when network mode is disabled, or as a fallback when network settings are not configured."
+msgstr ""
+
+#: admin/views/dashboard.php:309
+msgid "Installed"
+msgstr ""
+
+#: includes/class-admin.php:2083 includes/class-admin.php:2134 includes/class-admin.php:2193 includes/class-admin.php:2260 includes/class-admin.php:2330
+msgid "Invalid attachment ID."
+msgstr ""
+
+#: includes/class-admin.php:3930
+msgid "Invalid connection method selected."
+msgstr ""
+
+#: includes/class-admin.php:2566
+msgid "Invalid status type."
+msgstr ""
+
+#: includes/class-admin.php:2400
+msgid "Invalid status."
+msgstr ""
+
+#: includes/class-admin.php:353
+msgid "Items Per Page (File Status)"
+msgstr ""
+
+#: admin/views/settings.php:430
+msgid "Items processed per background batch (10-50 recommended)."
+msgstr ""
+
+#: admin/views/setup-wizard.php:113
+msgid "Less secure but easier to manage through the WordPress admin."
+msgstr ""
+
+#: admin/views/setup-wizard.php:322
+msgid "Let's test your connection to make sure everything is configured correctly."
+msgstr ""
+
+#: includes/class-admin.php:861 includes/class-admin.php:1033 includes/class-admin.php:1666
+msgid "License"
+msgstr ""
+
+#: includes/class-admin.php:697
+msgid "Limit the number of uploads per minute to avoid rate limiting or excessive API usage."
+msgstr ""
+
+#: admin/views/network-settings.php:186
+msgid "Limit uploads to"
+msgstr ""
+
+#: includes/class-admin.php:573
+msgid "Load Buckets"
+msgstr ""
+
+#: admin/views/settings.php:222
+msgid "Load Buckets from AWS"
+msgstr ""
+
+#: admin/views/settings.php:191 admin/views/settings.php:201
+msgid "Loaded securely from wp-config.php constant."
+msgstr ""
+
+#: includes/class-admin.php:196 admin/views/setup-wizard.php:288
+msgid "Loading buckets..."
+msgstr ""
+
+#: admin/views/dashboard.php:210
+msgid "Local Server Disk:"
+msgstr ""
+
+#: admin/views/dashboard.php:202
+msgid "Local disk saved: 0 B (files kept on server)"
+msgstr ""
+
+#: admin/views/dashboard.php:196
+msgid "Local files deleted from server"
+msgstr ""
+
+#: admin/views/settings.php:110
+msgid "Manage Global Settings on Main Site"
+msgstr ""
+
+#: admin/views/settings.php:83
+msgid "Manage storage provider credentials, upload rules, and live media delivery settings."
+msgstr ""
+
+#: includes/class-admin.php:714
+msgid "Maximum number of objects to upload per minute. Leave throttling disabled for unlimited uploads."
+msgstr ""
+
+#: admin/views/file-list.php:125
+msgid "Media Files"
+msgstr ""
+
+#: admin/views/dashboard.php:266
+msgid "Migrate from other offload plugins to Clockwork Offloader."
+msgstr ""
+
+#: includes/class-admin.php:859 includes/class-admin.php:1015 includes/class-admin.php:1622
+msgid "Migration"
+msgstr ""
+
+#: admin/views/dashboard.php:67
+msgid "Migration Complete!"
+msgstr ""
+
+#: admin/views/dashboard.php:262
+msgid "Migration Tools"
+msgstr ""
+
+#: includes/class-admin.php:1631
+msgid "Migration classes not found. Please ensure Clockwork Offloader Pro is properly installed."
+msgstr ""
+
+#: includes/class-admin.php:3200 includes/class-admin.php:3251 includes/class-admin.php:3272
+msgid "Migration tools are a Pro feature. Please upgrade to Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:3263
+msgid "Migrator notice reset. The notice will appear again on the dashboard."
+msgstr ""
+
+#: includes/class-admin.php:4254 includes/class-admin.php:4275
+msgid "Missing setup data. Please complete all steps."
+msgstr ""
+
+#: admin/views/settings.php:121
+msgid "Multisite Primary Network Site"
+msgstr ""
+
+#: admin/views/settings.php:94
+msgid "Network Managed Site:"
+msgstr ""
+
+#: admin/views/network-settings.php:53
+msgid "Network Mode"
+msgstr ""
+
+#: admin/views/network-settings.php:30
+msgid "Network Mode:"
+msgstr ""
+
+#: admin/views/network-settings.php:68
+msgid "Network Settings"
+msgstr ""
+
+#: admin/views/network-settings.php:204
+msgid "Network mode is currently disabled. Each site manages its own settings. Enable network mode above to configure shared settings for all sites."
+msgstr ""
+
+#: includes/class-admin.php:2763
+msgid "No attachment IDs provided."
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:46
+msgid "No attachment caps or overages"
+msgstr ""
+
+#: includes/class-admin.php:2826
+msgid "No attachments found to offload."
+msgstr ""
+
+#: includes/class-admin.php:3693
+msgid "No attachments to download."
+msgstr ""
+
+#: includes/class-admin.php:2944
+msgid "No file types selected."
+msgstr ""
+
+#: admin/views/file-list.php:237
+msgid "No media files found."
+msgstr ""
+
+#: includes/class-admin.php:4668 includes/class-admin.php:4679
+msgid "No offloaded media found to verify."
+msgstr ""
+
+#: includes/class-admin.php:2854
+msgid "No valid attachments found in this batch."
+msgstr ""
+
+#: includes/class-admin.php:187 admin/views/file-list.php:143 admin/views/file-list.php:200 admin/views/file-list.php:323
+msgid "Not Offloaded"
+msgstr ""
+
+#: admin/views/dashboard.php:311
+msgid "Not installed"
+msgstr ""
+
+#: includes/class-media-library.php:121 includes/class-media-library.php:151 includes/class-media-library.php:209 includes/class-media-library.php:213 includes/class-media-library.php:260
+msgid "Not on Cloud"
+msgstr ""
+
+#: includes/class-media-library.php:126 includes/class-media-library.php:152 includes/class-media-library.php:215 includes/class-media-library.php:261 includes/class-media-library.php:353
+msgid "Not on Server"
+msgstr ""
+
+#: admin/views/dashboard.php:296
+msgid "Not tested"
+msgstr ""
+
+#: admin/views/network-settings.php:41 admin/views/network-settings.php:203
+msgid "Note:"
+msgstr ""
+
+#: includes/class-admin.php:504
+msgid "Note: Region and bucket are always stored in the database and can be edited below."
+msgstr ""
+
+#: includes/class-admin.php:4665
+msgid "Note: URL rewriting is currently disabled in settings. Enable it to serve media from S3."
+msgstr ""
+
+#: includes/class-admin.php:4676
+msgid "Note: URL rewriting is currently enabled. Disable it to serve media from your server."
+msgstr ""
+
+#: includes/class-admin.php:4470
+msgid "Notice dismissed."
+msgstr ""
+
+#: admin/views/settings.php:440
+msgid "Number of files listed per page in the Files tab."
+msgstr ""
+
+#: includes/class-admin.php:732
+msgid "Number of items to display per page on the File Status tab. Default: 20. Maximum: 999."
+msgstr ""
+
+#: includes/class-admin.php:681
+msgid "Number of items to process per batch. Recommended: 10-50 for large sites. Lower values reduce server load but take longer."
+msgstr ""
+
+#: admin/views/partials/get-started.php:86
+msgid "Off. Until this is on, new uploads stay on your server and never reach %s."
+msgstr ""
+
+#: includes/class-admin.php:189 admin/views/file-list.php:211 admin/views/file-list.php:329
+msgid "Offload"
+msgstr ""
+
+#: admin/views/settings.php:259
+msgid "Offload Media"
+msgstr ""
+
+#: includes/class-admin.php:4749
+msgid "Offload existing media libraries in bulk, download files back to local server on demand, and handle 600,000+ items without timeouts."
+msgstr ""
+
+#: includes/class-admin.php:186 admin/views/file-list.php:137 admin/views/file-list.php:195 admin/views/file-list.php:275
+msgid "Offloaded"
+msgstr ""
+
+#: admin/views/dashboard.php:179
+msgid "Offloaded Attachments"
+msgstr ""
+
+#: admin/views/dashboard.php:231
+msgid "Offloaded to S3/CDN (saving server bandwidth)"
+msgstr ""
+
+#: includes/class-admin.php:184
+msgid "Offloading..."
+msgstr ""
+
+#: includes/class-admin.php:4357
+msgid "Old CLOUDBOUND_OFFLOADER constants detected. Please update your wp-config.php to use the new CLOCKWORK_OFFLOADER_SETTINGS constant shown above, then remove the old CLOUDBOUND constants."
+msgstr ""
+
+#: includes/class-media-library.php:119 includes/class-media-library.php:151 includes/class-media-library.php:212 includes/class-media-library.php:260 includes/class-media-library.php:352
+msgid "On Cloud"
+msgstr ""
+
+#: includes/class-media-library.php:210
+msgid "On Cloud & Server"
+msgstr ""
+
+#: includes/class-media-library.php:124 includes/class-media-library.php:152 includes/class-media-library.php:214 includes/class-media-library.php:261 includes/class-media-library.php:353
+msgid "On Server"
+msgstr ""
+
+#: admin/views/partials/get-started.php:84
+msgid "On. Every new media upload is pushed to %s automatically."
+msgstr ""
+
+#: admin/views/partials/get-started.php:108
+msgid "Open Bulk Offload"
+msgstr ""
+
+#: admin/views/partials/get-started.php:143
+msgid "Open Files"
+msgstr ""
+
+#: includes/class-admin.php:1077 admin/views/dashboard.php:271
+msgid "Open Migration Tool"
+msgstr ""
+
+#: includes/class-admin.php:616
+msgid "Optional CDN domain to use instead of S3 URLs."
+msgstr ""
+
+#: admin/views/settings.php:336
+msgid "Optional CloudFront or custom CDN domain to deliver offloaded assets through a global edge network instead of direct S3 URLs."
+msgstr ""
+
+#: admin/views/settings.php:420
+msgid "Optional folder path in your bucket (e.g. \"uploads/\"). Leave empty to offload to root."
+msgstr ""
+
+#: includes/class-admin.php:604
+msgid "Optional prefix/path for all uploaded files in S3."
+msgstr ""
+
+#: includes/class-admin.php:289
+msgid "Options"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:27
+msgid "PRO EDITION"
+msgstr ""
+
+#: admin/views/dashboard.php:372
+msgid "Path"
+msgstr ""
+
+#: admin/views/settings.php:453
+msgid "Pause between items to protect server memory on constrained shared hosts."
+msgstr ""
+
+#: includes/class-admin.php:2217
+msgid "Permission denied for %s. Please check your AWS credentials have delete permissions."
+msgstr ""
+
+#: includes/class-admin.php:1847 includes/class-admin.php:1952 includes/class-admin.php:2077 includes/class-admin.php:2128 includes/class-admin.php:2187
+msgid "Permission denied."
+msgstr ""
+
+#: includes/class-s3-service.php:380
+msgid "Permission denied. Your AWS credentials do not have delete permissions for this bucket."
+msgstr ""
+
+#: includes/class-admin.php:3938
+msgid "Please add the credentials to your wp-config.php file first. The code snippet is shown on this page. After adding the code, refresh this page to continue."
+msgstr ""
+
+#: includes/class-admin.php:4046
+msgid "Please complete step 1 first."
+msgstr ""
+
+#: admin/views/dashboard.php:49
+msgid "Please enter Access Key and Secret Key first."
+msgstr ""
+
+#: admin/views/dashboard.php:313
+msgid "Please run \"composer install\" in the plugin directory."
+msgstr ""
+
+#: clockwork-offloader.php:816
+msgid "Please verify your AWS S3 credentials are correct in the settings."
+msgstr ""
+
+#: includes/class-admin.php:4491
+msgid "Popup dismissed."
+msgstr ""
+
+#: admin/views/dashboard.php:365
+msgid "Prefix"
+msgstr ""
+
+#: admin/views/network-settings.php:130
+msgid "Prefix for every object key. Subsites are always stored under sites/{id}/ beneath this, mirroring the uploads directory."
+msgstr ""
+
+#: includes/class-admin.php:4743
+msgid "Private Media & Expiring Signed URLs"
+msgstr ""
+
+#: includes/class-admin.php:2911
+msgid "Processed %d attachment(s), added %d to queue. %s"
+msgstr ""
+
+#: includes/class-admin.php:3653
+msgid "Processed %d attachment(s), found %d that need downloading. %s"
+msgstr ""
+
+#: includes/class-admin.php:3882
+msgid "Processed %d attachment(s). Downloaded: %d, Deleted from S3: %d. %s"
+msgstr ""
+
+#: includes/class-admin.php:2914
+msgid "Processing will begin automatically via cron."
+msgstr ""
+
+#: includes/class-admin.php:4744
+msgid "Protect downloadable digital goods for WooCommerce and Easy Digital Downloads with secure, time-limited pre-signed S3 links."
+msgstr ""
+
+#: includes/class-admin.php:4370 admin/views/setup-wizard.php:144 admin/views/network-settings.php:76
+msgid "Provider"
+msgstr ""
+
+#: admin/views/partials/get-started.php:95
+msgid "Push your existing media"
+msgstr ""
+
+#: includes/class-admin.php:320 admin/views/settings.php:426 admin/views/network-settings.php:175
+msgid "Queue Batch Size"
+msgstr ""
+
+#: includes/class-admin.php:2751 includes/class-admin.php:3454 includes/class-admin.php:3484 includes/class-admin.php:3514 includes/class-admin.php:3543
+msgid "Queue system is a Pro feature. Please upgrade to Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:3656
+msgid "Ready to download."
+msgstr ""
+
+#: includes/class-admin.php:4769
+msgid "Ready to unlock Pro features?"
+msgstr ""
+
+#: admin/views/setup-wizard.php:105
+msgid "Recommended for better security. Credentials are stored outside the database."
+msgstr ""
+
+#: includes/class-admin.php:4376 admin/views/setup-wizard.php:148 admin/views/network-settings.php:117
+msgid "Region"
+msgstr ""
+
+#: admin/views/setup-wizard.php:47
+msgid "Region & Bucket"
+msgstr ""
+
+#: includes/class-admin.php:4112
+msgid "Region and bucket validated successfully!"
+msgstr ""
+
+#: admin/views/settings.php:273
+msgid "Remove Local Media"
+msgstr ""
+
+#: includes/class-media-library.php:278 includes/class-media-library.php:370
+msgid "Remove from Cloud"
+msgstr ""
+
+#: admin/views/network-settings.php:160
+msgid "Remove local copies once a file and all its sizes are confirmed in the bucket"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:67
+msgid "Renews at 50% off for life"
+msgstr ""
+
+#: includes/class-admin.php:3533
+msgid "Reset %d failed item(s) for retry."
+msgstr ""
+
+#: includes/class-admin.php:188 admin/views/file-list.php:207 admin/views/file-list.php:281
+msgid "Restore"
+msgstr ""
+
+#: includes/class-admin.php:2138
+msgid "Restore requires Clockwork Offloader Pro."
+msgstr ""
+
+#: includes/class-admin.php:2163
+msgid "Restored %d file(s). Some files could not be restored: %s"
+msgstr ""
+
+#: includes/class-admin.php:185
+msgid "Restoring..."
+msgstr ""
+
+#: includes/class-admin.php:312 admin/views/network-settings.php:165
+msgid "Rewrite URLs"
+msgstr ""
+
+#: includes/class-admin.php:667
+msgid "Rewrite media URLs to point to S3"
+msgstr ""
+
+#: admin/views/setup-wizard.php:264 admin/views/setup-wizard.php:372
+msgid "S3 Bucket"
+msgstr ""
+
+#: includes/class-admin.php:248 admin/views/settings.php:219
+msgid "S3 Bucket Name"
+msgstr ""
+
+#: includes/class-admin.php:216
+msgid "S3 Configuration"
+msgstr ""
+
+#: admin/views/dashboard.php:290
+msgid "S3 Connection"
+msgstr ""
+
+#: includes/class-admin.php:256 admin/views/settings.php:208
+msgid "S3 Region"
+msgstr ""
+
+#: includes/class-s3-service.php:222 includes/class-s3-service.php:305 includes/class-s3-service.php:356 includes/class-s3-service.php:441 includes/class-s3-service.php:884
+msgid "S3 bucket is not configured."
+msgstr ""
+
+#: includes/class-s3-service.php:170
+msgid "S3 credentials are not configured."
+msgstr ""
+
+#: includes/class-s3-service.php:385
+msgid "S3 delete failed: %s"
+msgstr ""
+
+#: includes/class-s3-service.php:336
+msgid "S3 download failed: %s"
+msgstr ""
+
+#: includes/class-s3-service.php:866
+msgid "SSL certificate validation failed. This is usually a server configuration issue. Please check your server's SSL certificates and ensure they are valid and trusted."
+msgstr ""
+
+#: includes/class-admin.php:2053
+msgid "SSL certificate validation failed. This is usually a server configuration issue. Please check your server's SSL certificates and ensure they are valid and trusted. You can try entering the bucket name manually instead of browsing."
+msgstr ""
+
+#: admin/views/settings.php:480
+msgid "Save Changes"
+msgstr ""
+
+#: admin/views/network-settings.php:196
+msgid "Save Network Settings"
+msgstr ""
+
+#: admin/views/dashboard.php:344
+msgid "Scheme"
+msgstr ""
+
+#: includes/class-admin.php:4764
+msgid "Script, automate, and inspect large fleet migrations from the terminal with wp clockwork-offloader commands."
+msgstr ""
+
+#: admin/views/file-list.php:157
+msgid "Search"
+msgstr ""
+
+#: admin/views/file-list.php:155
+msgid "Search Media"
+msgstr ""
+
+#: admin/views/file-list.php:156
+msgid "Search media..."
+msgstr ""
+
+#: admin/views/settings.php:198 admin/views/setup-wizard.php:188
+msgid "Secret Access Key"
+msgstr ""
+
+#: admin/views/network-settings.php:98
+msgid "Secret Key"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:54
+msgid "Secure expiring download links"
+msgstr ""
+
+#: includes/class-admin.php:494
+msgid "Security Recommendation"
+msgstr ""
+
+#: includes/class-admin.php:2073 includes/class-admin.php:2124 includes/class-admin.php:2183
+msgid "Security check failed."
+msgstr ""
+
+#: admin/views/partials/get-started.php:132
+msgid "See Pro"
+msgstr ""
+
+#: includes/class-admin.php:197 includes/class-admin.php:568 admin/views/settings.php:228
+msgid "Select a bucket..."
+msgstr ""
+
+#: admin/views/setup-wizard.php:226
+msgid "Select a region..."
+msgstr ""
+
+#: admin/views/setup-wizard.php:217
+msgid "Select your %s region and bucket where media files will be stored."
+msgstr ""
+
+#: admin/views/network-settings.php:169
+msgid "Serve offloaded media from the bucket / CDN instead of the local server"
+msgstr ""
+
+#: admin/views/dashboard.php:235
+msgid "Served by local web server (Rewrite URLs is OFF)"
+msgstr ""
+
+#: admin/views/settings.php:369
+msgid "Serves offloaded media files by rewriting local URLs in pages, posts, and feeds so visitors fetch them from S3 or your CDN."
+msgstr ""
+
+#: includes/class-admin.php:855 admin/views/settings.php:82
+msgid "Settings"
+msgstr ""
+
+#: admin/views/settings.php:477
+msgid "Settings Managed Globally by Main Site"
+msgstr ""
+
+#: admin/views/network-settings.php:42
+msgid "Settings are loaded from wp-config.php constants, which take priority over network and site settings."
+msgstr ""
+
+#: admin/views/settings.php:124
+msgid "Settings configured below serve as the network default for all subsites."
+msgstr ""
+
+#: includes/class-admin.php:1170
+msgid "Settings saved."
+msgstr ""
+
+#: admin/views/setup-wizard.php:32
+msgid "Setup Clockwork Offloader Lite"
+msgstr ""
+
+#: includes/class-admin.php:4331
+msgid "Setup completed successfully!"
+msgstr ""
+
+#: includes/class-admin.php:345
+msgid "Show CDN Status in Media Library"
+msgstr ""
+
+#: includes/class-admin.php:4759
+msgid "Single-click network-wide activation with automated per-subsite isolation under sites/{id}/ and global settings inheritance."
+msgstr ""
+
+#: admin/views/network-settings.php:211
+msgid "Site Settings:"
+msgstr ""
+
+#: includes/class-admin.php:3890
+msgid "Some errors occurred:"
+msgstr ""
+
+#: admin/views/setup-wizard.php:262 admin/views/setup-wizard.php:370
+msgid "Space Name"
+msgstr ""
+
+#: admin/views/partials/get-started.php:120
+msgid "Start Bulk Offload"
+msgstr ""
+
+#: includes/class-admin.php:1056
+msgid "Start with Migration Tool"
+msgstr ""
+
+#: admin/views/dashboard.php:169
+msgid "Statistics"
+msgstr ""
+
+#: admin/views/file-list.php:168
+msgid "Status"
+msgstr ""
+
+#: includes/class-admin.php:2538
+msgid "Status is already correct. No changes needed."
+msgstr ""
+
+#: includes/class-admin.php:2541
+msgid "Status updated. Actions taken: %s"
+msgstr ""
+
+#: includes/class-admin.php:224 includes/class-admin.php:4060 admin/views/setup-wizard.php:66 admin/views/setup-wizard.php:215 admin/views/setup-wizard.php:328
+msgid "Storage Provider"
+msgstr ""
+
+#: admin/views/settings.php:158
+msgid "Storage Settings"
+msgstr ""
+
+#: admin/views/settings.php:245
+msgid "Storage provider is not fully configured. Click \"Edit\" above to enter your bucket and credentials."
+msgstr ""
+
+#: admin/views/settings.php:238
+msgid "Storage provider is successfully connected and ready to offload new media."
+msgstr ""
+
+#: admin/views/setup-wizard.php:112
+msgid "Store access keys in database"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:30
+msgid "Supercharge Media Delivery with Clockwork Offloader Pro"
+msgstr ""
+
+#: includes/class-admin.php:4754
+msgid "Switch seamlessly from other offload plugins with 1-click migration. Preserves your existing S3 bucket, paths, and URLs."
+msgstr ""
+
+#: admin/views/dashboard.php:285
+msgid "System Status"
+msgstr ""
+
+#: includes/class-admin.php:3223
+msgid "Table already exists."
+msgstr ""
+
+#: admin/views/setup-wizard.php:52
+msgid "Test & Complete"
+msgstr ""
+
+#: includes/class-admin.php:190 admin/views/dashboard.php:300 admin/views/setup-wizard.php:384
+msgid "Test Connection"
+msgstr ""
+
+#: includes/class-admin.php:181
+msgid "Testing connection..."
+msgstr ""
+
+#: admin/views/setup-wizard.php:253
+msgid "The %s region where your bucket is located."
+msgstr ""
+
+#: admin/views/partials/get-started.php:142
+msgid "The Files tab lists each attachment and where it lives. Upload one image and confirm it shows as offloaded."
+msgstr ""
+
+#: includes/class-admin.php:1071
+msgid "The Migration Tool will help you transfer all your offloaded media and settings from your existing plugin to Clockwork Offloader seamlessly."
+msgstr ""
+
+#: includes/class-s3-service.php:849
+msgid "The bucket appears to be in a different region than the one selected. Please try selecting a different region. Common regions to try: us-east-2, us-west-1, us-west-2, eu-west-1, or check your AWS S3 console for the bucket's actual region."
+msgstr ""
+
+#: includes/class-s3-service.php:843
+msgid "The bucket is in region \"%s\", not \"%s\". Please select \"%s\" from the region dropdown."
+msgstr ""
+
+#: admin/views/setup-wizard.php:175
+msgid "These credentials will be stored in the WordPress database. You can modify them if needed."
+msgstr ""
+
+#: admin/views/network-settings.php:70
+msgid "These settings will be used by all sites in the network when network mode is enabled."
+msgstr ""
+
+#: includes/class-admin.php:2042
+msgid "This access key is scoped to a single bucket and cannot list buckets. Enter the bucket name manually instead."
+msgstr ""
+
+#: includes/class-admin.php:4206
+msgid "This bucket most likely has \"Bucket owner enforced\" object ownership (the default for new buckets), which disables ACLs, so public access has to come from a bucket policy. Add this policy under Permissions → Bucket policy in the S3 console, then re-run the test:"
+msgstr ""
+
+#: includes/class-lite-restrictions.php:78
+msgid "This is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature."
+msgstr ""
+
+#: includes/class-admin.php:1103
+msgid "This page is only available in network admin."
+msgstr ""
+
+#: admin/views/settings.php:99
+msgid "This site is automatically using the storage and delivery settings configured on the main network site (%s). Media uploaded on this site is stored under %s in bucket %s."
+msgstr ""
+
+#: includes/class-admin.php:328 admin/views/settings.php:451 admin/views/network-settings.php:182
+msgid "Throttle Uploads"
+msgstr ""
+
+#: admin/views/file-list.php:166
+msgid "Thumbnail"
+msgstr ""
+
+#: admin/views/dashboard.php:174
+msgid "Total Attachments"
+msgstr ""
+
+#: admin/views/dashboard.php:184
+msgid "Total Files Offloaded"
+msgstr ""
+
+#: admin/views/dashboard.php:199
+msgid "Total Storage on S3"
+msgstr ""
+
+#: admin/views/partials/get-started.php:82
+msgid "Turn on Auto Upload"
+msgstr ""
+
+#: admin/views/dashboard.php:327 admin/views/settings.php:396
+msgid "URL Preview"
+msgstr ""
+
+#: admin/views/dashboard.php:401
+msgid "URLs will use your configured CDN domain instead of the storage provider domain."
+msgstr ""
+
+#: includes/class-s3-service.php:373
+msgid "Unexpected response code: %d"
+msgstr ""
+
+#: includes/class-admin.php:3240
+msgid "Unknown database error"
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:46
+msgid "Unlimited Media Items"
+msgstr ""
+
+#: admin/views/dashboard.php:146
+msgid "Upgrade License"
+msgstr ""
+
+#: includes/class-lite-restrictions.php:86 includes/class-admin.php:870 admin/views/file-list.php:120
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/class-admin.php:336
+msgid "Upload Rate"
+msgstr ""
+
+#: includes/class-media-library.php:272 includes/class-media-library.php:364
+msgid "Upload to Cloud"
+msgstr ""
+
+#: includes/class-admin.php:2423 includes/class-admin.php:2443
+msgid "Uploaded to Cloud"
+msgstr ""
+
+#: admin/views/setup-wizard.php:72
+msgid "Use Amazon Web Services S3 for storage."
+msgstr ""
+
+#: admin/views/setup-wizard.php:80
+msgid "Use Digital Ocean Spaces for storage (S3-compatible)."
+msgstr ""
+
+#: admin/views/settings.php:383
+msgid "Uses secure HTTPS for all offloaded media URLs (standard for Amazon S3 and CloudFront distributions)."
+msgstr ""
+
+#: includes/class-admin.php:489
+msgid "Using wp-config.php credentials"
+msgstr ""
+
+#: includes/class-admin.php:4670
+msgid "Verified %d URLs - all pointing to S3."
+msgstr ""
+
+#: includes/class-admin.php:4681
+msgid "Verified %d URLs - all pointing to local server."
+msgstr ""
+
+#: admin/views/setup-wizard.php:133
+msgid "Verify wp-config.php"
+msgstr ""
+
+#: includes/class-admin.php:4774
+msgid "View Pricing &amp; Upgrade to Pro (50% Off) &rarr;"
+msgstr ""
+
+#: admin/views/dashboard.php:274
+msgid "View in Tools Menu"
+msgstr ""
+
+#: includes/class-admin.php:651
+msgid "Warning: This will permanently delete files from your server. Make sure you have backups."
+msgstr ""
+
+#: includes/class-admin.php:649
+msgid "Warning: This will permanently delete files from your server. Make sure you have backups. To restore files from S3 back to your server, you will need Clockwork Offloader Pro. Do not do this unless you want to buy Pro very soon."
+msgstr ""
+
+#: admin/views/partials/get-started.php:141
+msgid "Watch it work"
+msgstr ""
+
+#: includes/class-admin.php:1066
+msgid "We detected that you have another offload plugin installed. Before configuring Clockwork Offloader, we recommend using the Migration Tool to migrate your existing offloaded files and settings."
+msgstr ""
+
+#: admin/views/dashboard.php:228
+msgid "Web Server Delivery:"
+msgstr ""
+
+#: admin/views/dashboard.php:331
+msgid "When a media URL is rewritten, it will use the following structure based on the current Storage and Delivery settings:"
+msgstr ""
+
+#: includes/class-admin.php:762
+msgid "When enabled, a Development tab will appear in the menu with tools to generate test media files."
+msgstr ""
+
+#: includes/class-admin.php:669
+msgid "When enabled, all media URLs will be rewritten to use S3 URLs."
+msgstr ""
+
+#: admin/views/network-settings.php:61
+msgid "When enabled, all sites in the network will use these shared settings. When disabled, each site can have its own settings."
+msgstr ""
+
+#: admin/views/partials/pro-upgrade-ad.php:54
+msgid "WooCommerce Private Media"
+msgstr ""
+
+#: includes/class-admin.php:4758
+msgid "WordPress Multisite Network Support"
+msgstr ""
+
+#: admin/views/dashboard.php:378
+msgid "Year & Month"
+msgstr ""
+
+#: includes/class-admin.php:794 includes/class-admin.php:1107 includes/class-admin.php:1305 includes/class-admin.php:1319 includes/class-admin.php:1429
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: admin/views/partials/get-started.php:53
+msgid "You're connected, but new uploads aren't being pushed."
+msgstr ""
+
+#: admin/views/partials/get-started.php:51
+msgid "You're connected. Nothing has been pushed yet."
+msgstr ""
+
+#: admin/views/setup-wizard.php:183
+msgid "Your AWS Access Key ID"
+msgstr ""
+
+#: includes/class-admin.php:523
+msgid "Your AWS Access Key ID is loaded from wp-config.php. To change it, update the CLOCKWORK_OFFLOADER_SETTINGS constant."
+msgstr ""
+
+#: includes/class-admin.php:529
+msgid "Your AWS Access Key ID. For better security, consider storing this in wp-config.php instead."
+msgstr ""
+
+#: admin/views/setup-wizard.php:192
+msgid "Your AWS Secret Access Key"
+msgstr ""
+
+#: includes/class-admin.php:547
+msgid "Your AWS Secret Access Key is loaded from wp-config.php. To change it, update the CLOCKWORK_OFFLOADER_SETTINGS constant."
+msgstr ""
+
+#: includes/class-admin.php:553
+msgid "Your AWS Secret Access Key. For better security, consider storing this in wp-config.php instead."
+msgstr ""
+
+#: includes/class-admin.php:490
+msgid "Your AWS credentials and provider are currently loaded from wp-config.php. Region and bucket are stored in the database and can be edited below."
+msgstr ""
+
+#: admin/views/network-settings.php:92
+msgid "Your S3-compatible access key ID."
+msgstr ""
+
+#: admin/views/network-settings.php:103
+msgid "Your S3-compatible secret access key."
+msgstr ""
+
+#: admin/views/setup-wizard.php:300
+msgid "Your access key is scoped to a single bucket and is not allowed to list buckets, so browsing is unavailable. That is the recommended setup for security; just type the bucket name (not the IAM user name) and pick the region it lives in."
+msgstr ""
+
+#: admin/views/partials/get-started.php:115
+msgid "Your library has %s attachments on the server. Bulk Offload pushes them in the background and rewrites their URLs."
+msgstr ""
+
+#: admin/views/partials/get-started.php:126
+msgid "Your library has %s attachments on the server. Lite pushes new uploads only; Pro adds Bulk Offload for everything already there."
+msgstr ""
+
+#: admin/views/dashboard.php:68
+msgid "Your migration was successful. We recommend deactivating the Clockwork Offloader Migrator plugin as it is no longer needed."
+msgstr ""
+
+#: includes/class-admin.php:745
+msgid "Your settings have been migrated to the new format. Region and bucket are now stored in the database. If you had region/bucket in wp-config.php, they have been moved to the database."
+msgstr ""
+
+#: clockwork-offloader.php:811
+msgid "Your storage provider has been automatically migrated from %s to AWS S3. Clockwork Offloader now only supports AWS S3 and DigitalOcean Spaces."
+msgstr ""
+
+#: includes/class-admin.php:4753
+msgid "Zero-Downtime Migration Tools"
+msgstr ""
+
+#: includes/class-admin.php:711
+msgid "objects per minute"
+msgstr ""
+
+#: admin/views/network-settings.php:189
+msgid "per minute"
+msgstr ""
+
+#: admin/views/setup-wizard.php:346
+msgid "wp-config.php"
+msgstr ""
+
+#: includes/class-admin.php:4391
+msgid "wp-config.php constants are not currently defined. Please add the code snippet to your wp-config.php file and reload this page."
+msgstr ""
+
+#: includes/class-admin.php:4365 admin/views/setup-wizard.php:154
+msgid "wp-config.php constants detected successfully!"
+msgstr ""
+

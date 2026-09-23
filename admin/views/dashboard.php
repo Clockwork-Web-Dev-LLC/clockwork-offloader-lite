@@ -193,13 +193,13 @@ if ( ! isset( $has_credentials ) ) {
 							<h3><?php esc_html_e( 'Disk Space Saved', 'clockwork-offloader' ); ?></h3>
 							<p class="stat-number" style="color: #00a32a;"><?php echo esc_html( size_format( $stats['total_size'], 2 ) ); ?></p>
 							<p class="description" style="font-size: 11px; margin-top: 5px; color: #00a32a;">
-								<i class="fa-solid fa-check"></i> <?php esc_html_e( 'Local files deleted from server', 'clockwork-offloader' ); ?>
+								<span class="dashicons dashicons-yes-alt" style="color: #10b981; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> <?php esc_html_e( 'Local files deleted from server', 'clockwork-offloader' ); ?>
 							</p>
 						<?php else : ?>
 							<h3><?php esc_html_e( 'Total Storage on S3', 'clockwork-offloader' ); ?></h3>
 							<p class="stat-number"><?php echo esc_html( size_format( $stats['total_size'], 2 ) ); ?></p>
 							<p class="description" style="font-size: 11px; margin-top: 5px; color: #646970;">
-								<i class="fa-solid fa-hard-drive"></i> <?php esc_html_e( 'Local disk saved: 0 B (files kept on server)', 'clockwork-offloader' ); ?>
+								<span class="dashicons dashicons-database" style="color: #64748b; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> <?php esc_html_e( 'Local disk saved: 0 B (files kept on server)', 'clockwork-offloader' ); ?>
 							</p>
 						<?php endif; ?>
 					</div>
@@ -207,7 +207,7 @@ if ( ! isset( $has_credentials ) ) {
 
 				<div class="clockwork-stats-breakdown" style="margin-top: 20px; padding: 14px 18px; background: #fbfbfc; border: 1px solid #e2e4e7; border-radius: 4px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; font-size: 13px;">
 					<div>
-						<strong style="color: #1d2327;"><i class="fa-solid fa-hard-drive" style="color: #2271b1; margin-right: 6px;"></i><?php esc_html_e( 'Local Server Disk:', 'clockwork-offloader' ); ?></strong>
+						<strong style="color: #1d2327;"><span class="dashicons dashicons-database" style="color: #2271b1; margin-right: 6px; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span><?php esc_html_e( 'Local Server Disk:', 'clockwork-offloader' ); ?></strong>
 						<?php if ( $delete_after_upload ) : ?>
 							<span style="color: #00a32a; font-weight: 600; margin-left: 4px;">
 								<?php printf( esc_html__( '%s freed from web server disk', 'clockwork-offloader' ), esc_html( size_format( $stats['total_size'], 2 ) ) ); ?>
@@ -225,14 +225,14 @@ if ( ! isset( $has_credentials ) ) {
 						<?php endif; ?>
 					</div>
 					<div>
-						<strong style="color: #1d2327;"><i class="fa-solid fa-bolt" style="color: #2271b1; margin-right: 6px;"></i><?php esc_html_e( 'Web Server Delivery:', 'clockwork-offloader' ); ?></strong>
+						<strong style="color: #1d2327;"><span class="dashicons dashicons-performance" style="color: #2271b1; margin-right: 6px; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span><?php esc_html_e( 'Web Server Delivery:', 'clockwork-offloader' ); ?></strong>
 						<?php if ( $rewrite_urls ) : ?>
 							<span style="color: #00a32a; font-weight: 600; margin-left: 4px;">
-								<i class="fa-solid fa-check"></i> <?php esc_html_e( 'Offloaded to S3/CDN (saving server bandwidth)', 'clockwork-offloader' ); ?>
+								<span class="dashicons dashicons-yes-alt" style="color: #10b981; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> <?php esc_html_e( 'Offloaded to S3/CDN (saving server bandwidth)', 'clockwork-offloader' ); ?>
 							</span>
 						<?php else : ?>
 							<span style="color: #9a6700; font-weight: 600; margin-left: 4px;">
-								<i class="fa-solid fa-triangle-exclamation"></i> <?php esc_html_e( 'Served by local web server (Rewrite URLs is OFF)', 'clockwork-offloader' ); ?>
+								<span class="dashicons dashicons-warning" style="color: #f59e0b; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> <?php esc_html_e( 'Served by local web server (Rewrite URLs is OFF)', 'clockwork-offloader' ); ?>
 							</span>
 						<?php endif; ?>
 					</div>

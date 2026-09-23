@@ -31,16 +31,9 @@ Screenshots should be placed in the `screenshots/` folder and named:
 
 ## Current Status
 
-- [ ] Banner created (`banner-772x250.png`)
-- [ ] Icon created (`icon-256x256.png`)
-- [ ] Screenshot 1 created (`screenshots/screenshot-1.png`)
-- [ ] Screenshot 2 created (`screenshots/screenshot-2.png`)
-- [ ] Screenshot 3 created (`screenshots/screenshot-3.png`)
-- [ ] Screenshot 4 created (`screenshots/screenshot-4.png`)
-
-## Notes
-
-- The logo SVG is available at `admin/images/cloudbound-logo.svg` and can be used as a base for creating the icon and banner
-- Screenshots should be taken from a clean WordPress installation with default theme
-- All images should be optimized for web (compressed but high quality)
-
+- [x] Banner created (`banner-772x250.png`, `banner-1544x500.png`)
+- [x] Icon created (`icon-128x128.png`, `icon-256x256.png`)
+- [x] Screenshot 1 created (`screenshot-1.png`)
+- [x] Screenshot 2 created (`screenshot-2.png`)
+- [x] Screenshot 3 created (`screenshot-3.png`)
+- [x] Screenshot 4 created (`screenshot-4.png`)

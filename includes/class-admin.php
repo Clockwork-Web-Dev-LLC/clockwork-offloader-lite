@@ -146,15 +146,8 @@ class Clockwork_Offloader_Admin {
 			return;
 		}
 		
-		// Enqueue Font Awesome for status icons
-		if ( ! wp_style_is( 'font-awesome', 'enqueued' ) ) {
-			wp_enqueue_style(
-				'font-awesome',
-				'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-				array(),
-				'6.5.1'
-			);
-		}
+		// Enqueue Dashicons for status icons (WordPress core native)
+		wp_enqueue_style( 'dashicons' );
 		
 		$css_file = CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'admin/css/admin.css';
 		$css_ver  = file_exists( $css_file ) ? filemtime( $css_file ) : CLOCKWORK_OFFLOADER_VERSION;

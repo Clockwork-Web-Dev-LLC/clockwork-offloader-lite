@@ -175,8 +175,8 @@
 					
 					// Update status icons immediately
 					var $statusIcons = $controls.find('.clockwork-status-icons');
-					$statusIcons.find('.fa-cloud').css('color', status.cdn_color);
-					$statusIcons.find('.fa-computer').css('color', status.server_color);
+					$statusIcons.find('.dashicons-cloud, .fa-cloud').css('color', status.cdn_color);
+					$statusIcons.find('.dashicons-desktop, .fa-computer').css('color', status.server_color);
 					
 					// Update status text
 					$controls.find('.clockwork-status-text').text(status.label);
