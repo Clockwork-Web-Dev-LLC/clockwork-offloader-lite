@@ -226,8 +226,8 @@ class Clockwork_Offloader_Media_Library {
 		<script type="text/html" id="tmpl-clockwork-offload-indicator">
 			<# if ( data.status ) { #>
 				<span class="clockwork-offload-grid-indicator" title="{{ data.status.label }}">
-					<i class="fa-solid fa-cloud" style="color: {{ data.status.cdn_color }};" title="{{ data.status.cdn_on_cdn ? clockworkOffloaderMedia.strings.onCdn : clockworkOffloaderMedia.strings.notOnCdn }}"></span>
-					<i class="fa-solid fa-computer" style="color: {{ data.status.server_color }};" title="{{ data.status.server_on_server ? clockworkOffloaderMedia.strings.onServer : clockworkOffloaderMedia.strings.notOnServer }}"></span>
+					<span class="dashicons dashicons-cloud" style="color: {{ data.status.cdn_color }};" title="{{ data.status.cdn_on_cdn ? clockworkOffloaderMedia.strings.onCdn : clockworkOffloaderMedia.strings.notOnCdn }}"></span>
+					<span class="dashicons dashicons-desktop" style="color: {{ data.status.server_color }};" title="{{ data.status.server_on_server ? clockworkOffloaderMedia.strings.onServer : clockworkOffloaderMedia.strings.notOnServer }}"></span>
 				</span>
 			<# } #>
 		</script>
@@ -257,8 +257,8 @@ class Clockwork_Offloader_Media_Library {
 		$controls_html .= '<div class="clockwork-status-display" style="margin-bottom: 15px; padding: 10px; background: #f0f0f1; border-radius: 3px;">';
 		$controls_html .= '<strong>' . __( 'Cloud Status:', 'clockwork-offloader' ) . '</strong> ';
 		$controls_html .= '<span class="clockwork-status-icons" style="margin-left: 10px;">';
-		$controls_html .= '<i class="fa-solid fa-cloud" style="color: ' . esc_attr( $status['cdn_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ) . '"></span>';
-		$controls_html .= '<i class="fa-solid fa-computer" style="color: ' . esc_attr( $status['server_color'] ) . '; margin: 0 5px; font-size: 18px;" title="' . esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ) . '"></span>';
+		$controls_html .= '<span class="dashicons dashicons-cloud" style="color: ' . esc_attr( $status['cdn_color'] ) . '; margin: 0 4px; font-size: 18px; width: 18px; height: 18px; vertical-align: text-bottom;" title="' . esc_attr( $status['cdn_on_cdn'] ? __( 'On Cloud', 'clockwork-offloader' ) : __( 'Not on Cloud', 'clockwork-offloader' ) ) . '"></span>';
+		$controls_html .= '<span class="dashicons dashicons-desktop" style="color: ' . esc_attr( $status['server_color'] ) . '; margin: 0 4px; font-size: 18px; width: 18px; height: 18px; vertical-align: text-bottom;" title="' . esc_attr( $status['server_on_server'] ? __( 'On Server', 'clockwork-offloader' ) : __( 'Not on Server', 'clockwork-offloader' ) ) . '"></span>';
 		$controls_html .= '</span>';
 		$controls_html .= '</div>';
 		

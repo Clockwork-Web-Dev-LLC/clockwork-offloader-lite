@@ -405,7 +405,7 @@ if ( ! empty( $cdn_domain ) ) {
 		</div>
 
 		<!-- Collapsible Advanced Options -->
-		<details class="clockwork-advanced-settings">
+		<details class="clockwork-advanced-settings" <?php echo ! empty( $base_path ) ? 'open' : ''; ?>>
 			<summary>
 				<?php esc_html_e( 'Advanced Performance & Queue Settings', 'clockwork-offloader' ); ?>
 			</summary>

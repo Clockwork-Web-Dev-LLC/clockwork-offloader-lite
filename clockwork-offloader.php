@@ -170,8 +170,7 @@ class Clockwork_Offloader {
 		// Initialize admin
 		if ( is_admin() ) {
 			new Clockwork_Offloader_Admin();
-			// Media Library integration removed for performance
-			// new Clockwork_Offloader_Media_Library();
+			new Clockwork_Offloader_Media_Library();
 		}
 
 		// Initialize URL rewriter

@@ -549,7 +549,7 @@
 	background: var(--cwk-primary-dark);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: 0;
-	padding: 22px 32px;
+	padding: 16px 28px;
 	margin: 0;
 	position: relative;
 	overflow: hidden;
@@ -689,7 +689,7 @@
 }
 
 .clockwork-offloader-nav-tabs .nav-tab {
-	padding: 14px 18px;
+	padding: 10px 16px;
 	font-size: 13px;
 	font-weight: 500;
 	color: var(--cwk-text-muted);
@@ -722,12 +722,8 @@
 
 /* Tab Content Wrappers */
 .clockwork-offloader-tab-content {
-	padding: 0 32px 60px;
-}
-
-/* Tab Navigation Styles */
-.clockwork-offloader-tab-content {
-	margin-top: 20px;
+	padding: 0 28px 40px;
+	margin-top: 14px;
 }
 
 .clockwork-offloader-tab-content .nav-tab-wrapper {
@@ -2010,8 +2006,8 @@
 .clockwork-settings-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 24px;
-	margin-top: 20px;
+	gap: 18px;
+	margin-top: 14px;
 }
 
 @media (max-width: 960px) {
@@ -2024,7 +2020,7 @@
 	background: #ffffff;
 	border: 1px solid #e2e8f0;
 	border-radius: 8px;
-	padding: 24px;
+	padding: 18px 20px;
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 	display: flex;
 	flex-direction: column;
@@ -2034,14 +2030,14 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 18px;
-	padding-bottom: 14px;
+	margin-bottom: 14px;
+	padding-bottom: 10px;
 	border-bottom: 1px solid #f1f5f9;
 }
 
 .clockwork-settings-card .clockwork-card-header h3 {
 	margin: 0;
-	font-size: 17px;
+	font-size: 16px;
 	font-weight: 600;
 	color: #0f172a;
 	display: flex;
@@ -2053,17 +2049,17 @@
 .clockwork-provider-box {
 	display: flex;
 	align-items: center;
-	gap: 14px;
-	padding: 14px 16px;
+	gap: 12px;
+	padding: 11px 14px;
 	background: #f8fafc;
 	border: 1px solid #e2e8f0;
 	border-radius: 6px;
-	margin-bottom: 16px;
+	margin-bottom: 12px;
 }
 
 .clockwork-provider-icon {
-	width: 36px;
-	height: 36px;
+	width: 34px;
+	height: 34px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -2071,7 +2067,7 @@
 	border: 1px solid #e2e8f0;
 	border-radius: 6px;
 	color: #e07a14;
-	font-size: 20px;
+	font-size: 18px;
 	flex-shrink: 0;
 }
 
@@ -2082,12 +2078,12 @@
 
 .clockwork-provider-name {
 	font-weight: 600;
-	font-size: 14px;
+	font-size: 13.5px;
 	color: #0f172a;
 }
 
 .clockwork-provider-meta {
-	font-size: 12.5px;
+	font-size: 12px;
 	color: #64748b;
 	margin-top: 2px;
 	display: flex;
@@ -2115,10 +2111,10 @@
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	padding: 12px 14px;
+	padding: 10px 12px;
 	border-radius: 6px;
-	margin-bottom: 20px;
-	font-size: 13px;
+	margin-bottom: 14px;
+	font-size: 12.5px;
 	line-height: 1.4;
 }
 
