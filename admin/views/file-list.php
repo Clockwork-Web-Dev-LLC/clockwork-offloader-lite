@@ -62,7 +62,7 @@ if ( 'offloaded' === $filter || 'not-offloaded' === $filter ) {
 	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
 		if ( 'offloaded' === $filter ) {
 			// Get all offloaded attachment IDs
-			$offloaded_ids = $wpdb->get_col( "SELECT DISTINCT attachment_id FROM {$table_name}" );
+			$offloaded_ids = $wpdb->get_col( "SELECT DISTINCT attachment_id FROM " . esc_sql( $table_name ) );
 			$filtered_ids = ! empty( $offloaded_ids ) ? array_map( 'absint', $offloaded_ids ) : array( 0 ); // Use 0 if empty to show nothing
 		} else {
 			// Get all attachment IDs, then exclude offloaded ones
@@ -72,7 +72,7 @@ if ( 'offloaded' === $filter || 'not-offloaded' === $filter ) {
 				'inherit',
 				'image/%'
 			) );
-			$offloaded_ids = $wpdb->get_col( "SELECT DISTINCT attachment_id FROM {$table_name}" );
+			$offloaded_ids = $wpdb->get_col( "SELECT DISTINCT attachment_id FROM " . esc_sql( $table_name ) );
 			$filtered_ids = array_diff( array_map( 'absint', $all_ids ), array_map( 'absint', $offloaded_ids ) );
 			if ( empty( $filtered_ids ) ) {
 				$filtered_ids = array( 0 ); // Use 0 if empty to show nothing
@@ -86,14 +86,14 @@ if ( 'offloaded' === $filter || 'not-offloaded' === $filter ) {
 	}
 	
 	// Count totals
-	$offloaded_count = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT attachment_id) FROM {$table_name}" );
+	$offloaded_count = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT attachment_id) FROM " . esc_sql( $table_name ) );
 	$not_offloaded_count = max( 0, $total_attachments - $offloaded_count );
 } else {
 	// Count totals for "all" filter
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'clockwork_offloads';
 	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) ) === $table_name ) {
-		$offloaded_count = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT attachment_id) FROM {$table_name}" );
+		$offloaded_count = (int) $wpdb->get_var( "SELECT COUNT(DISTINCT attachment_id) FROM " . esc_sql( $table_name ) );
 		$not_offloaded_count = max( 0, $total_attachments - $offloaded_count );
 	}
 }
