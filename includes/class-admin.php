@@ -35,13 +35,13 @@ class Clockwork_Offloader_Admin {
 		add_action( 'wp_ajax_clockwork_offloader_restore', array( $this, 'ajax_restore' ) );
 		add_action( 'wp_ajax_clockwork_offloader_delete_from_cdn', array( $this, 'ajax_delete_from_cdn' ) );
 		add_action( 'wp_ajax_clockwork_offloader_offload_from_server', array( $this, 'ajax_offload_from_server' ) );
+		add_action( 'wp_ajax_clockwork_offloader_bulk_offload', array( $this, 'ajax_bulk_offload' ) );
 		add_action( 'wp_ajax_clockwork_offloader_update_status', array( $this, 'ajax_update_status' ) );
 		add_action( 'wp_ajax_clockwork_offloader_toggle_status', array( $this, 'ajax_toggle_status' ) );
 		add_action( 'wp_ajax_clockwork_offloader_get_stats', array( $this, 'ajax_get_stats' ) );
 		
 		// Pro-only AJAX handlers (only register if Pro is active)
 		if ( Clockwork_Offloader_Lite_Restrictions::is_pro_active() ) {
-			add_action( 'wp_ajax_clockwork_offloader_bulk_offload', array( $this, 'ajax_bulk_offload' ) );
 			add_action( 'wp_ajax_clockwork_offloader_bulk_offload_from_server', array( $this, 'ajax_offload_from_server' ) );
 			add_action( 'wp_ajax_clockwork_offloader_bulk_delete_from_server', array( $this, 'ajax_delete_from_server' ) );
 			add_action( 'wp_ajax_clockwork_offloader_get_bulk_stats', array( $this, 'ajax_get_bulk_stats' ) );
@@ -2083,8 +2083,12 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_error( array( 'message' => __( 'Invalid attachment ID.', 'clockwork-offloader' ) ) );
 		}
 		
-		$bulk_offloader = new Clockwork_Offloader_Bulk_Offloader();
-		$result = $bulk_offloader->offload_attachment( $attachment_id );
+		if ( class_exists( 'Clockwork_Offloader_Bulk_Offloader' ) ) {
+			$bulk_offloader = new Clockwork_Offloader_Bulk_Offloader();
+			$result = $bulk_offloader->offload_attachment( $attachment_id );
+		} else {
+			$result = Clockwork_Offloader::get_instance()->offload_attachment( $attachment_id );
+		}
 		
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -2134,12 +2138,12 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_error( array( 'message' => __( 'Invalid attachment ID.', 'clockwork-offloader' ) ) );
 		}
 		
-		if ( ! class_exists( 'Clockwork_Offloader_Bulk_Offloader' ) ) {
-			wp_send_json_error( array( 'message' => __( 'Restore requires Clockwork Offloader Pro.', 'clockwork-offloader' ) ) );
+		if ( class_exists( 'Clockwork_Offloader_Bulk_Offloader' ) ) {
+			$bulk_offloader = new Clockwork_Offloader_Bulk_Offloader();
+			$result = $bulk_offloader->restore_attachment( $attachment_id );
+		} else {
+			$result = Clockwork_Offloader::get_instance()->restore_attachment( $attachment_id );
 		}
-
-		$bulk_offloader = new Clockwork_Offloader_Bulk_Offloader();
-		$result = $bulk_offloader->restore_attachment( $attachment_id );
 		
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
@@ -2248,7 +2252,17 @@ class Clockwork_Offloader_Admin {
 	 * AJAX: Offload from server (delete files from server)
 	 */
 	public function ajax_offload_from_server() {
-		check_ajax_referer( 'clockwork_offloader_nonce', 'nonce' );
+		// Check both nonces (for settings page and attachment details)
+		$nonce_valid = false;
+		if ( isset( $_POST['nonce'] ) ) {
+			$nonce = sanitize_text_field( wp_unslash( $_POST['nonce'] ) );
+			$nonce_valid = wp_verify_nonce( $nonce, 'clockwork_offloader_nonce' ) || 
+			               wp_verify_nonce( $nonce, 'clockwork_offloader_attachment_nonce' );
+		}
+		
+		if ( ! $nonce_valid ) {
+			wp_send_json_error( array( 'message' => __( 'Security check failed.', 'clockwork-offloader' ) ) );
+		}
 		
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'clockwork-offloader' ) ) );

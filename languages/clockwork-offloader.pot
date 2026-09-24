@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-23 16:54\n"
+"POT-Creation-Date: 2026-09-23 22:22\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: Clockwork Offloader POT Generator\n"
 "X-Domain: clockwork-offloader\n"
@@ -18,11 +18,11 @@ msgstr ""
 msgid "%1$s files are already in your bucket out of %2$s attachments."
 msgstr ""
 
-#: includes/class-admin.php:4672
+#: includes/class-admin.php:4686
 msgid "%d of %d URLs are pointing to S3."
 msgstr ""
 
-#: includes/class-admin.php:4683
+#: includes/class-admin.php:4697
 msgid "%d of %d URLs are pointing to local server."
 msgstr ""
 
@@ -30,7 +30,7 @@ msgstr ""
 msgid "%s Region"
 msgstr ""
 
-#: includes/class-admin.php:4061
+#: includes/class-admin.php:4075
 msgid "%s Region is required."
 msgstr ""
 
@@ -42,7 +42,7 @@ msgstr ""
 msgid "%s is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature."
 msgstr ""
 
-#: includes/class-admin.php:3892
+#: includes/class-admin.php:3906
 msgid "...and %d more."
 msgstr ""
 
@@ -86,7 +86,7 @@ msgstr ""
 msgid "<strong>Item Usage:</strong> You have %1$d of %2$d items (%3$s%% used)."
 msgstr ""
 
-#: includes/class-admin.php:4057
+#: includes/class-admin.php:4071
 msgid "AWS"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgstr ""
 msgid "AWS Region"
 msgstr ""
 
-#: includes/class-admin.php:4369 admin/views/setup-wizard.php:143 admin/views/setup-wizard.php:212 admin/views/network-settings.php:80
+#: includes/class-admin.php:4383 admin/views/setup-wizard.php:143 admin/views/setup-wizard.php:212 admin/views/network-settings.php:80
 msgid "AWS S3"
 msgstr ""
 
@@ -134,7 +134,7 @@ msgstr ""
 msgid "Access Key ID"
 msgstr ""
 
-#: includes/class-s3-service.php:760 includes/class-admin.php:1886 includes/class-admin.php:1984 includes/class-admin.php:3957
+#: includes/class-s3-service.php:760 includes/class-admin.php:1886 includes/class-admin.php:1984 includes/class-admin.php:3971
 msgid "Access Key and Secret Key are required."
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Add to wp-config.php"
 msgstr ""
 
-#: includes/class-admin.php:2772
+#: includes/class-admin.php:2786
 msgid "Added %d item(s) to queue."
 msgstr ""
 
@@ -166,23 +166,23 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: includes/class-admin.php:2833
+#: includes/class-admin.php:2847
 msgid "All items have been added to queue."
 msgstr ""
 
-#: includes/class-admin.php:3615 includes/class-admin.php:3828
+#: includes/class-admin.php:3629 includes/class-admin.php:3842
 msgid "All items have been processed."
 msgstr ""
 
-#: includes/class-admin.php:4525
+#: includes/class-admin.php:4539
 msgid "All media URLs will now use S3 URLs."
 msgstr ""
 
-#: includes/class-admin.php:4563
+#: includes/class-admin.php:4577
 msgid "All media URLs will now use local URLs."
 msgstr ""
 
-#: includes/class-admin.php:3189
+#: includes/class-admin.php:3203
 msgid "All plugin data has been uninstalled successfully."
 msgstr ""
 
@@ -206,11 +206,11 @@ msgstr ""
 msgid "Are you sure you want to delete this file from Cloud?"
 msgstr ""
 
-#: includes/class-admin.php:3711
+#: includes/class-admin.php:3725
 msgid "Attachment %d: %s"
 msgstr ""
 
-#: includes/class-admin.php:2203
+#: clockwork-offloader.php:647 includes/class-admin.php:2207
 msgid "Attachment is not offloaded to Cloud."
 msgstr ""
 
@@ -250,7 +250,7 @@ msgstr ""
 msgid "Browse existing buckets"
 msgstr ""
 
-#: includes/class-admin.php:4379 admin/views/dashboard.php:357 admin/views/setup-wizard.php:151 admin/views/network-settings.php:109
+#: includes/class-admin.php:4393 admin/views/dashboard.php:357 admin/views/setup-wizard.php:151 admin/views/network-settings.php:109
 msgid "Bucket"
 msgstr ""
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "Bucket and S3 key are required."
 msgstr ""
 
-#: includes/class-admin.php:1890 includes/class-admin.php:4066
+#: includes/class-admin.php:1890 includes/class-admin.php:4080
 msgid "Bucket name is required."
 msgstr ""
 
@@ -266,7 +266,7 @@ msgstr ""
 msgid "Bucket not configured"
 msgstr ""
 
-#: includes/class-admin.php:4101
+#: includes/class-admin.php:4115
 msgid "Bucket test failed: %s"
 msgstr ""
 
@@ -274,7 +274,7 @@ msgstr ""
 msgid "Bulk"
 msgstr ""
 
-#: includes/class-admin.php:4748
+#: includes/class-admin.php:4762
 msgid "Bulk Queue & Background Processing"
 msgstr ""
 
@@ -286,19 +286,19 @@ msgstr ""
 msgid "Bulk Tools"
 msgstr ""
 
-#: includes/class-admin.php:3668
+#: includes/class-admin.php:3682
 msgid "Bulk download is a Pro feature. Please upgrade to Clockwork Offloader Pro."
 msgstr ""
 
-#: includes/class-admin.php:2573
+#: includes/class-admin.php:2587
 msgid "Bulk operations are a Pro feature. Please upgrade to Clockwork Offloader Pro."
 msgstr ""
 
-#: includes/class-admin.php:2674
+#: includes/class-admin.php:2688
 msgid "Bulk statistics are a Pro feature. Please upgrade to Clockwork Offloader Pro."
 msgstr ""
 
-#: includes/class-admin.php:4202
+#: includes/class-admin.php:4216
 msgid "But files in this bucket are not publicly readable (a test object returned HTTP %1$d). Offloaded images will upload fine and then fail to display. %2$s"
 msgstr ""
 
@@ -322,15 +322,15 @@ msgstr ""
 msgid "CDN Domain Active:"
 msgstr ""
 
-#: includes/class-admin.php:3504
+#: includes/class-admin.php:3518
 msgid "Cancelled %d pending item(s)."
 msgstr ""
 
-#: includes/class-admin.php:2586
+#: includes/class-admin.php:2600
 msgid "Cannot add to server: file is not in Cloud to download."
 msgstr ""
 
-#: includes/class-admin.php:2489
+#: includes/class-admin.php:2503
 msgid "Cannot set to server-only: file does not exist on server and is not in Cloud to download."
 msgstr ""
 
@@ -358,7 +358,7 @@ msgstr ""
 msgid "Clockwork Offloader Pro is already active. Clockwork Offloader Lite cannot be activated alongside Pro."
 msgstr ""
 
-#: clockwork-offloader.php:199
+#: clockwork-offloader.php:200
 msgid "Clockwork Offloader Pro is already active. The Lite version is not needed and cannot be activated alongside Pro."
 msgstr ""
 
@@ -370,11 +370,11 @@ msgstr ""
 msgid "Clockwork Offloader is connected to %s, but connecting doesn't move any files on its own. Finish these steps to start offloading."
 msgstr ""
 
-#: includes/class-admin.php:3211
+#: includes/class-admin.php:3225
 msgid "Clockwork Offloader is not available."
 msgstr ""
 
-#: clockwork-offloader.php:807
+#: clockwork-offloader.php:934
 msgid "Clockwork Offloader: Provider Migration"
 msgstr ""
 
@@ -402,11 +402,15 @@ msgstr ""
 msgid "Cloud URL:"
 msgstr ""
 
+#: clockwork-offloader.php:578
+msgid "Cloud storage is not configured."
+msgstr ""
+
 #: admin/views/settings.php:315
 msgid "CloudFront / Custom CDN"
 msgstr ""
 
-#: includes/class-admin.php:4738 admin/views/partials/pro-upgrade-ad.php:50
+#: includes/class-admin.php:4752 admin/views/partials/pro-upgrade-ad.php:50
 msgid "CloudFront CDN & Assets Pull"
 msgstr ""
 
@@ -418,7 +422,7 @@ msgstr ""
 msgid "Complete Setup"
 msgstr ""
 
-#: includes/class-admin.php:3886
+#: includes/class-admin.php:3900
 msgid "Completed."
 msgstr ""
 
@@ -426,11 +430,11 @@ msgstr ""
 msgid "Configuration Summary"
 msgstr ""
 
-#: includes/class-admin.php:4176
+#: includes/class-admin.php:4190
 msgid "Configuration incomplete. Missing: %s. Please complete steps 1 and 2 first."
 msgstr ""
 
-#: includes/class-admin.php:4313
+#: includes/class-admin.php:4327
 msgid "Configuration incomplete. Please check your settings."
 msgstr ""
 
@@ -446,7 +450,7 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: includes/class-admin.php:4199
+#: includes/class-admin.php:4213
 msgid "Connected: uploads to the bucket work."
 msgstr ""
 
@@ -462,15 +466,15 @@ msgstr ""
 msgid "Connection successful!"
 msgstr ""
 
-#: includes/class-admin.php:3978 includes/class-admin.php:4188
+#: includes/class-admin.php:3992 includes/class-admin.php:4202
 msgid "Connection test failed: %s"
 msgstr ""
 
-#: includes/class-admin.php:4195
+#: includes/class-admin.php:4209
 msgid "Connection test successful! Your S3 configuration is working correctly."
 msgstr ""
 
-#: includes/class-admin.php:4394
+#: includes/class-admin.php:4408
 msgid "Constants not found"
 msgstr ""
 
@@ -482,7 +486,7 @@ msgstr ""
 msgid "Continue to Step 3"
 msgstr ""
 
-#: includes/class-admin.php:2914 includes/class-admin.php:3656 includes/class-admin.php:3886
+#: includes/class-admin.php:2928 includes/class-admin.php:3670 includes/class-admin.php:3900
 msgid "Continuing..."
 msgstr ""
 
@@ -502,15 +506,15 @@ msgstr ""
 msgid "Copy the following snippet to near the top of your wp-config.php file (before the \"That's all, stop editing!\" line). Replace the placeholder values with your actual credentials:"
 msgstr ""
 
-#: includes/class-admin.php:4213
+#: includes/class-admin.php:4227
 msgid "Could not confirm that uploaded files are publicly readable: %s. Check an offloaded image in a browser after setup."
 msgstr ""
 
-#: includes/class-admin.php:4076
+#: includes/class-admin.php:4090
 msgid "Credentials not found in wp-config.php. Please complete step 1."
 msgstr ""
 
-#: includes/class-admin.php:3996
+#: includes/class-admin.php:4010
 msgid "Credentials validated successfully!"
 msgstr ""
 
@@ -534,7 +538,7 @@ msgstr ""
 msgid "Database"
 msgstr ""
 
-#: includes/class-admin.php:3238
+#: includes/class-admin.php:3252
 msgid "Database table created successfully!"
 msgstr ""
 
@@ -554,27 +558,27 @@ msgstr ""
 msgid "Delete files from local server after uploading to S3"
 msgstr ""
 
-#: includes/class-admin.php:2242 includes/class-admin.php:2646
+#: includes/class-admin.php:2246 includes/class-admin.php:2660
 msgid "Deleted %d file(s) from Cloud."
 msgstr ""
 
-#: includes/class-admin.php:2236
+#: includes/class-admin.php:2240
 msgid "Deleted %d file(s) from Cloud. Some files could not be deleted: %s"
 msgstr ""
 
-#: includes/class-admin.php:2312 includes/class-admin.php:2376 includes/class-admin.php:2615
+#: includes/class-admin.php:2326 includes/class-admin.php:2390 includes/class-admin.php:2629
 msgid "Deleted %d file(s) from server."
 msgstr ""
 
-#: includes/class-admin.php:2307 includes/class-admin.php:2371
+#: includes/class-admin.php:2321 includes/class-admin.php:2385
 msgid "Deleted %d file(s) from server. Some files could not be deleted: %s"
 msgstr ""
 
-#: includes/class-admin.php:2485 includes/class-admin.php:2507
+#: includes/class-admin.php:2499 includes/class-admin.php:2521
 msgid "Deleted from Cloud"
 msgstr ""
 
-#: includes/class-admin.php:2466 includes/class-admin.php:2531
+#: includes/class-admin.php:2480 includes/class-admin.php:2545
 msgid "Deleted from server"
 msgstr ""
 
@@ -582,7 +586,7 @@ msgstr ""
 msgid "Deliver Offloaded Media"
 msgstr ""
 
-#: includes/class-admin.php:4739
+#: includes/class-admin.php:4753
 msgid "Deliver media and static assets (CSS, JS, fonts) from worldwide CloudFront edge locations with automatic cache invalidation."
 msgstr ""
 
@@ -606,7 +610,7 @@ msgstr ""
 msgid "Development Mode"
 msgstr ""
 
-#: includes/class-admin.php:2938 includes/class-admin.php:2999
+#: includes/class-admin.php:2952 includes/class-admin.php:3013
 msgid "Development Mode is not enabled."
 msgstr ""
 
@@ -614,11 +618,11 @@ msgstr ""
 msgid "Development Mode is not enabled. Please enable it in Settings."
 msgstr ""
 
-#: includes/class-admin.php:2926 includes/class-admin.php:2987 includes/class-admin.php:3029 includes/class-admin.php:3052 includes/class-admin.php:3079
+#: includes/class-admin.php:2940 includes/class-admin.php:3001 includes/class-admin.php:3043 includes/class-admin.php:3066 includes/class-admin.php:3093
 msgid "Development mode is a Pro feature. Please upgrade to Clockwork Offloader Pro."
 msgstr ""
 
-#: includes/class-admin.php:4058
+#: includes/class-admin.php:4072
 msgid "Digital Ocean"
 msgstr ""
 
@@ -626,7 +630,7 @@ msgstr ""
 msgid "Digital Ocean Spaces"
 msgstr ""
 
-#: includes/class-admin.php:4369 admin/views/settings.php:169 admin/views/setup-wizard.php:143 admin/views/network-settings.php:81 admin/views/partials/get-started.php:35
+#: includes/class-admin.php:4383 admin/views/settings.php:169 admin/views/setup-wizard.php:143 admin/views/network-settings.php:81 admin/views/partials/get-started.php:35
 msgid "DigitalOcean Spaces"
 msgstr ""
 
@@ -666,11 +670,11 @@ msgstr ""
 msgid "Download from Cloud to Server"
 msgstr ""
 
-#: includes/class-admin.php:2977
+#: includes/class-admin.php:2991
 msgid "Downloaded %d file(s) successfully. %d failed."
 msgstr ""
 
-#: includes/class-admin.php:2431
+#: includes/class-admin.php:2445
 msgid "Downloaded to server"
 msgstr ""
 
@@ -742,7 +746,7 @@ msgstr ""
 msgid "Error restoring file."
 msgstr ""
 
-#: clockwork-offloader.php:605
+#: clockwork-offloader.php:732
 msgid "Every Minute (Clockwork Offloader Queue)"
 msgstr ""
 
@@ -750,15 +754,15 @@ msgstr ""
 msgid "Failed to create directory: %s"
 msgstr ""
 
-#: includes/class-admin.php:3241
+#: includes/class-admin.php:3255
 msgid "Failed to create table: %s"
 msgstr ""
 
-#: includes/class-admin.php:3869
+#: includes/class-admin.php:3883
 msgid "Failed to delete %s from S3: %s"
 msgstr ""
 
-#: includes/class-admin.php:2219 includes/class-admin.php:2295 includes/class-admin.php:2359
+#: includes/class-admin.php:2223 includes/class-admin.php:2309 includes/class-admin.php:2373
 msgid "Failed to delete %s: %s"
 msgstr ""
 
@@ -766,11 +770,11 @@ msgstr ""
 msgid "Failed to delete file from Cloud."
 msgstr ""
 
-#: includes/class-admin.php:2278 includes/class-admin.php:2342
+#: includes/class-admin.php:2292 includes/class-admin.php:2356
 msgid "Failed to delete original file: %s"
 msgstr ""
 
-#: includes/class-admin.php:3855
+#: includes/class-admin.php:3869
 msgid "Failed to download attachment %d: %s"
 msgstr ""
 
@@ -778,7 +782,7 @@ msgstr ""
 msgid "Failed to download file from Cloud."
 msgstr ""
 
-#: includes/class-admin.php:2429 includes/class-admin.php:2590
+#: includes/class-admin.php:2443 includes/class-admin.php:2604
 msgid "Failed to download from Cloud: %s"
 msgstr ""
 
@@ -790,15 +794,23 @@ msgstr ""
 msgid "Failed to offload file."
 msgstr ""
 
+#: clockwork-offloader.php:672
+msgid "Failed to restore %1$s: %2$s"
+msgstr ""
+
 #: includes/class-admin.php:194
 msgid "Failed to restore file."
+msgstr ""
+
+#: clockwork-offloader.php:602
+msgid "Failed to upload %1$s: %2$s"
 msgstr ""
 
 #: includes/class-media-library.php:443
 msgid "Failed to upload file to Cloud."
 msgstr ""
 
-#: includes/class-admin.php:2421 includes/class-admin.php:2441 includes/class-admin.php:2628
+#: includes/class-admin.php:2435 includes/class-admin.php:2455 includes/class-admin.php:2642
 msgid "Failed to upload to Cloud: %s"
 msgstr ""
 
@@ -806,19 +818,19 @@ msgstr ""
 msgid "File"
 msgstr ""
 
-#: includes/class-admin.php:3433
+#: includes/class-admin.php:3447
 msgid "File ID is required."
 msgstr ""
 
-#: includes/class-admin.php:2624
+#: includes/class-admin.php:2638
 msgid "File already in Cloud."
 msgstr ""
 
-#: includes/class-admin.php:2634
+#: includes/class-admin.php:2648
 msgid "File already not in Cloud."
 msgstr ""
 
-#: includes/class-admin.php:2596
+#: includes/class-admin.php:2610
 msgid "File already not on server."
 msgstr ""
 
@@ -838,7 +850,7 @@ msgstr ""
 msgid "File downloaded from Cloud successfully."
 msgstr ""
 
-#: includes/class-admin.php:2592
+#: includes/class-admin.php:2606
 msgid "File downloaded to server."
 msgstr ""
 
@@ -846,7 +858,7 @@ msgstr ""
 msgid "File management is a Pro feature. Upgrade to Clockwork Offloader Pro to offload, restore, and manage your media files."
 msgstr ""
 
-#: includes/class-admin.php:2266
+#: includes/class-admin.php:2280
 msgid "File must be in Cloud before offloading from server."
 msgstr ""
 
@@ -862,7 +874,7 @@ msgstr ""
 msgid "File restored successfully."
 msgstr ""
 
-#: includes/class-admin.php:2105
+#: includes/class-admin.php:2109
 msgid "File uploaded but failed to record in database. Please check database connection."
 msgstr ""
 
@@ -870,7 +882,7 @@ msgstr ""
 msgid "File uploaded to Cloud successfully."
 msgstr ""
 
-#: includes/class-admin.php:2630
+#: includes/class-admin.php:2644
 msgid "File uploaded to Cloud."
 msgstr ""
 
@@ -886,7 +898,7 @@ msgstr ""
 msgid "Files Per Page (Files Tab)"
 msgstr ""
 
-#: includes/class-admin.php:4320
+#: includes/class-admin.php:4334
 msgid "Final connection test failed: %s"
 msgstr ""
 
@@ -914,7 +926,7 @@ msgstr ""
 msgid "Full URL:"
 msgstr ""
 
-#: includes/class-admin.php:4763
+#: includes/class-admin.php:4777
 msgid "Full WP-CLI Command Suite"
 msgstr ""
 
@@ -922,7 +934,7 @@ msgstr ""
 msgid "Get Clockwork Offloader Pro"
 msgstr ""
 
-#: includes/class-admin.php:4771
+#: includes/class-admin.php:4785
 msgid "Get Clockwork Offloader Pro today starting at just $50/yr with our locked-in 50% launch discount and 14-day money-back guarantee."
 msgstr ""
 
@@ -942,7 +954,7 @@ msgstr ""
 msgid "How offloaded media links will appear to website visitors"
 msgstr ""
 
-#: includes/class-admin.php:4205
+#: includes/class-admin.php:4219
 msgid "In the DigitalOcean control panel set the Space's file listing / permissions so uploaded files are public, or serve through a CDN endpoint."
 msgstr ""
 
@@ -958,19 +970,19 @@ msgstr ""
 msgid "Installed"
 msgstr ""
 
-#: includes/class-admin.php:2083 includes/class-admin.php:2134 includes/class-admin.php:2193 includes/class-admin.php:2260 includes/class-admin.php:2330
+#: includes/class-admin.php:2083 includes/class-admin.php:2138 includes/class-admin.php:2197 includes/class-admin.php:2274 includes/class-admin.php:2344
 msgid "Invalid attachment ID."
 msgstr ""
 
-#: includes/class-admin.php:3930
+#: includes/class-admin.php:3944
 msgid "Invalid connection method selected."
 msgstr ""
 
-#: includes/class-admin.php:2566
+#: includes/class-admin.php:2580
 msgid "Invalid status type."
 msgstr ""
 
-#: includes/class-admin.php:2400
+#: includes/class-admin.php:2414
 msgid "Invalid status."
 msgstr ""
 
@@ -1066,15 +1078,15 @@ msgstr ""
 msgid "Migration classes not found. Please ensure Clockwork Offloader Pro is properly installed."
 msgstr ""
 
-#: includes/class-admin.php:3200 includes/class-admin.php:3251 includes/class-admin.php:3272
+#: includes/class-admin.php:3214 includes/class-admin.php:3265 includes/class-admin.php:3286
 msgid "Migration tools are a Pro feature. Please upgrade to Clockwork Offloader Pro."
 msgstr ""
 
-#: includes/class-admin.php:3263
+#: includes/class-admin.php:3277
 msgid "Migrator notice reset. The notice will appear again on the dashboard."
 msgstr ""
 
-#: includes/class-admin.php:4254 includes/class-admin.php:4275
+#: includes/class-admin.php:4268 includes/class-admin.php:4289
 msgid "Missing setup data. Please complete all steps."
 msgstr ""
 
@@ -1102,7 +1114,7 @@ msgstr ""
 msgid "Network mode is currently disabled. Each site manages its own settings. Enable network mode above to configure shared settings for all sites."
 msgstr ""
 
-#: includes/class-admin.php:2763
+#: includes/class-admin.php:2777
 msgid "No attachment IDs provided."
 msgstr ""
 
@@ -1110,15 +1122,15 @@ msgstr ""
 msgid "No attachment caps or overages"
 msgstr ""
 
-#: includes/class-admin.php:2826
+#: includes/class-admin.php:2840
 msgid "No attachments found to offload."
 msgstr ""
 
-#: includes/class-admin.php:3693
+#: includes/class-admin.php:3707
 msgid "No attachments to download."
 msgstr ""
 
-#: includes/class-admin.php:2944
+#: includes/class-admin.php:2958
 msgid "No file types selected."
 msgstr ""
 
@@ -1126,11 +1138,11 @@ msgstr ""
 msgid "No media files found."
 msgstr ""
 
-#: includes/class-admin.php:4668 includes/class-admin.php:4679
+#: includes/class-admin.php:4682 includes/class-admin.php:4693
 msgid "No offloaded media found to verify."
 msgstr ""
 
-#: includes/class-admin.php:2854
+#: includes/class-admin.php:2868
 msgid "No valid attachments found in this batch."
 msgstr ""
 
@@ -1162,15 +1174,15 @@ msgstr ""
 msgid "Note: Region and bucket are always stored in the database and can be edited below."
 msgstr ""
 
-#: includes/class-admin.php:4665
+#: includes/class-admin.php:4679
 msgid "Note: URL rewriting is currently disabled in settings. Enable it to serve media from S3."
 msgstr ""
 
-#: includes/class-admin.php:4676
+#: includes/class-admin.php:4690
 msgid "Note: URL rewriting is currently enabled. Disable it to serve media from your server."
 msgstr ""
 
-#: includes/class-admin.php:4470
+#: includes/class-admin.php:4484
 msgid "Notice dismissed."
 msgstr ""
 
@@ -1198,7 +1210,7 @@ msgstr ""
 msgid "Offload Media"
 msgstr ""
 
-#: includes/class-admin.php:4749
+#: includes/class-admin.php:4763
 msgid "Offload existing media libraries in bulk, download files back to local server on demand, and handle 600,000+ items without timeouts."
 msgstr ""
 
@@ -1218,7 +1230,7 @@ msgstr ""
 msgid "Offloading..."
 msgstr ""
 
-#: includes/class-admin.php:4357
+#: includes/class-admin.php:4371
 msgid "Old CLOUDBOUND_OFFLOADER constants detected. Please update your wp-config.php to use the new CLOCKWORK_OFFLOADER_SETTINGS constant shown above, then remove the old CLOUDBOUND constants."
 msgstr ""
 
@@ -1282,11 +1294,11 @@ msgstr ""
 msgid "Pause between items to protect server memory on constrained shared hosts."
 msgstr ""
 
-#: includes/class-admin.php:2217
+#: includes/class-admin.php:2221
 msgid "Permission denied for %s. Please check your AWS credentials have delete permissions."
 msgstr ""
 
-#: includes/class-admin.php:1847 includes/class-admin.php:1952 includes/class-admin.php:2077 includes/class-admin.php:2128 includes/class-admin.php:2187
+#: includes/class-admin.php:1847 includes/class-admin.php:1952 includes/class-admin.php:2077 includes/class-admin.php:2132 includes/class-admin.php:2191
 msgid "Permission denied."
 msgstr ""
 
@@ -1294,11 +1306,11 @@ msgstr ""
 msgid "Permission denied. Your AWS credentials do not have delete permissions for this bucket."
 msgstr ""
 
-#: includes/class-admin.php:3938
+#: includes/class-admin.php:3952
 msgid "Please add the credentials to your wp-config.php file first. The code snippet is shown on this page. After adding the code, refresh this page to continue."
 msgstr ""
 
-#: includes/class-admin.php:4046
+#: includes/class-admin.php:4060
 msgid "Please complete step 1 first."
 msgstr ""
 
@@ -1310,11 +1322,11 @@ msgstr ""
 msgid "Please run \"composer install\" in the plugin directory."
 msgstr ""
 
-#: clockwork-offloader.php:816
+#: clockwork-offloader.php:943
 msgid "Please verify your AWS S3 credentials are correct in the settings."
 msgstr ""
 
-#: includes/class-admin.php:4491
+#: includes/class-admin.php:4505
 msgid "Popup dismissed."
 msgstr ""
 
@@ -1326,31 +1338,31 @@ msgstr ""
 msgid "Prefix for every object key. Subsites are always stored under sites/{id}/ beneath this, mirroring the uploads directory."
 msgstr ""
 
-#: includes/class-admin.php:4743
+#: includes/class-admin.php:4757
 msgid "Private Media & Expiring Signed URLs"
 msgstr ""
 
-#: includes/class-admin.php:2911
+#: includes/class-admin.php:2925
 msgid "Processed %d attachment(s), added %d to queue. %s"
 msgstr ""
 
-#: includes/class-admin.php:3653
+#: includes/class-admin.php:3667
 msgid "Processed %d attachment(s), found %d that need downloading. %s"
 msgstr ""
 
-#: includes/class-admin.php:3882
+#: includes/class-admin.php:3896
 msgid "Processed %d attachment(s). Downloaded: %d, Deleted from S3: %d. %s"
 msgstr ""
 
-#: includes/class-admin.php:2914
+#: includes/class-admin.php:2928
 msgid "Processing will begin automatically via cron."
 msgstr ""
 
-#: includes/class-admin.php:4744
+#: includes/class-admin.php:4758
 msgid "Protect downloadable digital goods for WooCommerce and Easy Digital Downloads with secure, time-limited pre-signed S3 links."
 msgstr ""
 
-#: includes/class-admin.php:4370 admin/views/setup-wizard.php:144 admin/views/network-settings.php:76
+#: includes/class-admin.php:4384 admin/views/setup-wizard.php:144 admin/views/network-settings.php:76
 msgid "Provider"
 msgstr ""
 
@@ -1362,15 +1374,15 @@ msgstr ""
 msgid "Queue Batch Size"
 msgstr ""
 
-#: includes/class-admin.php:2751 includes/class-admin.php:3454 includes/class-admin.php:3484 includes/class-admin.php:3514 includes/class-admin.php:3543
+#: includes/class-admin.php:2765 includes/class-admin.php:3468 includes/class-admin.php:3498 includes/class-admin.php:3528 includes/class-admin.php:3557
 msgid "Queue system is a Pro feature. Please upgrade to Clockwork Offloader Pro."
 msgstr ""
 
-#: includes/class-admin.php:3656
+#: includes/class-admin.php:3670
 msgid "Ready to download."
 msgstr ""
 
-#: includes/class-admin.php:4769
+#: includes/class-admin.php:4783
 msgid "Ready to unlock Pro features?"
 msgstr ""
 
@@ -1378,7 +1390,7 @@ msgstr ""
 msgid "Recommended for better security. Credentials are stored outside the database."
 msgstr ""
 
-#: includes/class-admin.php:4376 admin/views/setup-wizard.php:148 admin/views/network-settings.php:117
+#: includes/class-admin.php:4390 admin/views/setup-wizard.php:148 admin/views/network-settings.php:117
 msgid "Region"
 msgstr ""
 
@@ -1386,7 +1398,7 @@ msgstr ""
 msgid "Region & Bucket"
 msgstr ""
 
-#: includes/class-admin.php:4112
+#: includes/class-admin.php:4126
 msgid "Region and bucket validated successfully!"
 msgstr ""
 
@@ -1406,7 +1418,7 @@ msgstr ""
 msgid "Renews at 50% off for life"
 msgstr ""
 
-#: includes/class-admin.php:3533
+#: includes/class-admin.php:3547
 msgid "Reset %d failed item(s) for retry."
 msgstr ""
 
@@ -1414,11 +1426,7 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#: includes/class-admin.php:2138
-msgid "Restore requires Clockwork Offloader Pro."
-msgstr ""
-
-#: includes/class-admin.php:2163
+#: includes/class-admin.php:2167
 msgid "Restored %d file(s). Some files could not be restored: %s"
 msgstr ""
 
@@ -1490,7 +1498,7 @@ msgstr ""
 msgid "Scheme"
 msgstr ""
 
-#: includes/class-admin.php:4764
+#: includes/class-admin.php:4778
 msgid "Script, automate, and inspect large fleet migrations from the terminal with wp clockwork-offloader commands."
 msgstr ""
 
@@ -1522,7 +1530,7 @@ msgstr ""
 msgid "Security Recommendation"
 msgstr ""
 
-#: includes/class-admin.php:2073 includes/class-admin.php:2124 includes/class-admin.php:2183
+#: includes/class-admin.php:2073 includes/class-admin.php:2128 includes/class-admin.php:2187 includes/class-admin.php:2264
 msgid "Security check failed."
 msgstr ""
 
@@ -1578,7 +1586,7 @@ msgstr ""
 msgid "Setup Clockwork Offloader Lite"
 msgstr ""
 
-#: includes/class-admin.php:4331
+#: includes/class-admin.php:4345
 msgid "Setup completed successfully!"
 msgstr ""
 
@@ -1586,7 +1594,7 @@ msgstr ""
 msgid "Show CDN Status in Media Library"
 msgstr ""
 
-#: includes/class-admin.php:4759
+#: includes/class-admin.php:4773
 msgid "Single-click network-wide activation with automated per-subsite isolation under sites/{id}/ and global settings inheritance."
 msgstr ""
 
@@ -1594,7 +1602,7 @@ msgstr ""
 msgid "Site Settings:"
 msgstr ""
 
-#: includes/class-admin.php:3890
+#: includes/class-admin.php:3904
 msgid "Some errors occurred:"
 msgstr ""
 
@@ -1618,15 +1626,15 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: includes/class-admin.php:2538
+#: includes/class-admin.php:2552
 msgid "Status is already correct. No changes needed."
 msgstr ""
 
-#: includes/class-admin.php:2541
+#: includes/class-admin.php:2555
 msgid "Status updated. Actions taken: %s"
 msgstr ""
 
-#: includes/class-admin.php:224 includes/class-admin.php:4060 admin/views/setup-wizard.php:66 admin/views/setup-wizard.php:215 admin/views/setup-wizard.php:328
+#: includes/class-admin.php:224 includes/class-admin.php:4074 admin/views/setup-wizard.php:66 admin/views/setup-wizard.php:215 admin/views/setup-wizard.php:328
 msgid "Storage Provider"
 msgstr ""
 
@@ -1650,7 +1658,7 @@ msgstr ""
 msgid "Supercharge Media Delivery with Clockwork Offloader Pro"
 msgstr ""
 
-#: includes/class-admin.php:4754
+#: includes/class-admin.php:4768
 msgid "Switch seamlessly from other offload plugins with 1-click migration. Preserves your existing S3 bucket, paths, and URLs."
 msgstr ""
 
@@ -1658,7 +1666,7 @@ msgstr ""
 msgid "System Status"
 msgstr ""
 
-#: includes/class-admin.php:3223
+#: includes/class-admin.php:3237
 msgid "Table already exists."
 msgstr ""
 
@@ -1706,7 +1714,7 @@ msgstr ""
 msgid "This access key is scoped to a single bucket and cannot list buckets. Enter the bucket name manually instead."
 msgstr ""
 
-#: includes/class-admin.php:4206
+#: includes/class-admin.php:4220
 msgid "This bucket most likely has \"Bucket owner enforced\" object ownership (the default for new buckets), which disables ACLs, so public access has to come from a bucket policy. Add this policy under Permissions → Bucket policy in the S3 console, then re-run the test:"
 msgstr ""
 
@@ -1758,7 +1766,7 @@ msgstr ""
 msgid "Unexpected response code: %d"
 msgstr ""
 
-#: includes/class-admin.php:3240
+#: includes/class-admin.php:3254
 msgid "Unknown database error"
 msgstr ""
 
@@ -1782,7 +1790,7 @@ msgstr ""
 msgid "Upload to Cloud"
 msgstr ""
 
-#: includes/class-admin.php:2423 includes/class-admin.php:2443
+#: includes/class-admin.php:2437 includes/class-admin.php:2457
 msgid "Uploaded to Cloud"
 msgstr ""
 
@@ -1802,11 +1810,11 @@ msgstr ""
 msgid "Using wp-config.php credentials"
 msgstr ""
 
-#: includes/class-admin.php:4670
+#: includes/class-admin.php:4684
 msgid "Verified %d URLs - all pointing to S3."
 msgstr ""
 
-#: includes/class-admin.php:4681
+#: includes/class-admin.php:4695
 msgid "Verified %d URLs - all pointing to local server."
 msgstr ""
 
@@ -1814,7 +1822,7 @@ msgstr ""
 msgid "Verify wp-config.php"
 msgstr ""
 
-#: includes/class-admin.php:4774
+#: includes/class-admin.php:4788
 msgid "View Pricing &amp; Upgrade to Pro (50% Off) &rarr;"
 msgstr ""
 
@@ -1862,7 +1870,7 @@ msgstr ""
 msgid "WooCommerce Private Media"
 msgstr ""
 
-#: includes/class-admin.php:4758
+#: includes/class-admin.php:4772
 msgid "WordPress Multisite Network Support"
 msgstr ""
 
@@ -1938,11 +1946,11 @@ msgstr ""
 msgid "Your settings have been migrated to the new format. Region and bucket are now stored in the database. If you had region/bucket in wp-config.php, they have been moved to the database."
 msgstr ""
 
-#: clockwork-offloader.php:811
+#: clockwork-offloader.php:938
 msgid "Your storage provider has been automatically migrated from %s to AWS S3. Clockwork Offloader now only supports AWS S3 and DigitalOcean Spaces."
 msgstr ""
 
-#: includes/class-admin.php:4753
+#: includes/class-admin.php:4767
 msgid "Zero-Downtime Migration Tools"
 msgstr ""
 
@@ -1958,11 +1966,11 @@ msgstr ""
 msgid "wp-config.php"
 msgstr ""
 
-#: includes/class-admin.php:4391
+#: includes/class-admin.php:4405
 msgid "wp-config.php constants are not currently defined. Please add the code snippet to your wp-config.php file and reload this page."
 msgstr ""
 
-#: includes/class-admin.php:4365 admin/views/setup-wizard.php:154
+#: includes/class-admin.php:4379 admin/views/setup-wizard.php:154
 msgid "wp-config.php constants detected successfully!"
 msgstr ""
 

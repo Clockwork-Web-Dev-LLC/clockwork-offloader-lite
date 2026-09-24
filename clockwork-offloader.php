@@ -121,8 +121,7 @@ class Clockwork_Offloader {
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-url-rewriter.php';
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-lite-restrictions.php';
 		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-admin.php';
-		// Media Library integration removed to improve performance
-		// require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-media-library.php';
+		require_once CLOCKWORK_OFFLOADER_PLUGIN_DIR . 'includes/class-media-library.php';
 	}
 	
 	/**
@@ -132,6 +131,9 @@ class Clockwork_Offloader {
 		// Activation and deactivation hooks
 		register_activation_hook( __FILE__, array( 'Clockwork_Offloader', 'activate' ) );
 		register_deactivation_hook( __FILE__, array( 'Clockwork_Offloader', 'deactivate' ) );
+
+		// Load plugin text domain for i18n
+		add_action( 'init', array( $this, 'load_textdomain' ) );
 
 		// Multisite: Create tables when new site is created. wp_initialize_site replaced the
 		// deprecated wpmu_new_blog in WP 5.1; priority 200 runs after core has populated the
@@ -556,6 +558,132 @@ class Clockwork_Offloader {
 		// Local deletion is deliberately NOT done here — see handle_attachment_metadata().
 	}
 	
+	/**
+	 * Load plugin textdomain for translations.
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'clockwork-offloader', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	}
+
+	/**
+	 * Offload an attachment and all its intermediate sizes to cloud storage.
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 * @return array{files_offloaded: int, errors: array<string>}
+	 */
+	public function offload_attachment( $attachment_id ) {
+		if ( ! $this->is_s3_configured() ) {
+			return array(
+				'files_offloaded' => 0,
+				'errors'          => array( __( 'Cloud storage is not configured.', 'clockwork-offloader' ) ),
+			);
+		}
+
+		$tracker   = new Clockwork_Offloader_Tracker();
+		$files     = self::get_attachment_files( $attachment_id );
+		$offloaded = 0;
+		$errors    = array();
+
+		foreach ( $files as $size_name => $file_path ) {
+			if ( ! file_exists( $file_path ) ) {
+				continue;
+			}
+			if ( $tracker->is_offloaded( $attachment_id, $size_name ) ) {
+				$offloaded++;
+				continue;
+			}
+
+			$s3_service = new Clockwork_Offloader_S3_Service();
+			$result     = $s3_service->upload_file( $file_path, $attachment_id, $size_name );
+
+			if ( is_wp_error( $result ) ) {
+				$errors[] = sprintf(
+					/* translators: 1: file name, 2: error message */
+					__( 'Failed to upload %1$s: %2$s', 'clockwork-offloader' ),
+					basename( $file_path ),
+					$result->get_error_message()
+				);
+			} else {
+				$tracker->record_offload(
+					$attachment_id,
+					$result['bucket'],
+					$result['s3_key'],
+					$file_path,
+					filesize( $file_path ),
+					$size_name
+				);
+				$offloaded++;
+			}
+		}
+
+		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
+		if ( ! empty( $settings['delete_after_upload'] ) ) {
+			foreach ( $files as $size_name => $file_path ) {
+				if ( file_exists( $file_path ) && $tracker->is_offloaded( $attachment_id, $size_name ) ) {
+					self::delete_local_file( $file_path );
+				}
+			}
+		}
+
+		return array(
+			'files_offloaded' => $offloaded,
+			'errors'          => $errors,
+		);
+	}
+
+	/**
+	 * Restore an attachment from cloud storage back to the local server.
+	 *
+	 * @param int $attachment_id Attachment ID.
+	 * @return array{files_restored: int, errors: array<string>}
+	 */
+	public function restore_attachment( $attachment_id ) {
+		$tracker  = new Clockwork_Offloader_Tracker();
+		$offloads = $tracker->get_attachment_offloads( $attachment_id );
+
+		if ( empty( $offloads ) ) {
+			return array(
+				'files_restored' => 0,
+				'errors'         => array( __( 'Attachment is not offloaded to Cloud.', 'clockwork-offloader' ) ),
+			);
+		}
+
+		$s3_service = new Clockwork_Offloader_S3_Service();
+		$restored   = 0;
+		$errors     = array();
+
+		foreach ( $offloads as $offload ) {
+			$local_path = $offload->file_path;
+			if ( file_exists( $local_path ) ) {
+				$restored++;
+				continue;
+			}
+
+			// Ensure target directory exists
+			$dir = dirname( $local_path );
+			if ( ! file_exists( $dir ) ) {
+				wp_mkdir_p( $dir );
+			}
+
+			$result = $s3_service->download_file( $offload->s3_key, $local_path );
+			if ( is_wp_error( $result ) ) {
+				$errors[] = sprintf(
+					/* translators: 1: file name, 2: error message */
+					__( 'Failed to restore %1$s: %2$s', 'clockwork-offloader' ),
+					basename( $local_path ),
+					$result->get_error_message()
+				);
+			} else {
+				$restored++;
+			}
+		}
+
+		return array(
+			'files_restored' => $restored,
+			'errors'         => $errors,
+		);
+	}
+
 	/**
 	 * Check if S3 is properly configured
 	 *
