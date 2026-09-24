@@ -18,11 +18,11 @@ This folder contains assets for the WordPress.org plugin repository.
 
 ## Screenshots
 
-Screenshots should be placed in the `screenshots/` folder and named:
-- `screenshot-1.png` - First screenshot (typically dashboard)
-- `screenshot-2.png` - Second screenshot (typically settings)
-- `screenshot-3.png` - Third screenshot (typically bulk offload)
-- `screenshot-4.png` - Fourth screenshot (typically setup wizard)
+Screenshots are placed directly in the `assets/` folder and named:
+- `screenshot-1.png` - First screenshot (Dashboard with live offload metrics)
+- `screenshot-2.png` - Second screenshot (AWS S3 & Storage settings)
+- `screenshot-3.png` - Third screenshot (Attachment details modal with S3 offload controls)
+- `screenshot-4.png` - Fourth screenshot (Setup wizard)
 
 **Requirements:**
 - **Size**: 1200x900 pixels (4:3 aspect ratio)

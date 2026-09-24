@@ -1,97 +1,64 @@
 # Clockwork Offloader
 
-A WordPress plugin for offloading media files to Amazon S3 with optional URL rewriting, delete-after-upload, bulk migration tools, and restore functionality.
+A fast, lightweight WordPress plugin for offloading WordPress media to cloud object storage (Amazon S3, Cloudflare R2, DigitalOcean Spaces, Backblaze B2, Wasabi, or any S3-compatible service) with automatic URL rewriting, local disk reclamation, and CDN delivery.
 
-## Features
+## Key Features
 
-- **S3 Integration**: Upload media files to Amazon S3 using AWS SDK v3
-- **Auto-Offload**: Automatically offload new media uploads (optional)
-- **URL Rewriting**: Optionally rewrite media URLs to point to S3
-- **Delete After Upload**: Option to delete files from server after upload
-- **Bulk Offload**: Offload existing media files in bulk
-- **Restore Functionality**: Restore files from S3 back to local server
-- **Database Tracking**: Track offload status for all files
-- **CDN Support**: Optional CDN domain configuration
+- **Multi-Provider Cloud Storage**: Connect seamlessly to Amazon S3, Cloudflare R2 ($0 egress fees), DigitalOcean Spaces, Wasabi, Backblaze B2, MinIO, or custom S3-compatible endpoints.
+- **Automatic Offload**: Automatically copies newly uploaded media and all generated responsive image sub-sizes (including WebP) to your cloud bucket.
+- **Automatic URL Rewriting**: Transparently rewrites media URLs in posts, pages, excerpts, text widgets, and responsive `srcset` attributes to serve directly from S3 or your CDN.
+- **Page Builder Compatibility**: Native compatibility with Beaver Builder and Elementor to ensure background images in layout CSS are rewritten properly.
+- **Local Storage Reclamation**: Optional "Delete After Upload" deletes local files from your server once confirmed in the cloud — freeing up valuable hosting storage.
+- **Media Library Controls**: Visual cloud status column (On Cloud / On Server) and single-click manual offload, download, and delete controls directly in your WordPress Media Library.
+- **Custom CDN / CNAME Delivery**: Route your media URLs through a custom domain or CDN (e.g., `cdn.example.com` or Amazon CloudFront).
+- **Secure Credentials**: Store credentials in the database or lock them down securely in `wp-config.php` constants.
+- **Multisite Support**: Supports network-wide global inheritance or independent per-subsite configuration across WordPress Multisite networks.
 
-## Installation
+## Clockwork Offloader Pro
 
-1. Upload the plugin to `/wp-content/plugins/clockwork-offloader/`
-2. Install dependencies by running `composer install` in the plugin directory
-3. Activate the plugin through the 'Plugins' menu in WordPress
-4. Configure your S3 credentials in Settings > Clockwork Offloader > Settings
+For advanced features and enterprise workloads, [Clockwork Offloader Pro](https://clockworkplugins.com/plugins/clockwork-offloader) adds:
+- **Bulk Offload & Download**: Offload your entire existing Media Library in batches or pull all cloud files back to your server.
+- **Background Queue System**: Asynchronous cron processor with throttle protection and automatic retries.
+- **Assets Pull CDN**: Automatically deliver theme/plugin CSS, JS, and web fonts through CloudFront without manual uploads.
+- **Private Media & Signed URLs**: Expiring pre-signed download links for WooCommerce and Easy Digital Downloads digital products.
+- **1-Click Migrator**: Migrate existing offloaded databases seamlessly without re-uploading files.
 
 ## Requirements
 
-- WordPress 5.0 or higher
+- WordPress 5.0 or higher (tested up to 7.1)
 - PHP 8.2 or higher
-- AWS SDK for PHP v3 (installed via Composer)
-- Symfony Filesystem ^7.4.0 (installed via Composer)
+- AWS SDK for PHP v3 (included in release bundle)
+- Symfony Filesystem ^7.4.0 (included in release bundle)
 
-## Configuration
+## Installation
 
-1. Go to **Clockwork Offloader > Settings**
-2. Enter your AWS credentials:
-   - AWS Access Key ID
-   - AWS Secret Access Key
-   - S3 Bucket Name
-   - S3 Region
-3. Configure optional settings:
-   - Base Path (optional prefix for S3 uploads)
-   - CDN Domain (optional CDN domain)
-4. Enable desired options:
-   - Auto-Offload: Automatically offload new uploads
-   - Delete After Upload: Remove files from server after upload
-   - Rewrite URLs: Replace media URLs with S3 URLs
-
-## Usage
-
-### Dashboard
-
-View statistics and system status on the main dashboard page.
-
-### Bulk Offload
-
-1. Go to **Clockwork Offloader > Bulk Offload**
-2. Filter attachments by status (All, Offloaded, Not Offloaded)
-3. Click "Offload" on individual attachments or use bulk actions
-
-### Restore Files
-
-1. Go to **Clockwork Offloader > Bulk Offload**
-2. Find offloaded attachments
-3. Click "Restore" to download files back to the local server
+1. Upload the plugin folder to `/wp-content/plugins/clockwork-offloader/` (or install the `.zip` via **Plugins > Add New > Upload Plugin**).
+2. Activate the plugin through the **Plugins** menu in WordPress.
+3. Follow the guided 3-step setup wizard or configure your credentials in **Settings > Clockwork Offloader**.
 
 ## Database
 
-The plugin creates a custom table `wp_cloudbound_offloads` to track:
+The plugin creates a custom table `{prefix}clockwork_offloads` to track:
 - Attachment ID
-- S3 bucket and key
-- Original file path
-- File size
-- Offload date
-- Status (offloaded, restored, deleted)
+- Image size name (empty for original file)
+- S3 bucket and object key
+- Original file path and file size
+- Offload timestamp and status
 
-## Future Enhancements
+## Contributing & Development
 
-- DigitalOcean Spaces integration
-- CloudFront integration
-- Image optimization before upload
-- Scheduled offloads
-- Export/import settings
+```bash
+# Clone the repository
+git clone https://github.com/Clockwork-Web-Dev-LLC/clockwork-offloader-lite.git
+cd clockwork-offloader-lite
 
-## Resources
+# Install development dependencies
+composer install
 
-This plugin follows WordPress coding standards and uses patterns from WordPress core:
-
-- **WordPress Database API**: Uses `$wpdb->prepare()` with proper placeholders for secure database queries
-  - Reference: [WordPress wpdb::prepare() documentation](https://developer.wordpress.org/reference/classes/wpdb/prepare/)
-  - Uses `%i` identifier placeholder (WordPress 6.2+) for table names with fallback for older versions
-  - Reference: [WordPress wpdb identifier placeholders](https://developer.wordpress.org/reference/classes/wpdb/prepare/#identifier-placeholders)
-
-- **WordPress Coding Standards**: Code follows WordPress PHP Coding Standards
-  - Reference: [WordPress Coding Standards Handbook](https://developer.wordpress.org/coding-standards/wordpress-coding-standards/php/)
+# Run unit tests
+./vendor/bin/phpunit
+```
 
 ## License
 
 GPL v2 or later
-
