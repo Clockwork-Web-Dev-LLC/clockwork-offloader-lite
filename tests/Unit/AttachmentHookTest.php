@@ -122,4 +122,60 @@ class AttachmentHookTest extends TestCase {
 
 		$this->assertEquals( $meta, $result );
 	}
+
+	public function test_get_attachment_files_rejects_path_traversal_sizes(): void {
+		$upload_dir = sys_get_temp_dir() . '/wp-content/uploads/2026/09';
+		@mkdir( $upload_dir, 0777, true );
+		$main_file = $upload_dir . '/test-photo.jpg';
+		touch( $main_file );
+
+		Functions\when( 'get_attached_file' )->alias( function( $id ) use ( $main_file ) {
+			return $main_file;
+		} );
+
+		$metadata = array(
+			'width'  => 1200,
+			'height' => 800,
+			'file'   => '2026/09/test-photo.jpg',
+			'sizes'  => array(
+				'evil' => array(
+					'file' => '../../wp-config.php',
+				),
+				'evil_nested' => array(
+					'file' => 'subdir/../../secret.txt',
+				),
+			),
+			'original_image' => '../../wp-config.php',
+		);
+
+		$files = Clockwork_Offloader::get_attachment_files( 123, $metadata );
+
+		$this->assertArrayNotHasKey( 'evil', $files );
+		$this->assertArrayNotHasKey( 'evil_nested', $files );
+		$this->assertArrayNotHasKey( 'original_image', $files );
+
+		@unlink( $main_file );
+		@rmdir( $upload_dir );
+	}
+
+	public function test_is_valid_upload_path_rejects_sibling_directories(): void {
+		$uploads_base = sys_get_temp_dir() . '/wp-content/uploads';
+		$sibling_base = sys_get_temp_dir() . '/wp-content/uploads-evil';
+		@mkdir( $uploads_base, 0777, true );
+		@mkdir( $sibling_base, 0777, true );
+
+		Functions\when( 'wp_upload_dir' )->justReturn( array(
+			'basedir' => $uploads_base,
+		) );
+
+		$evil_file = $sibling_base . '/trojan.php';
+		touch( $evil_file );
+
+		$this->assertFalse( Clockwork_Offloader::is_valid_upload_path( $evil_file ) );
+		$this->assertFalse( Clockwork_Offloader::delete_local_file( $evil_file ) );
+
+		@unlink( $evil_file );
+		@rmdir( $sibling_base );
+		@rmdir( $uploads_base );
+	}
 }

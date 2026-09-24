@@ -446,6 +446,8 @@ class Clockwork_Offloader_Media_Library {
 					'restoreSuccess' => __( 'File downloaded from Cloud successfully.', 'clockwork-offloader' ),
 					'restoreError' => __( 'Failed to download file from Cloud.', 'clockwork-offloader' ),
 					'confirmDelete' => __( 'Are you sure you want to delete this file from Cloud?', 'clockwork-offloader' ),
+					'confirmDeletePermanent' => __( 'WARNING: This file is NOT on the server. Deleting from Cloud will permanently delete this file. Are you absolutely sure you want to continue?', 'clockwork-offloader' ),
+					'confirmDeleteOnServer' => __( 'Are you sure you want to delete this file from Cloud? The file will remain on the server.', 'clockwork-offloader' ),
 					'copyUrl' => __( 'Copy Cloud URL', 'clockwork-offloader' ),
 				),
 			)

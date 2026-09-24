@@ -418,16 +418,68 @@ class Clockwork_Offloader {
 		if ( ! empty( $metadata['sizes'] ) && is_array( $metadata['sizes'] ) ) {
 			foreach ( $metadata['sizes'] as $size_name => $size_data ) {
 				if ( ! empty( $size_data['file'] ) ) {
-					$files[ $size_name ] = $file_dir . '/' . $size_data['file'];
+					// Guard against directory traversal in crafted metadata
+					$clean_filename = function_exists( 'wp_basename' ) ? wp_basename( $size_data['file'] ) : basename( $size_data['file'] );
+					if ( $clean_filename === $size_data['file'] ) {
+						$files[ $size_name ] = $file_dir . '/' . $clean_filename;
+					}
 				}
 			}
 		}
 
 		if ( ! empty( $metadata['original_image'] ) ) {
-			$files['original_image'] = $file_dir . '/' . $metadata['original_image'];
+			$clean_original = function_exists( 'wp_basename' ) ? wp_basename( $metadata['original_image'] ) : basename( $metadata['original_image'] );
+			if ( $clean_original === $metadata['original_image'] ) {
+				$files['original_image'] = $file_dir . '/' . $clean_original;
+			}
 		}
 
 		return $files;
+	}
+
+	/**
+	 * Check if a file path is safely confined within this site's uploads directory.
+	 * Prevents directory traversal and sibling directory attacks (e.g. uploads-evil).
+	 *
+	 * @param string $file_path Absolute file path.
+	 * @return bool True if inside uploads directory, false otherwise.
+	 */
+	public static function is_valid_upload_path( $file_path ) {
+		if ( empty( $file_path ) ) {
+			return false;
+		}
+
+		$upload_dir = wp_upload_dir();
+		if ( empty( $upload_dir['basedir'] ) ) {
+			return false;
+		}
+
+		$real_upload_dir = realpath( $upload_dir['basedir'] );
+		if ( false === $real_upload_dir ) {
+			return false;
+		}
+
+		// Ensure trailing separator so sibling directories (e.g. uploads-evil) never match
+		$real_upload_dir = rtrim( $real_upload_dir, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+
+		// If target file or directory doesn't exist yet, resolve the nearest existing parent
+		$test_dir = dirname( $file_path );
+		while ( ! empty( $test_dir ) && '.' !== $test_dir && '/' !== $test_dir && ! file_exists( $test_dir ) ) {
+			$parent = dirname( $test_dir );
+			if ( $parent === $test_dir ) {
+				break;
+			}
+			$test_dir = $parent;
+		}
+
+		$real_dir = realpath( $test_dir );
+		if ( false === $real_dir ) {
+			return false;
+		}
+
+		$real_dir = rtrim( $real_dir, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
+
+		return 0 === strpos( $real_dir, $real_upload_dir );
 	}
 
 	/**
@@ -437,11 +489,7 @@ class Clockwork_Offloader {
 	 * @return bool
 	 */
 	public static function delete_local_file( $file_path ) {
-		$upload_dir = wp_upload_dir();
-		$real_upload_dir = realpath( $upload_dir['basedir'] );
-		$real_file_path = realpath( dirname( $file_path ) );
-
-		if ( false === $real_upload_dir || false === $real_file_path || 0 !== strpos( $real_file_path, $real_upload_dir ) ) {
+		if ( ! self::is_valid_upload_path( $file_path ) ) {
 			return false;
 		}
 
@@ -584,10 +632,28 @@ class Clockwork_Offloader {
 		$offloaded = 0;
 		$errors    = array();
 
+		if ( empty( $files ) ) {
+			return array(
+				'files_offloaded' => 0,
+				'errors'          => array( __( 'No files found for this attachment.', 'clockwork-offloader' ) ),
+			);
+		}
+
 		foreach ( $files as $size_name => $file_path ) {
 			if ( ! file_exists( $file_path ) ) {
 				continue;
 			}
+
+			// Security check: confine file strictly within this site's uploads directory
+			if ( ! self::is_valid_upload_path( $file_path ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: file path */
+					__( 'Security check failed: File path is outside the uploads directory (%s).', 'clockwork-offloader' ),
+					basename( $file_path )
+				);
+				continue;
+			}
+
 			if ( $tracker->is_offloaded( $attachment_id, $size_name ) ) {
 				$offloaded++;
 				continue;
@@ -614,6 +680,11 @@ class Clockwork_Offloader {
 				);
 				$offloaded++;
 			}
+		}
+
+		// If nothing was on disk and nothing was uploaded, return an error
+		if ( 0 === $offloaded && empty( $errors ) ) {
+			$errors[] = __( 'No local files were found on disk to upload.', 'clockwork-offloader' );
 		}
 
 		$settings = Clockwork_Offloader_Settings_Helper::get_settings();
@@ -654,12 +725,23 @@ class Clockwork_Offloader {
 
 		foreach ( $offloads as $offload ) {
 			$local_path = $offload->file_path;
+
+			// Security check: confine restore destination strictly within this site's uploads directory
+			if ( ! self::is_valid_upload_path( $local_path ) ) {
+				$errors[] = sprintf(
+					/* translators: %s: file path */
+					__( 'Security check failed: Destination path is outside the uploads directory (%s).', 'clockwork-offloader' ),
+					basename( $local_path )
+				);
+				continue;
+			}
+
 			if ( file_exists( $local_path ) ) {
 				$restored++;
 				continue;
 			}
 
-			// Ensure target directory exists
+			// Ensure target directory exists safely
 			$dir = dirname( $local_path );
 			if ( ! file_exists( $dir ) ) {
 				wp_mkdir_p( $dir );
@@ -676,6 +758,10 @@ class Clockwork_Offloader {
 			} else {
 				$restored++;
 			}
+		}
+
+		if ( 0 === $restored && empty( $errors ) ) {
+			$errors[] = __( 'No files were restored from Cloud.', 'clockwork-offloader' );
 		}
 
 		return array(

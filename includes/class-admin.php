@@ -770,20 +770,7 @@ class Clockwork_Offloader_Admin {
 	 * @return bool True if valid, false otherwise
 	 */
 	private function is_valid_upload_path( $file_path ) {
-		if ( empty( $file_path ) ) {
-			return false;
-		}
-		
-		$upload_dir = wp_upload_dir();
-		$real_upload_dir = realpath( $upload_dir['basedir'] );
-		$real_file_path = realpath( dirname( $file_path ) );
-		
-		// Check if file path is within uploads directory
-		if ( false === $real_upload_dir || false === $real_file_path ) {
-			return false;
-		}
-		
-		return 0 === strpos( $real_file_path, $real_upload_dir );
+		return Clockwork_Offloader::is_valid_upload_path( $file_path );
 	}
 	
 	/**
@@ -2099,6 +2086,10 @@ class Clockwork_Offloader_Admin {
 			$error_message = implode( ' ', $result['errors'] );
 			wp_send_json_error( array( 'message' => $error_message ) );
 		}
+
+		if ( 0 === $result['files_offloaded'] ) {
+			wp_send_json_error( array( 'message' => __( 'No files were uploaded to Cloud.', 'clockwork-offloader' ) ) );
+		}
 		
 		// Verify the offload was actually recorded
 		$tracker = new Clockwork_Offloader_Tracker();
@@ -2107,6 +2098,20 @@ class Clockwork_Offloader_Admin {
 		if ( ! $is_offloaded && $result['files_offloaded'] > 0 ) {
 			// Upload succeeded but database record failed - this is a problem
 			wp_send_json_error( array( 'message' => __( 'File uploaded but failed to record in database. Please check database connection.', 'clockwork-offloader' ) ) );
+		}
+
+		if ( ! empty( $result['errors'] ) ) {
+			$error_message = implode( ' ', $result['errors'] );
+			wp_send_json_success( array(
+				'files_offloaded' => $result['files_offloaded'],
+				'errors'          => $result['errors'],
+				'message'         => sprintf(
+					/* translators: 1: number of files, 2: error details */
+					__( 'Uploaded %1$d file(s) to Cloud. Some sizes could not be uploaded: %2$s', 'clockwork-offloader' ),
+					$result['files_offloaded'],
+					$error_message
+				),
+			) );
 		}
 		
 		wp_send_json_success( $result );
@@ -2416,7 +2421,7 @@ class Clockwork_Offloader_Admin {
 		
 		$tracker = new Clockwork_Offloader_Tracker();
 		$s3_service = new Clockwork_Offloader_S3_Service();
-		$bulk_offloader = new Clockwork_Offloader_Bulk_Offloader();
+		$bulk_offloader = class_exists( 'Clockwork_Offloader_Bulk_Offloader' ) ? new Clockwork_Offloader_Bulk_Offloader() : null;
 		
 		$current_cdn_status = $tracker->is_offloaded( $attachment_id );
 		$file_path = get_attached_file( $attachment_id );
@@ -2430,7 +2435,9 @@ class Clockwork_Offloader_Admin {
 				// Need both on CDN and on server
 				if ( ! $current_cdn_status ) {
 					// Upload to Cloud
-					$result = $bulk_offloader->offload_attachment( $attachment_id );
+					$result = $bulk_offloader 
+						? $bulk_offloader->offload_attachment( $attachment_id ) 
+						: Clockwork_Offloader::get_instance()->offload_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
 						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 					}
@@ -2438,7 +2445,9 @@ class Clockwork_Offloader_Admin {
 				}
 				if ( ! $current_server_status ) {
 					// Download from Cloud to server
-					$result = $bulk_offloader->restore_attachment( $attachment_id );
+					$result = $bulk_offloader 
+						? $bulk_offloader->restore_attachment( $attachment_id ) 
+						: Clockwork_Offloader::get_instance()->restore_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
 						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 					}
@@ -2450,18 +2459,20 @@ class Clockwork_Offloader_Admin {
 				// Need in Cloud, not on server
 				if ( ! $current_cdn_status ) {
 					// Upload to Cloud
-					$result = $bulk_offloader->offload_attachment( $attachment_id );
+					$result = $bulk_offloader 
+						? $bulk_offloader->offload_attachment( $attachment_id ) 
+						: Clockwork_Offloader::get_instance()->offload_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
 						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 					}
 					$actions_taken[] = __( 'Uploaded to Cloud', 'clockwork-offloader' );
 				}
 				if ( $current_server_status ) {
-					// Delete from server - call the method directly
+					// Delete from server safely
 					$deleted = 0;
 					$file_path = get_attached_file( $attachment_id );
 					if ( $file_path && file_exists( $file_path ) ) {
-						if ( @unlink( $file_path ) ) {
+						if ( Clockwork_Offloader::delete_local_file( $file_path ) ) {
 							$deleted++;
 						}
 					}
@@ -2471,8 +2482,9 @@ class Clockwork_Offloader_Admin {
 						foreach ( $metadata['sizes'] as $size_data ) {
 							$size_file = $file_dir . '/' . $size_data['file'];
 							if ( file_exists( $size_file ) ) {
-								@unlink( $size_file );
-								$deleted++;
+								if ( Clockwork_Offloader::delete_local_file( $size_file ) ) {
+									$deleted++;
+								}
 							}
 						}
 					}
@@ -2522,11 +2534,11 @@ class Clockwork_Offloader_Admin {
 					}
 				}
 				if ( $current_server_status ) {
-					// Delete from server
+					// Delete from server safely
 					$deleted = 0;
 					$file_path = get_attached_file( $attachment_id );
 					if ( $file_path && file_exists( $file_path ) ) {
-						if ( @unlink( $file_path ) ) {
+						if ( Clockwork_Offloader::delete_local_file( $file_path ) ) {
 							$deleted++;
 						}
 					}
@@ -2536,8 +2548,9 @@ class Clockwork_Offloader_Admin {
 						foreach ( $metadata['sizes'] as $size_data ) {
 							$size_file = $file_dir . '/' . $size_data['file'];
 							if ( file_exists( $size_file ) ) {
-								@unlink( $size_file );
-								$deleted++;
+								if ( Clockwork_Offloader::delete_local_file( $size_file ) ) {
+									$deleted++;
+								}
 							}
 						}
 					}

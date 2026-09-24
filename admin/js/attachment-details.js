@@ -19,14 +19,15 @@
 		// Confirm delete action with appropriate warning
 		if (action === 'delete-from-cdn') {
 			var onServer = $button.data('on-server') === 1 || $button.data('on-server') === '1';
+			var strings = (typeof clockworkOffloaderAttachment !== 'undefined' && clockworkOffloaderAttachment.strings) ? clockworkOffloaderAttachment.strings : {};
 			var confirmMessage;
 			
 			if (!onServer) {
 				// File is not on server - show severe warning
-				confirmMessage = 'WARNING: This file is NOT on the server. Deleting from Cloud will permanently delete this file. Are you absolutely sure you want to continue?';
+				confirmMessage = strings.confirmDeletePermanent || strings.confirmDelete || 'WARNING: This file is NOT on the server. Deleting from Cloud will permanently delete this file. Are you absolutely sure you want to continue?';
 			} else {
 				// File is on server - regular warning
-				confirmMessage = 'Are you sure you want to delete this file from Cloud? The file will remain on the server.';
+				confirmMessage = strings.confirmDeleteOnServer || strings.confirmDelete || 'Are you sure you want to delete this file from Cloud? The file will remain on the server.';
 			}
 			
 			if (!confirm(confirmMessage)) {
@@ -61,17 +62,19 @@
 			},
 			success: function(response) {
 				if (response.success) {
-					var message = '';
-					switch(action) {
-						case 'offload':
-							message = clockworkOffloaderAttachment.strings.offloadSuccess;
-							break;
-						case 'delete-from-cdn':
-							message = clockworkOffloaderAttachment.strings.deleteSuccess;
-							break;
-						case 'restore':
-							message = clockworkOffloaderAttachment.strings.restoreSuccess;
-							break;
+					var message = (response.data && response.data.message) ? response.data.message : '';
+					if (!message) {
+						switch(action) {
+							case 'offload':
+								message = clockworkOffloaderAttachment.strings.offloadSuccess;
+								break;
+							case 'delete-from-cdn':
+								message = clockworkOffloaderAttachment.strings.deleteSuccess;
+								break;
+							case 'restore':
+								message = clockworkOffloaderAttachment.strings.restoreSuccess;
+								break;
+						}
 					}
 					
 					// Show success notice
