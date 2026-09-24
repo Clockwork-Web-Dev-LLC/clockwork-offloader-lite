@@ -181,7 +181,7 @@ if ( ! empty( $search ) ) {
 					?>
 					<tr>
 						<td class="column-thumbnail">
-							<?php echo $thumbnail ? $thumbnail : '<span class="dashicons dashicons-media-default"></span>'; ?>
+							<?php echo $thumbnail ? wp_kses_post( $thumbnail ) : '<span class="dashicons dashicons-media-default"></span>'; ?>
 						</td>
 						<td class="column-title">
 							<strong><?php echo esc_html( $file_name ); ?></strong>
@@ -230,7 +230,7 @@ if ( ! empty( $search ) ) {
 		if ( ! empty( $search ) ) {
 			$pagination_args['format'] .= '&s=' . urlencode( $search );
 		}
-		echo paginate_links( $pagination_args );
+		echo wp_kses_post( paginate_links( $pagination_args ) );
 		?>
 		
 	<?php else : ?>

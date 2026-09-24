@@ -310,12 +310,14 @@ class Clockwork_Offloader_S3_Service {
 		if ( ! file_exists( $dir ) ) {
 			$mkdir_result = wp_mkdir_p( $dir );
 			if ( ! $mkdir_result ) {
+				/* translators: %s: Directory path */
 				return new WP_Error( 'directory_creation_failed', sprintf( __( 'Failed to create directory: %s', 'clockwork-offloader' ), $dir ) );
 			}
 		}
 		
 		// Check if directory is writable
-		if ( ! is_writable( $dir ) ) {
+		if ( ! wp_is_writable( $dir ) ) {
+			/* translators: %s: Directory path */
 			return new WP_Error( 'directory_not_writable', sprintf( __( 'Directory is not writable: %s', 'clockwork-offloader' ), $dir ) );
 		}
 		
@@ -333,6 +335,7 @@ class Clockwork_Offloader_S3_Service {
 			
 			return true;
 		} catch ( Exception $e ) {
+			/* translators: %s: Error message from S3 */
 			return new WP_Error( 'download_failed', sprintf( __( 'S3 download failed: %s', 'clockwork-offloader' ), $e->getMessage() ) );
 		}
 	}
@@ -370,6 +373,7 @@ class Clockwork_Offloader_S3_Service {
 				do_action( 'clockwork_offloader_file_deleted_from_s3', $s3_key, $bucket );
 				return true;
 			} else {
+				/* translators: %d: HTTP status code */
 				return new WP_Error( 'delete_failed', sprintf( __( 'Unexpected response code: %d', 'clockwork-offloader' ), $status_code ) );
 			}
 		} catch ( Exception $e ) {
@@ -382,6 +386,7 @@ class Clockwork_Offloader_S3_Service {
 				return new WP_Error( 'delete_file_not_found', __( 'File not found in S3. It may have already been deleted.', 'clockwork-offloader' ) );
 			}
 			
+			/* translators: %s: Error message from S3 */
 			return new WP_Error( 'delete_failed', sprintf( __( 'S3 delete failed: %s', 'clockwork-offloader' ), $error_message ) );
 		}
 	}
@@ -471,6 +476,7 @@ class Clockwork_Offloader_S3_Service {
 			
 			return $objects;
 		} catch ( Exception $e ) {
+			/* translators: %s: Error message from S3 */
 			return new WP_Error( 'list_failed', sprintf( __( 'Failed to list S3 objects: %s', 'clockwork-offloader' ), $e->getMessage() ) );
 		}
 	}
@@ -840,7 +846,8 @@ class Clockwork_Offloader_S3_Service {
 					
 					if ( $correct_region ) {
 						$suggested_message = sprintf( 
-							__( 'The bucket is in region "%s", not "%s". Please select "%s" from the region dropdown.', 'clockwork-offloader' ),
+							/* translators: 1: Actual bucket region, 2: Selected region, 3: Actual bucket region */
+							__( 'The bucket is in region "%1$s", not "%2$s". Please select "%3$s" from the region dropdown.', 'clockwork-offloader' ),
 							$correct_region,
 							$test_region,
 							$correct_region

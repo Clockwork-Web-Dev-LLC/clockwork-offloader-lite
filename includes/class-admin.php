@@ -2169,7 +2169,12 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array(
 				'files_restored' => $result['files_restored'],
 				'errors' => $result['errors'],
-				'message' => sprintf( __( 'Restored %d file(s). Some files could not be restored: %s', 'clockwork-offloader' ), $result['files_restored'], $error_message ),
+				'message' => sprintf(
+					/* translators: 1: Number of files restored, 2: Error messages */
+					__( 'Restored %1$d file(s). Some files could not be restored: %2$s', 'clockwork-offloader' ),
+					$result['files_restored'],
+					$error_message
+				),
 			) );
 		}
 		
@@ -2223,9 +2228,18 @@ class Clockwork_Offloader_Admin {
 				$error_message = $delete_result->get_error_message();
 				// Check if it's a permissions error
 				if ( strpos( $error_message, '403' ) !== false || strpos( $error_message, 'Forbidden' ) !== false || strpos( $error_message, 'AccessDenied' ) !== false ) {
-					$errors[] = sprintf( __( 'Permission denied for %s. Please check your AWS credentials have delete permissions.', 'clockwork-offloader' ), $offload->s3_key );
+					$errors[] = sprintf(
+						/* translators: %s: S3 object key */
+						__( 'Permission denied for %s. Please check your AWS credentials have delete permissions.', 'clockwork-offloader' ),
+						$offload->s3_key
+					);
 				} else {
-					$errors[] = sprintf( __( 'Failed to delete %s: %s', 'clockwork-offloader' ), $offload->s3_key, $error_message );
+					$errors[] = sprintf(
+						/* translators: 1: S3 object key, 2: Error message */
+						__( 'Failed to delete %1$s: %2$s', 'clockwork-offloader' ),
+						$offload->s3_key,
+						$error_message
+					);
 				}
 			} else {
 				$deleted++;
@@ -2242,13 +2256,22 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array(
 				'deleted' => $deleted,
 				'errors' => $errors,
-				'message' => sprintf( __( 'Deleted %d file(s) from Cloud. Some files could not be deleted: %s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
+				'message' => sprintf(
+					/* translators: 1: Number of files deleted, 2: Error messages */
+					__( 'Deleted %1$d file(s) from Cloud. Some files could not be deleted: %2$s', 'clockwork-offloader' ),
+					$deleted,
+					implode( ' ', $errors )
+				),
 			) );
 		} else {
 			// All deletions succeeded
 			wp_send_json_success( array(
 				'deleted' => $deleted,
-				'message' => sprintf( __( 'Deleted %d file(s) from Cloud.', 'clockwork-offloader' ), $deleted ),
+				'message' => sprintf(
+					/* translators: %d: Number of files deleted */
+					__( 'Deleted %d file(s) from Cloud.', 'clockwork-offloader' ),
+					$deleted
+				),
 			) );
 		}
 	}
@@ -2291,9 +2314,10 @@ class Clockwork_Offloader_Admin {
 		// Get original file
 		$file_path = get_attached_file( $attachment_id );
 		if ( $file_path && file_exists( $file_path ) && $this->is_valid_upload_path( $file_path ) ) {
-			if ( @unlink( $file_path ) ) {
+			if ( Clockwork_Offloader::delete_local_file( $file_path ) ) {
 				$deleted++;
 			} else {
+				/* translators: %s: File path */
 				$errors[] = sprintf( __( 'Failed to delete original file: %s', 'clockwork-offloader' ), $file_path );
 			}
 		}
@@ -2308,10 +2332,11 @@ class Clockwork_Offloader_Admin {
 				$size_file_path = $file_dir . '/' . $size_data['file'];
 				
 				if ( file_exists( $size_file_path ) && $this->is_valid_upload_path( $size_file_path ) ) {
-					if ( @unlink( $size_file_path ) ) {
+					if ( Clockwork_Offloader::delete_local_file( $size_file_path ) ) {
 						$deleted++;
 					} else {
-						$errors[] = sprintf( __( 'Failed to delete %s: %s', 'clockwork-offloader' ), $size_name, $size_file_path );
+						/* translators: 1: Image size name, 2: File path */
+						$errors[] = sprintf( __( 'Failed to delete %1$s: %2$s', 'clockwork-offloader' ), $size_name, $size_file_path );
 					}
 				}
 			}
@@ -2323,11 +2348,13 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array(
 				'deleted' => $deleted,
 				'errors' => $errors,
-				'message' => sprintf( __( 'Deleted %d file(s) from server. Some files could not be deleted: %s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
+				/* translators: 1: Number of files deleted, 2: Error messages */
+				'message' => sprintf( __( 'Deleted %1$d file(s) from server. Some files could not be deleted: %2$s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
 			) );
 		} else {
 			wp_send_json_success( array(
 				'deleted' => $deleted,
+				/* translators: %d: Number of files deleted */
 				'message' => sprintf( __( 'Deleted %d file(s) from server.', 'clockwork-offloader' ), $deleted ),
 			) );
 		}
@@ -2355,9 +2382,10 @@ class Clockwork_Offloader_Admin {
 		// Get original file
 		$file_path = get_attached_file( $attachment_id );
 		if ( $file_path && file_exists( $file_path ) && $this->is_valid_upload_path( $file_path ) ) {
-			if ( @unlink( $file_path ) ) {
+			if ( Clockwork_Offloader::delete_local_file( $file_path ) ) {
 				$deleted++;
 			} else {
+				/* translators: %s: File path */
 				$errors[] = sprintf( __( 'Failed to delete original file: %s', 'clockwork-offloader' ), $file_path );
 			}
 		}
@@ -2372,10 +2400,11 @@ class Clockwork_Offloader_Admin {
 				$size_file_path = $file_dir . '/' . $size_data['file'];
 				
 				if ( file_exists( $size_file_path ) && $this->is_valid_upload_path( $size_file_path ) ) {
-					if ( @unlink( $size_file_path ) ) {
+					if ( Clockwork_Offloader::delete_local_file( $size_file_path ) ) {
 						$deleted++;
 					} else {
-						$errors[] = sprintf( __( 'Failed to delete %s: %s', 'clockwork-offloader' ), $size_name, $size_file_path );
+						/* translators: 1: Image size name, 2: File path */
+						$errors[] = sprintf( __( 'Failed to delete %1$s: %2$s', 'clockwork-offloader' ), $size_name, $size_file_path );
 					}
 				}
 			}
@@ -2387,11 +2416,13 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array(
 				'deleted' => $deleted,
 				'errors' => $errors,
-				'message' => sprintf( __( 'Deleted %d file(s) from server. Some files could not be deleted: %s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
+				/* translators: 1: Number of files deleted, 2: Error messages */
+				'message' => sprintf( __( 'Deleted %1$d file(s) from server. Some files could not be deleted: %2$s', 'clockwork-offloader' ), $deleted, implode( ' ', $errors ) ),
 			) );
 		} else {
 			wp_send_json_success( array(
 				'deleted' => $deleted,
+				/* translators: %d: Number of files deleted */
 				'message' => sprintf( __( 'Deleted %d file(s) from server.', 'clockwork-offloader' ), $deleted ),
 			) );
 		}
@@ -2439,7 +2470,13 @@ class Clockwork_Offloader_Admin {
 						? $bulk_offloader->offload_attachment( $attachment_id ) 
 						: Clockwork_Offloader::get_instance()->offload_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
-						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+						wp_send_json_error( array(
+							'message' => sprintf(
+								/* translators: %s: Error message */
+								__( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ),
+								$result->get_error_message()
+							),
+						) );
 					}
 					$actions_taken[] = __( 'Uploaded to Cloud', 'clockwork-offloader' );
 				}
@@ -2449,7 +2486,13 @@ class Clockwork_Offloader_Admin {
 						? $bulk_offloader->restore_attachment( $attachment_id ) 
 						: Clockwork_Offloader::get_instance()->restore_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
-						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+						wp_send_json_error( array(
+							'message' => sprintf(
+								/* translators: %s: Error message */
+								__( 'Failed to download from Cloud: %s', 'clockwork-offloader' ),
+								$result->get_error_message()
+							),
+						) );
 					}
 					$actions_taken[] = __( 'Downloaded to server', 'clockwork-offloader' );
 				}
@@ -2463,7 +2506,13 @@ class Clockwork_Offloader_Admin {
 						? $bulk_offloader->offload_attachment( $attachment_id ) 
 						: Clockwork_Offloader::get_instance()->offload_attachment( $attachment_id );
 					if ( is_wp_error( $result ) ) {
-						wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
+						wp_send_json_error( array(
+							'message' => sprintf(
+								/* translators: %s: Error message */
+								__( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ),
+								$result->get_error_message()
+							),
+						) );
 					}
 					$actions_taken[] = __( 'Uploaded to Cloud', 'clockwork-offloader' );
 				}
@@ -2565,6 +2614,7 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array( 'message' => __( 'Status is already correct. No changes needed.', 'clockwork-offloader' ) ) );
 		} else {
 			wp_send_json_success( array( 
+				/* translators: %s: Comma-separated list of actions taken */
 				'message' => sprintf( __( 'Status updated. Actions taken: %s', 'clockwork-offloader' ), implode( ', ', $actions_taken ) ),
 				'actions' => $actions_taken,
 			) );
@@ -2614,6 +2664,7 @@ class Clockwork_Offloader_Admin {
 				}
 				$result = $bulk_offloader->restore_attachment( $attachment_id );
 				if ( is_wp_error( $result ) ) {
+					/* translators: %s: Error message */
 					wp_send_json_error( array( 'message' => sprintf( __( 'Failed to download from Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 				}
 				wp_send_json_success( array( 'message' => __( 'File downloaded to server.', 'clockwork-offloader' ) ) );
@@ -2624,7 +2675,7 @@ class Clockwork_Offloader_Admin {
 				}
 				$deleted = 0;
 				if ( $file_path && file_exists( $file_path ) ) {
-					if ( @unlink( $file_path ) ) {
+					if ( Clockwork_Offloader::delete_local_file( $file_path ) ) {
 						$deleted++;
 					}
 				}
@@ -2634,12 +2685,19 @@ class Clockwork_Offloader_Admin {
 					foreach ( $metadata['sizes'] as $size_data ) {
 						$size_file = $file_dir . '/' . $size_data['file'];
 						if ( file_exists( $size_file ) ) {
-							@unlink( $size_file );
-							$deleted++;
+							if ( Clockwork_Offloader::delete_local_file( $size_file ) ) {
+								$deleted++;
+							}
 						}
 					}
 				}
-				wp_send_json_success( array( 'message' => sprintf( __( 'Deleted %d file(s) from server.', 'clockwork-offloader' ), $deleted ) ) );
+				wp_send_json_success( array(
+					'message' => sprintf(
+						/* translators: %d: number of deleted files */
+						__( 'Deleted %d file(s) from server.', 'clockwork-offloader' ),
+						$deleted
+					),
+				) );
 			}
 		} else {
 			// Toggling Cloud status
@@ -2652,6 +2710,7 @@ class Clockwork_Offloader_Admin {
 				}
 				$result = $bulk_offloader->offload_attachment( $attachment_id );
 				if ( is_wp_error( $result ) ) {
+					/* translators: %s: Error message */
 					wp_send_json_error( array( 'message' => sprintf( __( 'Failed to upload to Cloud: %s', 'clockwork-offloader' ), $result->get_error_message() ) ) );
 				}
 				wp_send_json_success( array( 'message' => __( 'File uploaded to Cloud.', 'clockwork-offloader' ) ) );
@@ -2670,6 +2729,7 @@ class Clockwork_Offloader_Admin {
 						$tracker->delete_record( $attachment_id, $offload->size_name );
 					}
 				}
+				/* translators: %d: Number of files deleted from Cloud */
 				wp_send_json_success( array( 'message' => sprintf( __( 'Deleted %d file(s) from Cloud.', 'clockwork-offloader' ), $deleted ) ) );
 			}
 		}
@@ -2796,6 +2856,7 @@ class Clockwork_Offloader_Admin {
 		wp_send_json_success( array(
 			'added' => $added,
 			'total' => count( $attachment_ids ),
+			/* translators: %d: Number of items added to queue */
 			'message' => sprintf( __( 'Added %d item(s) to queue.', 'clockwork-offloader' ), $added ),
 		) );
 	}
@@ -2935,7 +2996,8 @@ class Clockwork_Offloader_Admin {
 			'offset' => $offset + $chunk_size,
 			'has_more' => $has_more,
 			'message' => sprintf( 
-				__( 'Processed %d attachment(s), added %d to queue. %s', 'clockwork-offloader' ),
+				/* translators: 1: Total processed attachments, 2: Number added to queue, 3: Status continuation message */
+				__( 'Processed %1$d attachment(s), added %2$d to queue. %3$s', 'clockwork-offloader' ),
 				count( $attachments ),
 				$total_added,
 				$has_more ? __( 'Continuing...', 'clockwork-offloader' ) : __( 'Processing will begin automatically via cron.', 'clockwork-offloader' )
@@ -3001,7 +3063,8 @@ class Clockwork_Offloader_Admin {
 			'results' => $results,
 			'success_count' => $success_count,
 			'error_count' => $error_count,
-			'message' => sprintf( __( 'Downloaded %d file(s) successfully. %d failed.', 'clockwork-offloader' ), $success_count, $error_count ),
+			/* translators: 1: Number of successful downloads, 2: Number of failed downloads */
+			'message' => sprintf( __( 'Downloaded %1$d file(s) successfully. %2$d failed.', 'clockwork-offloader' ), $success_count, $error_count ),
 		) );
 	}
 	
@@ -3265,6 +3328,7 @@ class Clockwork_Offloader_Admin {
 			wp_send_json_success( array( 'message' => __( 'Database table created successfully!', 'clockwork-offloader' ) ) );
 		} else {
 			$error = $wpdb->last_error ? $wpdb->last_error : __( 'Unknown database error', 'clockwork-offloader' );
+			/* translators: %s: Database error message */
 			wp_send_json_error( array( 'message' => sprintf( __( 'Failed to create table: %s', 'clockwork-offloader' ), $error ) ) );
 		}
 	}
@@ -3528,6 +3592,7 @@ class Clockwork_Offloader_Admin {
 		
 		wp_send_json_success( array(
 			'cancelled' => $cancelled,
+			/* translators: %d: Number of cancelled pending items */
 			'message' => sprintf( __( 'Cancelled %d pending item(s).', 'clockwork-offloader' ), $cancelled ),
 		) );
 	}
@@ -3557,6 +3622,7 @@ class Clockwork_Offloader_Admin {
 		
 		wp_send_json_success( array(
 			'retried' => $retried,
+			/* translators: %d: Number of failed items reset for retry */
 			'message' => sprintf( __( 'Reset %d failed item(s) for retry.', 'clockwork-offloader' ), $retried ),
 		) );
 	}
@@ -3677,7 +3743,8 @@ class Clockwork_Offloader_Admin {
 			'offset' => $offset + $chunk_size,
 			'has_more' => $has_more,
 			'message' => sprintf( 
-				__( 'Processed %d attachment(s), found %d that need downloading. %s', 'clockwork-offloader' ),
+				/* translators: 1: Total processed attachments, 2: Number needing downloading, 3: Status continuation message */
+				__( 'Processed %1$d attachment(s), found %2$d that need downloading. %3$s', 'clockwork-offloader' ),
 				count( $attachments ),
 				count( $needs_download ),
 				$has_more ? __( 'Continuing...', 'clockwork-offloader' ) : __( 'Ready to download.', 'clockwork-offloader' )
@@ -3735,7 +3802,8 @@ class Clockwork_Offloader_Admin {
 			
 			if ( is_wp_error( $result ) ) {
 				$stats['failed']++;
-				$stats['errors'][] = sprintf( __( 'Attachment %d: %s', 'clockwork-offloader' ), $attachment_id, $result->get_error_message() );
+				/* translators: 1: Attachment ID, 2: Error message */
+				$stats['errors'][] = sprintf( __( 'Attachment %1$d: %2$s', 'clockwork-offloader' ), $attachment_id, $result->get_error_message() );
 			} else {
 				$stats['succeeded']++;
 			}
@@ -3879,7 +3947,8 @@ class Clockwork_Offloader_Admin {
 				if ( ! is_wp_error( $result ) && $result['files_restored'] > 0 ) {
 					$stats['downloaded']++;
 				} elseif ( is_wp_error( $result ) ) {
-					$stats['errors'][] = sprintf( __( 'Failed to download attachment %d: %s', 'clockwork-offloader' ), $attachment_id, $result->get_error_message() );
+					/* translators: 1: Attachment ID, 2: Error message */
+					$stats['errors'][] = sprintf( __( 'Failed to download attachment %1$d: %2$s', 'clockwork-offloader' ), $attachment_id, $result->get_error_message() );
 					continue; // Skip deletion if download failed
 				}
 			}
@@ -3893,7 +3962,8 @@ class Clockwork_Offloader_Admin {
 					$deleted_count++;
 					$tracker->delete_record( $attachment_id, $offload->size_name );
 				} else {
-					$stats['errors'][] = sprintf( __( 'Failed to delete %s from S3: %s', 'clockwork-offloader' ), $offload->s3_key, $delete_result->get_error_message() );
+					/* translators: 1: S3 object key, 2: Error message */
+					$stats['errors'][] = sprintf( __( 'Failed to delete %1$s from S3: %2$s', 'clockwork-offloader' ), $offload->s3_key, $delete_result->get_error_message() );
 				}
 			}
 			
@@ -3906,7 +3976,8 @@ class Clockwork_Offloader_Admin {
 		$has_more = count( $attachments ) === $chunk_size;
 		
 		$message = sprintf(
-			__( 'Processed %d attachment(s). Downloaded: %d, Deleted from S3: %d. %s', 'clockwork-offloader' ),
+			/* translators: 1: Number of attachments processed, 2: Number downloaded, 3: Number deleted from S3, 4: Status continuation message */
+			__( 'Processed %1$d attachment(s). Downloaded: %2$d, Deleted from S3: %3$d. %4$s', 'clockwork-offloader' ),
 			count( $attachments ),
 			$stats['downloaded'],
 			$stats['deleted'],
@@ -3916,6 +3987,7 @@ class Clockwork_Offloader_Admin {
 		if ( ! empty( $stats['errors'] ) ) {
 			$message .= ' ' . __( 'Some errors occurred:', 'clockwork-offloader' ) . ' ' . implode( '; ', array_slice( $stats['errors'], 0, 3 ) );
 			if ( count( $stats['errors'] ) > 3 ) {
+				/* translators: %d: Number of additional errors */
 				$message .= ' ' . sprintf( __( '...and %d more.', 'clockwork-offloader' ), count( $stats['errors'] ) - 3 );
 			}
 		}
@@ -4002,6 +4074,7 @@ class Clockwork_Offloader_Admin {
 		
 		if ( is_wp_error( $test_result ) ) {
 			wp_send_json_error( array( 
+				/* translators: %s: Error message from connection test */
 				'message' => sprintf( __( 'Connection test failed: %s', 'clockwork-offloader' ), $test_result->get_error_message() )
 			) );
 		}
@@ -4085,6 +4158,7 @@ class Clockwork_Offloader_Admin {
 				'digitalocean' => __( 'Digital Ocean', 'clockwork-offloader' ),
 			);
 			$provider_name = isset( $provider_names[ $provider ] ) ? $provider_names[ $provider ] : __( 'Storage Provider', 'clockwork-offloader' );
+			/* translators: %s: Storage provider name (e.g. AWS, Digital Ocean) */
 			wp_send_json_error( array( 'message' => sprintf( __( '%s Region is required.', 'clockwork-offloader' ), $provider_name ) ) );
 		}
 		
@@ -4125,6 +4199,7 @@ class Clockwork_Offloader_Admin {
 				) );
 			} else {
 				wp_send_json_error( array( 
+					/* translators: %s: Bucket test error message */
 					'message' => sprintf( __( 'Bucket test failed: %s', 'clockwork-offloader' ), $error_message )
 				) );
 			}
@@ -4200,6 +4275,7 @@ class Clockwork_Offloader_Admin {
 		if ( ! empty( $missing ) ) {
 			wp_send_json_error( array( 
 				'message' => sprintf( 
+					/* translators: %s: Comma-separated list of missing configuration fields */
 					__( 'Configuration incomplete. Missing: %s. Please complete steps 1 and 2 first.', 'clockwork-offloader' ),
 					implode( ', ', $missing )
 				)
@@ -4212,6 +4288,7 @@ class Clockwork_Offloader_Admin {
 		
 		if ( is_wp_error( $test_result ) ) {
 			wp_send_json_error( array( 
+				/* translators: %s: Error message from connection test */
 				'message' => sprintf( __( 'Connection test failed: %s', 'clockwork-offloader' ), $test_result->get_error_message() )
 			) );
 		}
@@ -4344,6 +4421,7 @@ class Clockwork_Offloader_Admin {
 		
 		if ( is_wp_error( $test_result ) ) {
 			wp_send_json_error( array( 
+				/* translators: %s: Error message from final connection test */
 				'message' => sprintf( __( 'Final connection test failed: %s', 'clockwork-offloader' ), $test_result->get_error_message() )
 			) );
 		}
@@ -4694,9 +4772,11 @@ class Clockwork_Offloader_Admin {
 			} elseif ( $checked_count === 0 ) {
 				$message = __( 'No offloaded media found to verify.', 'clockwork-offloader' );
 			} elseif ( $all_correct ) {
+				/* translators: %d: Number of URLs checked */
 				$message = sprintf( __( 'Verified %d URLs - all pointing to S3.', 'clockwork-offloader' ), $checked_count );
 			} else {
-				$message = sprintf( __( '%d of %d URLs are pointing to S3.', 'clockwork-offloader' ), $correct_count, $checked_count );
+				/* translators: 1: Number of URLs pointing to S3, 2: Total number of checked URLs */
+				$message = sprintf( __( '%1$d of %2$d URLs are pointing to S3.', 'clockwork-offloader' ), $correct_count, $checked_count );
 			}
 		} else {
 			if ( $rewrite_enabled ) {
@@ -4705,9 +4785,11 @@ class Clockwork_Offloader_Admin {
 			} elseif ( $checked_count === 0 ) {
 				$message = __( 'No offloaded media found to verify.', 'clockwork-offloader' );
 			} elseif ( $all_correct ) {
+				/* translators: %d: Number of URLs checked */
 				$message = sprintf( __( 'Verified %d URLs - all pointing to local server.', 'clockwork-offloader' ), $checked_count );
 			} else {
-				$message = sprintf( __( '%d of %d URLs are pointing to local server.', 'clockwork-offloader' ), $correct_count, $checked_count );
+				/* translators: 1: Number of URLs pointing to local server, 2: Total number of checked URLs */
+				$message = sprintf( __( '%1$d of %2$d URLs are pointing to local server.', 'clockwork-offloader' ), $correct_count, $checked_count );
 			}
 		}
 		

@@ -214,12 +214,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 				);
 				$provider_name = isset( $provider_names[ $provider ] ) ? $provider_names[ $provider ] : __( 'Storage Provider', 'clockwork-offloader' );
 				?>
-				<p class="description"><?php echo esc_html( sprintf( __( 'Select your %s region and bucket where media files will be stored.', 'clockwork-offloader' ), $provider_name ) ); ?></p>
+				<p class="description">
+					<?php
+					echo esc_html(
+						sprintf(
+							/* translators: %s: storage provider name (e.g. AWS S3) */
+							__( 'Select your %s region and bucket where media files will be stored.', 'clockwork-offloader' ),
+							$provider_name
+						)
+					);
+					?>
+				</p>
 				
 				<table class="form-table">
 					<tr>
 						<th scope="row">
-							<label for="setup_region"><?php echo esc_html( sprintf( __( '%s Region', 'clockwork-offloader' ), $provider_name ) ); ?></label>
+							<label for="setup_region">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %s: storage provider name */
+										__( '%s Region', 'clockwork-offloader' ),
+										$provider_name
+									)
+								);
+								?>
+							</label>
 						</th>
 						<td>
 							<select id="setup_region" name="region" class="regular-text" data-provider="<?php echo esc_attr( $provider ); ?>">
@@ -250,7 +270,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 									<option value="ap-northeast-1" <?php selected( isset( $setup_data['region'] ) ? $setup_data['region'] : '', 'ap-northeast-1' ); ?>>Asia Pacific (Tokyo) - ap-northeast-1</option>
 								<?php endif; ?>
 							</select>
-							<p class="description"><?php echo esc_html( sprintf( __( 'The %s region where your bucket is located.', 'clockwork-offloader' ), $provider_name ) ); ?></p>
+							<p class="description">
+								<?php
+								echo esc_html(
+									sprintf(
+										/* translators: %s: storage provider name */
+										__( 'The %s region where your bucket is located.', 'clockwork-offloader' ),
+										$provider_name
+									)
+								);
+								?>
+							</p>
 						</td>
 					</tr>
 					<tr>

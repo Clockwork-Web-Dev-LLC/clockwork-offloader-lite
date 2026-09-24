@@ -73,9 +73,12 @@ class Clockwork_Offloader_Lite_Restrictions {
 			return; // Don't show notice if Pro is active
 		}
 		
-		$message = ! empty( $feature_name ) 
-			? sprintf( __( '%s is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature.', 'clockwork-offloader' ), esc_html( $feature_name ) )
-			: __( 'This is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature.', 'clockwork-offloader' );
+		if ( ! empty( $feature_name ) ) {
+			/* translators: %s: Feature name */
+			$message = sprintf( __( '%s is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature.', 'clockwork-offloader' ), esc_html( $feature_name ) );
+		} else {
+			$message = __( 'This is a Pro feature. Upgrade to Clockwork Offloader Pro to unlock this feature.', 'clockwork-offloader' );
+		}
 		
 		?>
 		<div class="notice notice-info is-dismissible">

@@ -216,7 +216,7 @@ class Clockwork_Offloader_URL_Rewriter {
 	 */
 	private function replace_s3_domain_with_cdn( $s3_url, $cdn_domain ) {
 		// Parse S3 URL to get the path
-		$parsed = parse_url( $s3_url );
+		$parsed = wp_parse_url( $s3_url );
 		if ( ! $parsed || empty( $parsed['path'] ) ) {
 			return $s3_url;
 		}

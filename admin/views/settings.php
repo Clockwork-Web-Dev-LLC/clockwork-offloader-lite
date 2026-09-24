@@ -96,7 +96,8 @@ if ( ! empty( $cdn_domain ) ) {
 					$main_blog_details = get_blog_details( get_main_site_id() );
 					$main_site_name = $main_blog_details ? $main_blog_details->blogname : get_site_url( get_main_site_id() );
 					printf(
-						esc_html__( 'This site is automatically using the storage and delivery settings configured on the main network site (%s). Media uploaded on this site is stored under %s in bucket %s.', 'clockwork-offloader' ),
+						/* translators: 1: main network site name, 2: subsite path prefix, 3: bucket name */
+						esc_html__( 'This site is automatically using the storage and delivery settings configured on the main network site (%1$s). Media uploaded on this site is stored under %2$s in bucket %3$s.', 'clockwork-offloader' ),
 						'<strong>' . esc_html( $main_site_name ) . '</strong>',
 						'<code>sites/' . esc_html( get_current_blog_id() ) . '/</code>',
 						'<strong>' . esc_html( $bucket ) . '</strong>'

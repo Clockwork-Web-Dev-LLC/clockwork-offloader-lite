@@ -162,6 +162,18 @@ if ( ! function_exists( 'wp_parse_url' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_delete_file' ) ) {
+	function wp_delete_file( $file ) {
+		return @unlink( $file );
+	}
+}
+
+if ( ! function_exists( 'wp_is_writable' ) ) {
+	function wp_is_writable( $path ) {
+		return is_writable( $path );
+	}
+}
+
 if ( ! function_exists( 'is_admin' ) ) {
 	function is_admin() {
 		return false;

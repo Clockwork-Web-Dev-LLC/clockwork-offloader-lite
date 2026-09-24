@@ -210,7 +210,13 @@ if ( ! isset( $has_credentials ) ) {
 						<strong style="color: #1d2327;"><span class="dashicons dashicons-database" style="color: #2271b1; margin-right: 6px; font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span><?php esc_html_e( 'Local Server Disk:', 'clockwork-offloader' ); ?></strong>
 						<?php if ( $delete_after_upload ) : ?>
 							<span style="color: #00a32a; font-weight: 600; margin-left: 4px;">
-								<?php printf( esc_html__( '%s freed from web server disk', 'clockwork-offloader' ), esc_html( size_format( $stats['total_size'], 2 ) ) ); ?>
+								<?php
+								printf(
+									/* translators: %s: formatted file size (e.g. 15.2 MB) */
+									esc_html__( '%s freed from web server disk', 'clockwork-offloader' ),
+									esc_html( size_format( $stats['total_size'], 2 ) )
+								);
+								?>
 							</span>
 							<span class="description" style="color: #646970; margin-left: 4px;">
 								(<?php esc_html_e( 'Delete After Upload is ON', 'clockwork-offloader' ); ?>)

@@ -12,7 +12,7 @@
  * Domain Path: /languages
  * Requires at least: 5.0
  * Requires PHP: 8.2
- * Tested up to: 6.9
+ * Tested up to: 7.1
  */
 
 // Exit if accessed directly
@@ -493,7 +493,7 @@ class Clockwork_Offloader {
 			return false;
 		}
 
-		return @unlink( $file_path );
+		return wp_delete_file( $file_path );
 	}
 	
 	/**
